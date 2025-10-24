@@ -1,6 +1,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.14.36603.0 d17.14
+VisualStudioVersion = 17.14.36603.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
 EndProject
@@ -9,10 +9,25 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.editorconfig = .editorconfig
 		Directory.Packages.props = Directory.Packages.props
 		NuGet.config = NuGet.config
-EndProjectSection
+	EndProjectSection
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eMeetup.AppHost", "src\eMeetup.AppHost\eMeetup.AppHost.csproj", "{22711DC7-511F-4034-8289-EA6E8F46EAB5}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eMeetup.ServiceDefaults", "src\eMeetup.ServiceDefaults\eMeetup.ServiceDefaults.csproj", "{49867A38-D30A-7BC6-1E5C-E859444C32A6}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Modules", "Modules", "{5B82D04C-FFA1-4B09-8836-1A989F23C264}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Users", "Users", "{DD48E8E4-11C4-465F-8CAD-EA9B79DF63B1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eMeetup.Modules.Users.Domain", "src\Modules\Users\eMeetup.Modules.Users.Domain\eMeetup.Modules.Users.Domain.csproj", "{CFA5D240-7E22-4BD4-BC9C-0B889A6DF304}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "API", "API", "{BEFC9597-83C1-43B6-986A-768EFF1C1E5C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{44235AFA-1E3B-41DF-951B-A2D8C670C8E4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eMeetup.Common.Domain", "src\Common\eMeetup.Common.Domain\eMeetup.Common.Domain.csproj", "{E5C8EE54-B099-49E8-B104-0451053CCA06}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Users", "Users", "{69E22A7E-A568-485D-B1D6-5AD5F615C982}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -28,6 +43,14 @@ Global
 		{49867A38-D30A-7BC6-1E5C-E859444C32A6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{49867A38-D30A-7BC6-1E5C-E859444C32A6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{49867A38-D30A-7BC6-1E5C-E859444C32A6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CFA5D240-7E22-4BD4-BC9C-0B889A6DF304}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CFA5D240-7E22-4BD4-BC9C-0B889A6DF304}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CFA5D240-7E22-4BD4-BC9C-0B889A6DF304}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CFA5D240-7E22-4BD4-BC9C-0B889A6DF304}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E5C8EE54-B099-49E8-B104-0451053CCA06}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E5C8EE54-B099-49E8-B104-0451053CCA06}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E5C8EE54-B099-49E8-B104-0451053CCA06}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E5C8EE54-B099-49E8-B104-0451053CCA06}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -35,6 +58,13 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{22711DC7-511F-4034-8289-EA6E8F46EAB5} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{49867A38-D30A-7BC6-1E5C-E859444C32A6} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{5B82D04C-FFA1-4B09-8836-1A989F23C264} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{DD48E8E4-11C4-465F-8CAD-EA9B79DF63B1} = {5B82D04C-FFA1-4B09-8836-1A989F23C264}
+		{CFA5D240-7E22-4BD4-BC9C-0B889A6DF304} = {DD48E8E4-11C4-465F-8CAD-EA9B79DF63B1}
+		{BEFC9597-83C1-43B6-986A-768EFF1C1E5C} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{44235AFA-1E3B-41DF-951B-A2D8C670C8E4} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{E5C8EE54-B099-49E8-B104-0451053CCA06} = {44235AFA-1E3B-41DF-951B-A2D8C670C8E4}
+		{69E22A7E-A568-485D-B1D6-5AD5F615C982} = {DD48E8E4-11C4-465F-8CAD-EA9B79DF63B1}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {1425A9EE-DA7F-463D-9FDC-BDA1DD9761AD}
