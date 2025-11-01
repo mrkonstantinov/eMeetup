@@ -16,8 +16,6 @@ public sealed class User : Entity
     public string IdentityId { get; private set; }
     public string Email { get; private set; }
     public string UserName { get; private set; }
-    public string FirstName { get; private set; }
-    public string LastName { get; private set; }
     public DateTime DateOfBirth { get; private set; } // User's date of birth
     public Gender Gender { get; private set; }        
     public string Bio { get; private set; }
@@ -47,15 +45,18 @@ public sealed class User : Entity
     //public List<string> Subscriptions { get; set; } = new List<string>();  // List of subscription plans
     //public List<string> Subscribers { get; set; } = new List<string>();  // List of users who subscribed to this profile
 
-    public static User Create(string email, string userName, Gender gender, DateTime dateOfBirth,  string identityId)
+    public static User Create(string email, string userName, DateTime dateOfBirth, Gender gender, string bio, string ProfilePictureUrl, Location location,  string identityId)
     {
         var user = new User
         {
             Id = Guid.NewGuid(),
             Email = email,
             UserName = userName,
-            Gender = gender,
             DateOfBirth = dateOfBirth,
+            Gender = gender,
+            Bio = bio, 
+            ProfilePictureUrl = ProfilePictureUrl, 
+            Location = location,
             IdentityId = identityId
         };
 
