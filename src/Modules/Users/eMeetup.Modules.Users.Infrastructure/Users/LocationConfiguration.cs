@@ -1,0 +1,28 @@
+﻿using eMeetup.Modules.Users.Domain.Users;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+
+namespace eMeetup.Modules.Users.Infrastructure.Users;
+
+public static class LocationConfiguration
+{
+    public static OwnedNavigationBuilder<T, Location> ConfigureLocation<T>(
+        this OwnedNavigationBuilder<T, Location> builder) where T : class
+    {
+        builder.Property(l => l.Latitude)
+            .IsRequired()
+            .HasColumnType("decimal(9,6)");
+
+        builder.Property(l => l.Longitude)
+            .IsRequired()
+            .HasColumnType("decimal(9,6)");
+
+        builder.Property(l => l.City)
+            .HasMaxLength(100);
+
+        builder.Property(l => l.Country)
+            .HasMaxLength(100);
+
+        return builder;
+    }
+}

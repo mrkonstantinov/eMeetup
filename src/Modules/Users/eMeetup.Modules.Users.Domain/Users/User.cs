@@ -29,7 +29,7 @@ public sealed class User : Entity
     //    .ToList();
 
     public UserStatus Status { get; set; }
-    public UserSubscription Subscription { get; set; }
+    //public UserSubscription Subscription { get; set; }
     public DateTime CreatedAt { get; private set; }
     public DateTime UpdatedAt { get; private set; }
     public DateTime LastActive { get; private set; }

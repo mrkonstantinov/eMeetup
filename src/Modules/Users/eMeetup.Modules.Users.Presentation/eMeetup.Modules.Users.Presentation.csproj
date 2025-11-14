@@ -1,0 +1,13 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Common\eMeetup.Common.Infrastructure\eMeetup.Common.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\..\Common\eMeetup.Common.Presentation\eMeetup.Common.Presentation.csproj" />
+    <ProjectReference Include="..\eMeetup.Modules.Users.Application\eMeetup.Modules.Users.Application.csproj" />
+  </ItemGroup>
+
+</Project>

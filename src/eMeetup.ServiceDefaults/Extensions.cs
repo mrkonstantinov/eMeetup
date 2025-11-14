@@ -1,5 +1,6 @@
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Logging;
@@ -7,6 +8,9 @@ using Microsoft.Extensions.ServiceDiscovery;
 using OpenTelemetry;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
+
 
 namespace Microsoft.Extensions.Hosting;
 
@@ -20,6 +24,20 @@ public static class Extensions
 
     public static TBuilder AddServiceDefaults<TBuilder>(this TBuilder builder) where TBuilder : IHostApplicationBuilder
     {
+        // Get Seq configuration
+        var seqServerUrl = builder.Configuration["Seq:ServerUrl"] ?? "http://seq:5341";
+        var seqApiKey = builder.Configuration["Seq:ApiKey"];
+
+        // Add Seq logging
+        builder.Services.AddLogging(logging =>
+        {
+            logging.AddSeq(serverUrl: seqServerUrl, apiKey: seqApiKey);
+
+            // Optional: Configure log levels
+            logging.SetMinimumLevel(LogLevel.Information);
+            logging.AddFilter("Microsoft.AspNetCore", LogLevel.Warning);
+        });
+
         builder.ConfigureOpenTelemetry();
 
         builder.AddDefaultHealthChecks();
@@ -124,4 +142,12 @@ public static class Extensions
 
         return app;
     }
+}
+
+// Configuration class for Seq settings
+public class SeqSettings
+{
+    public bool Enabled { get; set; } = true;
+    public string ServerUrl { get; set; } = "http://localhost:5341";
+    public string? ApiKey { get; set; }
 }

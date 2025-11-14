@@ -1,29 +1,58 @@
 <Project>
   <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
     <CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
-    <AspireVersion>9.5.1</AspireVersion>
+    <MicrosoftExtensionsVersion>10.0.0-preview.7.25380.108</MicrosoftExtensionsVersion>
+    <AspireVersion>9.5.0</AspireVersion>
+    <AspireUnstablePackagesVersion>9.5.0-preview.1.25474.7</AspireUnstablePackagesVersion>
   </PropertyGroup>
   <ItemGroup>
+    <!-- Update to the version that EF Core 10.0.0 requires -->
+    <PackageVersion Include="Microsoft.Build.Tasks.Core" Version="17.14.28" />
+    <PackageVersion Include="Microsoft.Build" Version="17.14.28" />
+    <PackageVersion Include="Microsoft.Build.Framework" Version="17.14.28" />
+    <PackageVersion Include="Microsoft.Build.Utilities.Core" Version="17.14.28" />
+    <!-- Security: Update vulnerable Microsoft.Build packages -->
+    <PackageVersion Include="EFCore.NamingConventions" Version="10.0.0-rc.1" />
     <!-- Version together with Aspire -->
-    <PackageVersion Include="Aspire.Hosting.AppHost" Version="9.5.2" />
-    <PackageVersion Include="Aspire.Hosting.Keycloak" Version="9.5.2-preview.1.25522.3" />
+    <PackageVersion Include="Aspire.Hosting.AppHost" Version="$(AspireVersion)" />
+    <PackageVersion Include="Aspire.Hosting.PostgreSQL" Version="$(AspireVersion)" />
+    <PackageVersion Include="Aspire.Hosting.RabbitMQ" Version="$(AspireVersion)" />
+    <PackageVersion Include="Aspire.Hosting.Redis" Version="$(AspireVersion)" />
+    <PackageVersion Include="Aspire.Hosting.Yarp" Version="$(AspireUnstablePackagesVersion)" />
+    <PackageVersion Include="Aspire.Npgsql" Version="$(AspireVersion)" />
+    <PackageVersion Include="Aspire.Npgsql.EntityFrameworkCore.PostgreSQL" Version="$(AspireVersion)" />
+    <PackageVersion Include="Aspire.RabbitMQ.Client" Version="$(AspireVersion)" />
+    <PackageVersion Include="Aspire.StackExchange.Redis" Version="$(AspireVersion)" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="10.0.0-rc.1.25451.107" />
+    <PackageVersion Include="Microsoft.Extensions.ApiDescription.Server" Version="10.0.0-rc.1.25451.107">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageVersion>
+    <PackageVersion Include="Microsoft.Extensions.ServiceDiscovery" Version="$(AspireVersion)" />
+    <PackageVersion Include="Microsoft.Extensions.ServiceDiscovery.Yarp" Version="$(AspireVersion)" />
+    <PackageVersion Include="Aspire.Hosting.Keycloak" Version="13.0.0-preview.1.25560.3" />
+    <PackageVersion Include="Aspire.Hosting.Seq" Version="13.0.0" />
+    <!-- Version together with EF -->
+    <PackageVersion Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.0-rc.1" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.0-rc.1.25451.107" />
+    <PackageVersion Include="Microsoft.Extensions.Hosting" Version="10.0.0" />
+    <!-- Microsoft packages -->
+    <PackageVersion Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="10.0.0" />
+    <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.0" />
+    <PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.0" />
+    <PackageVersion Include="NetTopologySuite" Version="2.6.0" />
+    <!-- Npgsql -->
     <PackageVersion Include="Dapper" Version="2.1.66" />
-    <PackageVersion Include="EFCore.NamingConventions" Version="9.0.0" />
-    <PackageVersion Include="FluentValidation.DependencyInjectionExtensions" Version="12.0.0" />
+    <PackageVersion Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.0" />
     <PackageVersion Include="MassTransit" Version="8.5.5" />
     <PackageVersion Include="MediatR" Version="13.1.0" />
     <PackageVersion Include="MediatR.Contracts" Version="2.0.1" />
-    <PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.10" />
-    <PackageVersion Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="9.0.10" />
-    <PackageVersion Include="Microsoft.Extensions.Http.Resilience" Version="9.10.0" />
-    <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.10" />
-    <PackageVersion Include="Microsoft.Extensions.ServiceDiscovery" Version="9.5.1" />
+    <PackageVersion Include="Microsoft.Extensions.Http.Resilience" Version="$(AspireVersion)" />
     <PackageVersion Include="Newtonsoft.Json" Version="13.0.4" />
-    <PackageVersion Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
     <PackageVersion Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.13.1" />
     <PackageVersion Include="OpenTelemetry.Extensions.Hosting" Version="1.13.1" />
     <PackageVersion Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.13.0" />
@@ -31,6 +60,7 @@
     <PackageVersion Include="OpenTelemetry.Instrumentation.Runtime" Version="1.13.0" />
     <PackageVersion Include="Quartz.Extensions.Hosting" Version="3.15.1" />
     <PackageVersion Include="Scrutor" Version="6.1.0" />
+    <PackageVersion Include="Seq.Extensions.Logging" Version="9.0.0" />
     <PackageVersion Include="Serilog" Version="4.3.0" />
     <PackageVersion Include="SonarAnalyzer.CSharp" Version="10.15.0.120848" />
     <PackageVersion Include="Ulid" Version="1.4.1" />

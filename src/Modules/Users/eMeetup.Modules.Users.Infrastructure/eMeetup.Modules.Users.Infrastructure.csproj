@@ -1,0 +1,25 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">  
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+  </PropertyGroup>  
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Common\eMeetup.Common.Infrastructure\eMeetup.Common.Infrastructure.csproj" />
+    <ProjectReference Include="..\eMeetup.Modules.Users.Application\eMeetup.Modules.Users.Application.csproj" />
+    <ProjectReference Include="..\eMeetup.Modules.Users.Presentation\eMeetup.Modules.Users.Presentation.csproj" />
+  </ItemGroup>  
+
+  <ItemGroup>
+    <Folder Include="Database\Migrations\" />
+  </ItemGroup>  
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+</Project>

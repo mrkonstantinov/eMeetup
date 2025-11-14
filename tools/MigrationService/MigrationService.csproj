@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Worker">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>dotnet-MigrationService-4e08dc3d-e9e8-4f5f-80dd-1c91f47f77fe</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="EFCore.NamingConventions" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Extensions.Hosting" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\eMeetup.ServiceDefaults\eMeetup.ServiceDefaults.csproj" />
+    <ProjectReference Include="..\..\src\Modules\Users\eMeetup.Modules.Users.Domain\eMeetup.Modules.Users.Domain.csproj" />
+    <ProjectReference Include="..\..\src\Modules\Users\eMeetup.Modules.Users.Infrastructure\eMeetup.Modules.Users.Infrastructure.csproj" />
+  </ItemGroup>
+</Project>
