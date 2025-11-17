@@ -45,6 +45,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eMeetup.Common.Presentation
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eMeetup.Modules.Users.Presentation", "src\Modules\Users\eMeetup.Modules.Users.Presentation\eMeetup.Modules.Users.Presentation.csproj", "{4095F076-2417-19B2-D4FD-AAA2CF484EA6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eMeetup.Api", "src\API\eMeetup.Api\eMeetup.Api.csproj", "{0A3681AF-C672-8523-013A-AC304D48DA06}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -99,6 +101,10 @@ Global
 		{4095F076-2417-19B2-D4FD-AAA2CF484EA6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4095F076-2417-19B2-D4FD-AAA2CF484EA6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4095F076-2417-19B2-D4FD-AAA2CF484EA6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0A3681AF-C672-8523-013A-AC304D48DA06}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0A3681AF-C672-8523-013A-AC304D48DA06}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0A3681AF-C672-8523-013A-AC304D48DA06}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0A3681AF-C672-8523-013A-AC304D48DA06}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -120,6 +126,7 @@ Global
 		{BDCBA545-BC96-33C5-3706-0FA6E6BE4426} = {DD48E8E4-11C4-465F-8CAD-EA9B79DF63B1}
 		{82559EA2-0A65-3C47-EBA9-00FC4B230E71} = {44235AFA-1E3B-41DF-951B-A2D8C670C8E4}
 		{4095F076-2417-19B2-D4FD-AAA2CF484EA6} = {DD48E8E4-11C4-465F-8CAD-EA9B79DF63B1}
+		{0A3681AF-C672-8523-013A-AC304D48DA06} = {BEFC9597-83C1-43B6-986A-768EFF1C1E5C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {1425A9EE-DA7F-463D-9FDC-BDA1DD9761AD}

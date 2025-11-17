@@ -1,0 +1,28 @@
+{
+  "ConnectionStrings": {
+    "meetupDb": "Host=localhost:5435;Database=meetupDb;Username=postgres;Password=postgres;Include Error Detail=true"
+  },
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft.AspNetCore": "Warning"
+    }
+  },
+  "Users": {
+    "Outbox": {
+      "IntervalInSeconds": 15,
+      "BatchSize": 20
+    },
+    "Inbox": {
+      "IntervalInSeconds": 15,
+      "BatchSize": 20
+    },
+    "KeyCloak": {
+      "AdminUrl": "http://localhost:8080/admin/realms/emeetup/",
+      "TokenUrl": "http://localhost:8080/realms/emeetup/protocol/openid-connect/token",
+      "ConfidentialClientId": "emeetup-confidential-client",
+      "ConfidentialClientSecret": "EiohkPa8XB8PVCtKHTZC01tTaER13xAB",
+      "PublicClientId": "emeetup-public-client"
+    }
+  }
+}
