@@ -18,9 +18,9 @@ public sealed class User : Entity
     public string UserName { get; private set; }
     public DateTime DateOfBirth { get; private set; } // User's date of birth
     public Gender Gender { get; private set; }        
-    public string Bio { get; private set; }
-    public string ProfilePictureUrl { get; set; }
-    public Location Location { get; private set; }
+    public string? Bio { get; private set; }
+    public string? ProfilePictureUrl { get; set; }
+    public Location? Location { get; private set; }
 
     //var userLocation = new Point(10.0, 20.0) { SRID = 4326 };
 
@@ -28,11 +28,11 @@ public sealed class User : Entity
     //    .Where(l => l.Coordinate.IsWithinDistance(userLocation, 1000)) // within 1000 meters
     //    .ToList();
 
-    public UserStatus Status { get; set; }
+    public UserStatus? Status { get; set; }
     //public UserSubscription Subscription { get; set; }
     public DateTime CreatedAt { get; private set; }
-    public DateTime UpdatedAt { get; private set; }
-    public DateTime LastActive { get; private set; }
+    public DateTime? UpdatedAt { get; private set; }
+    public DateTime? LastActive { get; private set; }
 
     
 
@@ -57,7 +57,8 @@ public sealed class User : Entity
             Bio = bio, 
             ProfilePictureUrl = ProfilePictureUrl, 
             Location = location,
-            IdentityId = identityId
+            IdentityId = identityId,
+            CreatedAt = DateTime.UtcNow
         };
 
         user._roles.Add(Role.Member);

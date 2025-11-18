@@ -18,7 +18,8 @@ internal sealed class IdentityProviderService(KeyCloakClient keyCloakClient, ILo
             user.Email,
             new Dictionary<string, List<string>>
             {
-                { "gender", new List<string> { user.Gender.ToString() } }
+               { "gender", new List<string> { user.Gender.ToString() } },
+               { "dateOfBirth", new List<string> { user.DateOfBirth.ToString() } }
             },
             true,
             true,

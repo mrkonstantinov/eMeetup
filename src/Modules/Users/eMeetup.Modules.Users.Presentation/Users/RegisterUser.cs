@@ -45,10 +45,10 @@ internal sealed class RegisterUser : IEndpoint
 
         public Gender Gender { get; init; }
 
-        public string Bio { get; init; }
+        public string? Bio { get; init; }
 
-        public string ProfilePictureUrl { get; init; }
+        public string? ProfilePictureUrl { get; init; }
 
-        public Location Location { get; init; }
+        public Location? Location { get; init; }
     }
 }

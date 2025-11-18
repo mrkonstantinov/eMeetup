@@ -27,6 +27,24 @@ internal sealed class UserRepository(UsersDbContext context) : IUserRepository
 
     public void Insert(User user)
     {
-        throw new NotImplementedException();
+        foreach (Role role in user.Roles)
+        {
+            context.Attach(role);
+        }
+
+        if (user?.Interests?.Any() == true)
+            foreach (var interest in user.Interests)
+            {
+                context.Attach(interest);
+            }
+
+        if (user?.Photos?.Any() == true)
+        {
+            foreach (var photo in user.Photos)
+            {
+                context.Attach(photo);
+            }
+        }
+        context.Users.Add(user);
     }
 }

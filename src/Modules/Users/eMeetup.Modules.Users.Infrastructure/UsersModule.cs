@@ -77,7 +77,7 @@ public static class UsersModule
                         //777.UseNetTopologySuite()
                         )
                 .AddInterceptors(sp.GetRequiredService<InsertOutboxMessagesInterceptor>())
-                //.UseSnakeCaseNamingConvention()
+                .UseSnakeCaseNamingConvention()
                 );
 
         services.AddScoped<IUserRepository, UserRepository>();

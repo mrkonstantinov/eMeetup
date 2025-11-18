@@ -111,16 +111,16 @@ namespace eMeetup.Modules.Users.Infrastructure.Database.Migrations
                     user_name = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
                     date_of_birth = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     gender = table.Column<int>(type: "integer", nullable: false),
-                    bio = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false),
-                    profile_picture_url = table.Column<string>(type: "text", nullable: false),
-                    location_latitude = table.Column<double>(type: "numeric(9,6)", nullable: false),
-                    location_longitude = table.Column<double>(type: "numeric(9,6)", nullable: false),
-                    location_city = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
-                    location_country = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
-                    status = table.Column<int>(type: "integer", nullable: false),
+                    bio = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
+                    profile_picture_url = table.Column<string>(type: "text", nullable: true),
+                    location_latitude = table.Column<double>(type: "numeric(9,6)", nullable: true),
+                    location_longitude = table.Column<double>(type: "numeric(9,6)", nullable: true),
+                    location_city = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
+                    location_country = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
+                    status = table.Column<int>(type: "integer", nullable: true),
                     created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    last_active = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    last_active = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {

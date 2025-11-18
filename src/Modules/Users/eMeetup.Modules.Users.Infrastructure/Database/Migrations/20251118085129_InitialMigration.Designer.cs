@@ -12,7 +12,7 @@ using eMeetup.Modules.Users.Infrastructure.Database;
 namespace eMeetup.Modules.Users.Infrastructure.Database.Migrations
 {
     [DbContext(typeof(UsersDbContext))]
-    [Migration("20251114120130_InitialMigration")]
+    [Migration("20251118085129_InitialMigration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
@@ -426,7 +426,6 @@ namespace eMeetup.Modules.Users.Infrastructure.Database.Migrations
                         .HasColumnName("id");
 
                     b.Property<string>("Bio")
-                        .IsRequired()
                         .HasMaxLength(500)
                         .HasColumnType("character varying(500)")
                         .HasColumnName("bio");
@@ -454,20 +453,19 @@ namespace eMeetup.Modules.Users.Infrastructure.Database.Migrations
                         .HasColumnType("text")
                         .HasColumnName("identity_id");
 
-                    b.Property<DateTime>("LastActive")
+                    b.Property<DateTime?>("LastActive")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("last_active");
 
                     b.Property<string>("ProfilePictureUrl")
-                        .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("profile_picture_url");
 
-                    b.Property<int>("Status")
+                    b.Property<int?>("Status")
                         .HasColumnType("integer")
                         .HasColumnName("status");
 
-                    b.Property<DateTime>("UpdatedAt")
+                    b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at");
 
@@ -644,8 +642,7 @@ namespace eMeetup.Modules.Users.Infrastructure.Database.Migrations
                                 .HasConstraintName("fk_users_users_id");
                         });
 
-                    b.Navigation("Location")
-                        .IsRequired();
+                    b.Navigation("Location");
                 });
 
             modelBuilder.Entity("eMeetup.Modules.Users.Domain.Users.UserInterest", b =>
