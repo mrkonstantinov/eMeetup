@@ -4,6 +4,7 @@ using Dapper;
 using eMeetup.Common.Application.Data;
 using eMeetup.Common.Application.Messaging;
 using eMeetup.Common.Domain;
+using eMeetup.Modules.Users.Domain.Interfaces.Repositories;
 using eMeetup.Modules.Users.Domain.Users;
 
 namespace eMeetup.Modules.Users.Application.Users.GetUser;
@@ -25,32 +26,47 @@ internal sealed class GetUserQueryHandler(IUserRepository userRepository, IDbCon
 
         await using DbConnection connection = await dbConnectionFactory.OpenConnectionAsync();
 
-        const string sql =
-            $"""
-             SELECT
-                 users.id AS {nameof(UserResponse.Id)},
-                 users.email AS {nameof(UserResponse.Email)},
-                 users.user_name AS {nameof(UserResponse.UserName)},
-                 users.gender AS {nameof(UserResponse.Gender)},
-                 users.date_of_birth AS {nameof(UserResponse.DateOfBirth)},
-                 users.bio AS {nameof(UserResponse.Bio)},
-                 users.interests AS {nameof(UserResponse.Interests)},
-                 ST_AsText(users.location) AS {nameof(UserResponse.Location)},
-                 
-                 users.user_images.static_path AS {nameof(UserResponse.ProfilePictureUrl)}
-             FROM users.users
-             LEFT JOIN users.user_images ON users.users.id = users.user_images.user_id
-             WHERE users.id = @UserId
-             """;
+        string userSql = $"""
+            SELECT
+                u.id AS {nameof(UserResponse.Id)},
+                u.email AS {nameof(UserResponse.Email)},
+                u.user_name AS {nameof(UserResponse.UserName)},
+                u.date_of_birth AS {nameof(UserResponse.DateOfBirth)},
+                u.gender AS {nameof(UserResponse.Gender)},
+                u.bio AS {nameof(UserResponse.Bio)},
+                u.profile_picture_url AS {nameof(UserResponse.ProfilePictureUrl)},
+                u.location_latitude AS {nameof(UserResponse.Latitude)},
+                u.location_longitude AS {nameof(UserResponse.Longitude)},
+                u.location_city AS {nameof(UserResponse.City)},
+                u.location_country AS {nameof(UserResponse.Country)},
+                u.created_at AS {nameof(UserResponse.CreatedAt)},
+                u.updated_at AS {nameof(UserResponse.UpdatedAt)}
+            FROM users.users u
+            WHERE u.id = @UserId
+            """;
 
-
-        UserResponse? userResponse = await connection.QuerySingleOrDefaultAsync<UserResponse>(sql, request);
+        UserResponse? userResponse = await connection.QuerySingleOrDefaultAsync<UserResponse>(userSql, request);
 
         if (userResponse is null)
         {
             return Result.Failure<UserResponse>(UserErrors.NotFound(request.UserId));
         }
 
-        return userResponse;
+        string photosSql = $"""
+            SELECT
+                id AS {nameof(UserPhotoResponse.Id)},
+                url AS {nameof(UserPhotoResponse.Url)},
+                display_order AS {nameof(UserPhotoResponse.DisplayOrder)},
+                is_primary AS {nameof(UserPhotoResponse.IsPrimary)}
+            FROM users.user_photos
+            WHERE user_id = @UserId
+            ORDER BY display_order
+            """;
+
+        var photos = await connection.QueryAsync<UserPhotoResponse>(photosSql, new { UserId = request.UserId });
+
+        var userWithPhotos = userResponse with { Photos = photos.AsList() };
+
+        return userWithPhotos;
     }
 }

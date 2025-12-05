@@ -8,9 +8,9 @@ namespace eMeetup.Modules.Users.Domain.Users
 {
     public enum UserStatus
     {
-        Active,
-        Inactive,
-        Suspended,
-        Deleted
+        Active = 1,
+        Inactive = 2,
+        Suspended = 3,
+        Deleted = 4
     }
 }

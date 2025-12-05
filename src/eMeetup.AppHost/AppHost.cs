@@ -21,7 +21,8 @@ var postgres = builder.AddPostgres(name: "postgres", userName: username, passwor
     .WithImage("postgis/postgis")
     .WithImageTag("latest")
     .WithLifetime(ContainerLifetime.Persistent)
-    .WithDataVolume(isReadOnly: false);
+    .WithDataVolume(isReadOnly: false)
+    .WithPgWeb(); 
 
 var meetupDb = postgres.AddDatabase("meetupDb");
 

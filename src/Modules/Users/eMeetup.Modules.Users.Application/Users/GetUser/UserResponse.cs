@@ -2,17 +2,27 @@
 
 namespace eMeetup.Modules.Users.Application.Users.GetUser;
 
-public sealed record UserResponse(Guid Id, string Email, string UserName, int? Gender, DateTime DateOfBirth, string? Bio, string? Interests, Location Location, string? ProfilePictureUrl);
+public sealed record UserResponse(
+    Guid Id, 
+    string Email, 
+    string UserName,
+    DateTime DateOfBirth,
+    Gender Gender,
+    string? Bio,
+    string? ProfilePictureUrl,
+    double? Latitude, 
+    double? Longitude, 
+    string? City, 
+    string? Country, 
+    DateTime CreatedAt, 
+    DateTime? UpdatedAt,
+    List<UserPhotoResponse> Photos
+    );
 
-
-
-public class PointJson
+public sealed record UserPhotoResponse
 {
-    public string Type { get; set; } = "Point";
-    public double[] Coordinates { get; set; }
-
-    //public PointJson(Point point)
-    //{
-    //    Coordinates = new double[] { point.X, point.Y };
-    //}
+    public Guid Id { get; init; }
+    public string Url { get; init; } = string.Empty;
+    public int DisplayOrder { get; init; }
+    public bool IsPrimary { get; init; }
 }

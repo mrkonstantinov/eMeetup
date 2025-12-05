@@ -18,7 +18,7 @@ internal sealed class UserPhotoConfiguration : IEntityTypeConfiguration<UserPhot
         builder.Property(p => p.UserId)
             .IsRequired();
 
-        builder.Property(p => p.ImageUrl)
+        builder.Property(p => p.Url)
             .IsRequired()
             .HasMaxLength(500);
 

@@ -11,7 +11,8 @@ namespace eMeetup.Modules.Users.Infrastructure.Database;
 // update-database -Context UsersDbContext
 public sealed class UsersDbContext(DbContextOptions<UsersDbContext> options) : DbContext(options), IUnitOfWork
 {
-    internal DbSet<User> Users { get; set; }
+    public DbSet<User> Users { get; set; }
+    public DbSet<Tag> Tags { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -27,5 +28,6 @@ public sealed class UsersDbContext(DbContextOptions<UsersDbContext> options) : D
         modelBuilder.ApplyConfiguration(new UserInterestConfiguration());
         modelBuilder.ApplyConfiguration(new RoleConfiguration());
         modelBuilder.ApplyConfiguration(new PermissionConfiguration());
+        modelBuilder.ApplyConfiguration(new TagConfiguration());      
     }
 }

@@ -7,12 +7,15 @@ using eMeetup.Common.Infrastructure.Outbox;
 using eMeetup.Common.Presentation.Endpoints;
 using eMeetup.Modules.Users.Application.Abstractions.Data;
 using eMeetup.Modules.Users.Application.Abstractions.Identity;
-using eMeetup.Modules.Users.Domain.Users;
+using eMeetup.Modules.Users.Domain.Interfaces.Repositories;
+using eMeetup.Modules.Users.Domain.Interfaces.Services;
 using eMeetup.Modules.Users.Infrastructure.Authorization;
 using eMeetup.Modules.Users.Infrastructure.Database;
 using eMeetup.Modules.Users.Infrastructure.Identity;
 using eMeetup.Modules.Users.Infrastructure.Inbox;
 using eMeetup.Modules.Users.Infrastructure.Outbox;
+using eMeetup.Modules.Users.Infrastructure.Services;
+using eMeetup.Modules.Users.Infrastructure.Tags;
 using eMeetup.Modules.Users.Infrastructure.Users;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Migrations;
@@ -81,7 +84,13 @@ public static class UsersModule
                 );
 
         services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<ITagRepository, TagRepository>();
+
+        services.AddScoped<IFileStorageService, LocalFileStorageService>();
+        services.AddScoped<IGeocodingService, MockGeocodingService>();
+        services.AddScoped<ISlugService, SlugService>();
         
+
         services.AddScoped<IUnitOfWork>(sp => sp.GetRequiredService<UsersDbContext>());
 
         services.Configure<OutboxOptions>(configuration.GetSection("Users:Outbox"));

@@ -11,10 +11,13 @@ public sealed class UserRegisteredIntegrationEvent : IntegrationEvent
         Guid userId,
         string email,
         string userName,
-        int? gender,
+        Gender gender,
         DateTime dateOfBirth,
-        string bio,
-        string? interests)
+        string? bio,
+        double? latitude,
+        double? longitude,
+        string? city,
+        string? country)
         : base(id, occurredOnUtc)
     {
         UserId = userId;
@@ -23,22 +26,20 @@ public sealed class UserRegisteredIntegrationEvent : IntegrationEvent
         Gender = gender;
         DateOfBirth = dateOfBirth;
         Bio = bio;
-        Interests = interests;
+        Latitude = latitude;
+        Longitude = longitude;
+        City = city;
+        Country = country;
     }
 
     public Guid UserId { get; init; }
-
     public string Email { get; init; }
-
     public string UserName { get; private set; }
-
-    public int? Gender { get; init; }
-
+    public Gender Gender { get; init; }
     public DateTime DateOfBirth { get; init; }
-
-    public string Bio { get; init; }
-
-    public string? Interests { get; init; }
-
-    public Location Location { get; init; }
+    public string? Bio { get; init; }
+    public double? Latitude { get; init; }
+    public double? Longitude { get; init; }
+    public string? City { get; init; }
+    public string? Country { get; init; }
 }

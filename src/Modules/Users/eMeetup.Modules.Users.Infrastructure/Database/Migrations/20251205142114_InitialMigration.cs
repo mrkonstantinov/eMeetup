@@ -101,6 +101,24 @@ namespace eMeetup.Modules.Users.Infrastructure.Database.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "tags",
+                schema: "users",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
+                    name = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
+                    slug = table.Column<string>(type: "character varying(60)", maxLength: 60, nullable: false),
+                    description = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false, defaultValue: ""),
+                    usage_count = table.Column<int>(type: "integer", nullable: false, defaultValue: 0),
+                    updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    is_active = table.Column<bool>(type: "boolean", nullable: false, defaultValue: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_tags", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "users",
                 schema: "users",
                 columns: table => new
@@ -118,7 +136,7 @@ namespace eMeetup.Modules.Users.Infrastructure.Database.Migrations
                     location_city = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
                     location_country = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
                     status = table.Column<int>(type: "integer", nullable: true),
-                    created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     last_active = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
@@ -159,13 +177,21 @@ namespace eMeetup.Modules.Users.Infrastructure.Database.Migrations
                 schema: "users",
                 columns: table => new
                 {
-                    id = table.Column<Guid>(type: "uuid", nullable: false),
+                    id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
                     user_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    interest = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false)
+                    tag_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "NOW()")
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("pk_user_interests", x => x.id);
+                    table.ForeignKey(
+                        name: "fk_user_interests_tags_tag_id",
+                        column: x => x.tag_id,
+                        principalSchema: "users",
+                        principalTable: "tags",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "fk_user_interests_users_user_id",
                         column: x => x.user_id,
@@ -173,7 +199,8 @@ namespace eMeetup.Modules.Users.Infrastructure.Database.Migrations
                         principalTable: "users",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
-                });
+                },
+                comment: "Junction table for user interests and tags");
 
             migrationBuilder.CreateTable(
                 name: "user_photos",
@@ -182,7 +209,7 @@ namespace eMeetup.Modules.Users.Infrastructure.Database.Migrations
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
                     user_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    image_url = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false),
+                    url = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false),
                     display_order = table.Column<int>(type: "integer", nullable: false, defaultValue: 0),
                     is_primary = table.Column<bool>(type: "boolean", nullable: false, defaultValue: false),
                     uploaded_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
@@ -304,22 +331,57 @@ namespace eMeetup.Modules.Users.Infrastructure.Database.Migrations
                 column: "role_name");
 
             migrationBuilder.CreateIndex(
-                name: "ix_user_interests_interest",
+                name: "ix_tags_is_active",
+                schema: "users",
+                table: "tags",
+                column: "is_active");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_tags_name",
+                schema: "users",
+                table: "tags",
+                column: "name",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "ix_tags_slug",
+                schema: "users",
+                table: "tags",
+                column: "slug",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "ix_tags_usage_count",
+                schema: "users",
+                table: "tags",
+                column: "usage_count");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_user_interests_created_at",
                 schema: "users",
                 table: "user_interests",
-                column: "interest");
+                column: "created_at")
+                .Annotation("Npgsql:IndexMethod", "brin");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_user_interests_tag_id",
+                schema: "users",
+                table: "user_interests",
+                column: "tag_id")
+                .Annotation("Npgsql:IndexMethod", "hash");
 
             migrationBuilder.CreateIndex(
                 name: "ix_user_interests_user_id",
                 schema: "users",
                 table: "user_interests",
-                column: "user_id");
+                column: "user_id")
+                .Annotation("Npgsql:IndexMethod", "hash");
 
             migrationBuilder.CreateIndex(
-                name: "ix_user_interests_user_id_interest",
+                name: "ix_user_interests_user_tag_unique",
                 schema: "users",
                 table: "user_interests",
-                columns: new[] { "user_id", "interest" },
+                columns: new[] { "user_id", "tag_id" },
                 unique: true);
 
             migrationBuilder.CreateIndex(
@@ -399,6 +461,10 @@ namespace eMeetup.Modules.Users.Infrastructure.Database.Migrations
 
             migrationBuilder.DropTable(
                 name: "permissions",
+                schema: "users");
+
+            migrationBuilder.DropTable(
+                name: "tags",
                 schema: "users");
 
             migrationBuilder.DropTable(
