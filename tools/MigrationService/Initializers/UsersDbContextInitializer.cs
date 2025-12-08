@@ -104,6 +104,8 @@ internal class UsersDbContextInitializer : DbContextInitializerBase<UsersDbConte
         Tag.Create("Entrepreneur", "Business-minded and innovative").Value
         };
 
+        DbContext.Tags.AddRange(tags);
+
         return tags;
     }
 }

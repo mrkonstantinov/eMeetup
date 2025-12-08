@@ -5,7 +5,7 @@ namespace eMeetup.Modules.Users.Domain.Users;
 public static class UserErrors
 {
     // User errors
-    public static Error NotFound(Guid userId) =>
+    public static Error NotFound(string userId) =>
         Error.NotFound("Users.NotFound", $"The user with the identifier {userId} was not found");
 
     public static Error EmailAlreadyExists(string email) =>

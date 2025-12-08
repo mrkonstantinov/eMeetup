@@ -29,6 +29,11 @@ public class Worker(
             await usersInitializer.EnsureDatabaseAsync(cancellationToken);
             await usersInitializer.RunMigrationAsync(cancellationToken);
 
+            if (environment.IsDevelopment())
+            {
+                await usersInitializer.SeedDataAsync(cancellationToken);
+            }
+
             sw.Stop();
             logger.LogInformation($"DB creation and seeding took {sw.Elapsed} ");
         }

@@ -9,64 +9,79 @@ using eMeetup.Modules.Users.Domain.Users;
 
 namespace eMeetup.Modules.Users.Application.Users.GetUser;
 
-internal sealed class GetUserQueryHandler(IUserRepository userRepository, IDbConnectionFactory dbConnectionFactory)
+internal sealed class GetUserQueryHandler(IDbConnectionFactory dbConnectionFactory)
     : IQueryHandler<GetUserQuery, UserResponse>
 {
     public async Task<Result<UserResponse>> Handle(GetUserQuery request, CancellationToken cancellationToken)
     {
-        //var user = await userRepository.GetAsync(request.UserId, cancellationToken);
-        //if (user is null)
-        //{
-        //    return Result.Failure<UserResponse>(UserErrors.NotFound(request.UserId));
-        //}
+        await using var connection = await dbConnectionFactory.OpenConnectionAsync();
 
-        //UserResponse userResponse = new UserResponse(
-        //    user.Id, user.Email, user.UserName, user.Gender, user.DateOfBirth, user.Bio, user.Interests, user.Location, user.ProfilePhotoUrl);
-
-
-        await using DbConnection connection = await dbConnectionFactory.OpenConnectionAsync();
-
-        string userSql = $"""
-            SELECT
-                u.id AS {nameof(UserResponse.Id)},
-                u.email AS {nameof(UserResponse.Email)},
-                u.user_name AS {nameof(UserResponse.UserName)},
-                u.date_of_birth AS {nameof(UserResponse.DateOfBirth)},
-                u.gender AS {nameof(UserResponse.Gender)},
-                u.bio AS {nameof(UserResponse.Bio)},
-                u.profile_picture_url AS {nameof(UserResponse.ProfilePictureUrl)},
-                u.location_latitude AS {nameof(UserResponse.Latitude)},
-                u.location_longitude AS {nameof(UserResponse.Longitude)},
-                u.location_city AS {nameof(UserResponse.City)},
-                u.location_country AS {nameof(UserResponse.Country)},
-                u.created_at AS {nameof(UserResponse.CreatedAt)},
-                u.updated_at AS {nameof(UserResponse.UpdatedAt)}
-            FROM users.users u
-            WHERE u.id = @UserId
-            """;
-
-        UserResponse? userResponse = await connection.QuerySingleOrDefaultAsync<UserResponse>(userSql, request);
-
-        if (userResponse is null)
+        // Use PostgreSQL JSON features for optimal data retrieval
+        var user = await GetUserWithDetailsPostgresAsync(connection, request.UserId);
+        if (user is null)
         {
-            return Result.Failure<UserResponse>(UserErrors.NotFound(request.UserId));
+            return Result.Failure<UserResponse>(UserErrors.NotFound(request.UserId.ToString()));
         }
 
-        string photosSql = $"""
-            SELECT
-                id AS {nameof(UserPhotoResponse.Id)},
-                url AS {nameof(UserPhotoResponse.Url)},
-                display_order AS {nameof(UserPhotoResponse.DisplayOrder)},
-                is_primary AS {nameof(UserPhotoResponse.IsPrimary)}
-            FROM users.user_photos
-            WHERE user_id = @UserId
-            ORDER BY display_order
-            """;
-
-        var photos = await connection.QueryAsync<UserPhotoResponse>(photosSql, new { UserId = request.UserId });
-
-        var userWithPhotos = userResponse with { Photos = photos.AsList() };
-
-        return userWithPhotos;
+        return Result.Success(user);
     }
+
+    private async Task<UserResponse?> GetUserWithDetailsPostgresAsync(IDbConnection connection, Guid userId)
+    {
+        const string userSql = @"
+        SELECT 
+            u.id AS Id,
+            u.email AS Email,
+            u.user_name AS UserName,
+            u.date_of_birth AS DateOfBirth,
+            u.gender AS Gender,
+            u.bio AS Bio,
+            u.profile_picture_url AS ProfilePictureUrl,
+            u.location_latitude AS Latitude,
+            u.location_longitude AS Longitude,
+            u.location_city AS City,
+            u.location_country AS Country,
+            u.created_at AS CreatedAt,
+            u.updated_at AS UpdatedAt
+        FROM users.users u
+        WHERE u.id = @userId;
+    ";
+
+        const string photosSql = @"
+        SELECT 
+            id AS Id,
+            url AS Url,
+            display_order AS DisplayOrder,
+            is_primary AS IsPrimary
+        FROM users.user_photos
+        WHERE user_id = @userId
+        ORDER BY display_order;
+    ";
+
+        const string interestsSql = @"
+        SELECT string_agg(t.name, ', ' ORDER BY t.name) AS Interests
+        FROM users.user_interests ui
+        INNER JOIN users.tags t ON t.id = ui.tag_id
+        WHERE ui.user_id = @userId
+        GROUP BY ui.user_id;
+    ";
+
+        // Получаем данные отдельными запросами
+        using var multi = await connection.QueryMultipleAsync(
+            $"{userSql}; {photosSql}; {interestsSql}",
+            new { userId }
+        );
+
+        var user = await multi.ReadFirstOrDefaultAsync<UserResponse>();
+        if (user == null) return null;
+
+        var photos = await multi.ReadAsync<UserPhotoResponse>();
+        var interests = await multi.ReadFirstOrDefaultAsync<string>();
+
+        user.Photos = photos.AsList();
+        user.Interests = interests;
+
+        return user;
+    }
+
 }
