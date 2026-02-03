@@ -10,6 +10,9 @@ public interface IUserRepository
     // Add these methods for proper duplicate checking
     Task<User?> GetByEmailAsync(string email, CancellationToken cancellationToken = default);
     Task<User?> GetByUsernameAsync(string username, CancellationToken cancellationToken = default);
+    Task<User?> GetByIdWithPhotosAsync(Guid id, CancellationToken cancellationToken = default);
+    Task<User?> GetByIdentityIdAsync(Guid identityId, CancellationToken cancellationToken);
 
     void Insert(User user);
+    Task UpdateAsync(User user, CancellationToken cancellationToken = default);
 }

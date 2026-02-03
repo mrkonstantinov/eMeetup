@@ -4,7 +4,8 @@ var builder = DistributedApplication.CreateBuilder(args);
 
 var keycloak = builder.AddKeycloak("keycloak", 6001)
     .WithDataVolume("keycloak-data")
-    .WithExternalHttpEndpoints();
+    .WithExternalHttpEndpoints()
+    .WithArgs("--features", "account-api");
 
 var redis = builder.AddRedis("redis", 6379);
 

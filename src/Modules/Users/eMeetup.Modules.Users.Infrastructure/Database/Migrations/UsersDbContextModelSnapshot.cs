@@ -692,13 +692,11 @@ namespace eMeetup.Modules.Users.Infrastructure.Database.Migrations
                                 .HasColumnName("id");
 
                             b1.Property<string>("City")
-                                .IsRequired()
                                 .HasMaxLength(100)
                                 .HasColumnType("character varying(100)")
                                 .HasColumnName("location_city");
 
                             b1.Property<string>("Country")
-                                .IsRequired()
                                 .HasMaxLength(100)
                                 .HasColumnType("character varying(100)")
                                 .HasColumnName("location_country");

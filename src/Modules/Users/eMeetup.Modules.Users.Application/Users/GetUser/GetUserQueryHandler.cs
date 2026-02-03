@@ -4,17 +4,20 @@ using Dapper;
 using eMeetup.Common.Application.Data;
 using eMeetup.Common.Application.Messaging;
 using eMeetup.Common.Domain;
+using eMeetup.Modules.Users.Application.Abstractions.Identity;
 using eMeetup.Modules.Users.Domain.Interfaces.Repositories;
 using eMeetup.Modules.Users.Domain.Users;
 
 namespace eMeetup.Modules.Users.Application.Users.GetUser;
 
-internal sealed class GetUserQueryHandler(IDbConnectionFactory dbConnectionFactory)
+internal sealed class GetUserQueryHandler(IDbConnectionFactory dbConnectionFactory, IIdentityProviderService identityProviderService)
     : IQueryHandler<GetUserQuery, UserResponse>
 {
     public async Task<Result<UserResponse>> Handle(GetUserQuery request, CancellationToken cancellationToken)
     {
         await using var connection = await dbConnectionFactory.OpenConnectionAsync();
+
+        var t = identityProviderService.GetUserAsync(request.IdentityId).Result;
 
         // Use PostgreSQL JSON features for optimal data retrieval
         var user = await GetUserWithDetailsPostgresAsync(connection, request.UserId);

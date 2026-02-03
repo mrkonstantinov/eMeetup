@@ -5,12 +5,12 @@ namespace eMeetup.Common.Infrastructure.Authentication;
 
 public static class ClaimsPrincipalExtensions
 {
-    public static Guid GetUserId(this ClaimsPrincipal? principal)
+    public static string GetUserId(this ClaimsPrincipal? principal)
     {
         string? userId = principal?.FindFirst(CustomClaims.Sub)?.Value;
 
-        return Guid.TryParse(userId, out Guid parsedUserId) ?
-            parsedUserId :
+        return (!string.IsNullOrEmpty(userId)) ?
+            userId :
             throw new EmeetupException("User identifier is unavailable");
     }
 

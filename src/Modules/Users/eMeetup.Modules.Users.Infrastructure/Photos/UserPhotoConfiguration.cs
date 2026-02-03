@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace eMeetup.Modules.Users.Infrastructure.Users;
+namespace eMeetup.Modules.Users.Infrastructure.Photos;
 
 internal sealed class UserPhotoConfiguration : IEntityTypeConfiguration<UserPhoto>
 {

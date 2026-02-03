@@ -12,7 +12,7 @@ using eMeetup.Modules.Users.Infrastructure.Database;
 namespace eMeetup.Modules.Users.Infrastructure.Database.Migrations
 {
     [DbContext(typeof(UsersDbContext))]
-    [Migration("20251205142114_InitialMigration")]
+    [Migration("20260203095301_InitialMigration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
@@ -695,13 +695,11 @@ namespace eMeetup.Modules.Users.Infrastructure.Database.Migrations
                                 .HasColumnName("id");
 
                             b1.Property<string>("City")
-                                .IsRequired()
                                 .HasMaxLength(100)
                                 .HasColumnType("character varying(100)")
                                 .HasColumnName("location_city");
 
                             b1.Property<string>("Country")
-                                .IsRequired()
                                 .HasMaxLength(100)
                                 .HasColumnType("character varying(100)")
                                 .HasColumnName("location_country");

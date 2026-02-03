@@ -14,6 +14,7 @@ using eMeetup.Modules.Users.Infrastructure.Database;
 using eMeetup.Modules.Users.Infrastructure.Identity;
 using eMeetup.Modules.Users.Infrastructure.Inbox;
 using eMeetup.Modules.Users.Infrastructure.Outbox;
+using eMeetup.Modules.Users.Infrastructure.Photos;
 using eMeetup.Modules.Users.Infrastructure.Services;
 using eMeetup.Modules.Users.Infrastructure.Tags;
 using eMeetup.Modules.Users.Infrastructure.Users;
@@ -84,9 +85,12 @@ public static class UsersModule
                 );
 
         services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<IPhotoRepository, PhotoRepository>();
+        services.AddScoped<IFileStorageService, LocalFileStorageService>();
+        services.AddScoped<IUserPhotoService, UserPhotoService>();
         services.AddScoped<ITagRepository, TagRepository>();
 
-        services.AddScoped<IFileStorageService, LocalFileStorageService>();
+        
         services.AddScoped<IGeocodingService, MockGeocodingService>();
         services.AddScoped<ISlugService, SlugService>();
         

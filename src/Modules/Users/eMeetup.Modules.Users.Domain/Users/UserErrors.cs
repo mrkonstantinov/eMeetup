@@ -2,11 +2,15 @@
 
 namespace eMeetup.Modules.Users.Domain.Users;
 
+
 public static class UserErrors
 {
     // User errors
     public static Error NotFound(string userId) =>
         Error.NotFound("Users.NotFound", $"The user with the identifier {userId} was not found");
+
+    public static Error NotFoundByIdentity(Guid IdentityId) =>
+        Error.NotFound("Users.NotFound", $"The user with the IdentityId {IdentityId} was not found");    
 
     public static Error EmailAlreadyExists(string email) =>
         Error.Conflict("Users.EmailAlreadyExists", $"The email address '{email}' is already registered");
@@ -44,6 +48,16 @@ public static class UserErrors
     public static Error DatabaseSaveFailed =>
         Error.Failure("Users.DatabaseSaveFailed", "Failed to save user to database. Please try again.");
 
+    public static Error UpdateFailed =>
+        Error.Failure("Users.UpdateFailed", "Failed to update user to database. Please try again.");
+
+    public static Error DatabaseUpdateFailed => 
+        Error.Failure("User.DatabaseUpdateFailed", "Database update operation failed");
+
+    public static Error DatabaseConcurrencyConflict => 
+        Error.Conflict("User.DatabaseConcurrencyConflict", "Database concurrency conflict occurred");
+
+
     public static Error InvalidLocation =>
         Error.Validation("Users.InvalidLocation", "Invalid location provided");
 
@@ -78,6 +92,46 @@ public static class UserErrors
     public static Error DuplicateDisplayOrder =>
         Error.Validation("Users.DuplicateDisplayOrder", "Duplicate display order found");
 
+    public static Error PhotoUpdateFailed =>
+        Error.Failure("Users.PhotoUpdateFailed", "Failed to update user photos");
+
+    public static Error OperationCancelled =>
+        Error.Failure("User.OperationCancelled", "Photo upload operation was cancelled.");
+
+    // Photo upload specific errors
+    public static Error NoPhotosProvided => 
+        Error.Validation("User.NoPhotosProvided", "No photos were provided for upload");
+
+    public static Error TotalPhotoSizeExceeded => 
+        Error.Validation("User.TotalPhotoSizeExceeded", "Total size of all photos exceeds the limit of 50MB");
+
+    public static Error PhotoEmpty => 
+        Error.Validation("User.PhotoEmpty", "Photo file is empty");
+
+    public static Error InvalidPhotoMimeType => Error.Validation(
+        "User.InvalidPhotoMimeType",
+        "Invalid photo MIME type");
+
+    public static Error PhotoUploadRetryFailed => Error.Failure(
+        "User.PhotoUploadRetryFailed",
+        "Failed to upload photo after multiple retries");
+
+    public static Error AllPhotosUploadFailed => Error.Failure(
+        "User.AllPhotosUploadFailed",
+        "All photo uploads failed");
+
+    public static Error PhotoDomainValidationFailed => Error.Validation(
+        "User.PhotoDomainValidationFailed",
+        "Failed to add photo to user domain model");
+
+    public static Error PhotoCleanupFailed => Error.Failure(
+        "User.PhotoCleanupFailed",
+        "Failed to cleanup uploaded photos");
+
+    public static Error PhotoDeletionFailed => Error.Failure(
+        "User.PhotoDeletionFailed",
+        "Failed to delete photo");
+
 
     // Interest errors
     public static Error InvalidTagSlug => 
@@ -107,4 +161,22 @@ public static class UserErrors
     // General errors
     public static Error OperationFailed =>
         Error.Failure("Users.OperationFailed", "The operation failed. Please try again.");
+
+    public static Error KeycloakSyncFailed => 
+        Error.Failure("User.KeycloakSyncFailed", "Failed to synchronize user changes with Keycloak");
+
+    public static Error KeycloakUserNotFound =>
+        Error.NotFound("User.KeycloakUserNotFound", "User not found in Keycloak");
+
+    public static Error KeycloakUpdateFailed => 
+        Error.Failure("User.KeycloakUpdateFailed", "Failed to update user in Keycloak");
+
+    public static Error KeycloakConflict => 
+        Error.Conflict("User.KeycloakConflict", "Keycloak update conflict occurred");
+
+    public static Error KeycloakTimeout => 
+        Error.Failure("User.KeycloakTimeout", "Keycloak request timed out");
+
+    public static Error AtomicUpdateFailed => 
+        Error.Failure("User.AtomicUpdateFailed", "Atomic update operation failed");
 }

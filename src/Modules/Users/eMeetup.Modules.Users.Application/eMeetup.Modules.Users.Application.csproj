@@ -7,6 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Users\UpdateUser\UpdateUserCommandHandler - Copy.cs" />
+    <Compile Remove="Users\UpdateUser\UpdateUserPhotosCommandHandler.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" />
     <PackageReference Include="SonarAnalyzer.CSharp">
       <PrivateAssets>all</PrivateAssets>
@@ -18,10 +23,7 @@
     <ProjectReference Include="..\..\..\Common\eMeetup.Common.Application\eMeetup.Common.Application.csproj" />
     <ProjectReference Include="..\eMeetup.Modules.Users.Domain\eMeetup.Modules.Users.Domain.csproj" />
     <ProjectReference Include="..\eMeetup.Modules.Users.IntegrationEvents\eMeetup.Modules.Users.IntegrationEvents.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Users\UpdateUser\" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" />
   </ItemGroup>
 
 </Project>

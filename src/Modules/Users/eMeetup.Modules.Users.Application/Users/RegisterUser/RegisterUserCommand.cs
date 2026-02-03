@@ -9,19 +9,5 @@ public sealed record RegisterUserCommand(
     string Password, 
     string Username, 
     DateTime DateOfBirth, 
-    Gender Gender, 
-    string? Bio,
-    double? Latitude,
-    double? Longitude,
-    string? City,
-    string? Country,
-    string? Interests,
-    List<IFormFile>? Photos = null)
-    : ICommand<Guid>;
-
-public sealed record PhotoUploadRequest(
-    Stream FileStream,
-    string FileName,
-    string ContentType,
-    bool IsPrimary = false,
-    int DisplayOrder = 0);
+    Gender Gender
+    ): ICommand<Guid>;
