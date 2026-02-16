@@ -92,7 +92,7 @@ public static class UserErrors
     public static Error DuplicateDisplayOrder =>
         Error.Validation("Users.DuplicateDisplayOrder", "Duplicate display order found");
 
-    public static Error PhotoUpdateFailed =>
+    public static Error PhotoUpdateFailed(string error = "Failed to update user photos") =>
         Error.Failure("Users.PhotoUpdateFailed", "Failed to update user photos");
 
     public static Error OperationCancelled =>
@@ -132,6 +132,8 @@ public static class UserErrors
         "User.PhotoDeletionFailed",
         "Failed to delete photo");
 
+    public static Error DuplicateFileNames => 
+        Error.Failure("User.DuplicateFileNames", "Duplicate file names found");
 
     // Interest errors
     public static Error InvalidTagSlug => 
@@ -179,4 +181,14 @@ public static class UserErrors
 
     public static Error AtomicUpdateFailed => 
         Error.Failure("User.AtomicUpdateFailed", "Atomic update operation failed");
+
+
+    public static Error InvalidPhotos(string errors) =>
+        Error.Failure("User.InvalidPhotos", $"Invalid photos: {errors}");
+
+    public static Error KeycloakAuthorizationFailed =>
+        Error.Failure("User.KeycloakAuthorizationFailed", "Authorization failed for Keycloak update");
+
+    public static Error KeycloakServiceUnavailable =>
+        Error.Failure("User.KeycloakServiceUnavailable", "Keycloak service unavailable");
 }

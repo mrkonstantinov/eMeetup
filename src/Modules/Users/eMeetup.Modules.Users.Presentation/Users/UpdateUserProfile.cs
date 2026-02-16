@@ -20,94 +20,30 @@ internal sealed class UpdateUserProfile : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapPut("users/profile", async (HttpContext context, ClaimsPrincipal claims, ISender sender) =>
+        app.MapPut("users/profile", async (Request request, ClaimsPrincipal claims, ISender sender) =>
         {
-            try
-            {
-                if (!context.Request.HasFormContentType)
-                {
-                    return Results.Problem(
-                        detail: "Request must be multipart/form-data",
-                        statusCode: StatusCodes.Status415UnsupportedMediaType
-                    );
-                }
-                var identity = Guid.Parse(claims.GetIdentityId());
+            Result result = await sender.Send(new UpdateUserCommand(
+                Guid.Parse(claims.GetIdentityId()),
+                request.Bio,
+                request.Latitude,
+                request.Longitude,
+                request.City,
+                request.Country,
+                request.Interests));
 
-                var form = await context.Request.ReadFormAsync();
-
-                // Parse optional coordinates
-                double? latitude = null;
-                double? longitude = null;
-
-                if (!string.IsNullOrEmpty(form["Latitude"].FirstOrDefault()) &&
-                    double.TryParse(form["Latitude"].FirstOrDefault(), out var lat))
-                {
-                    latitude = lat;
-                }
-
-                if (!string.IsNullOrEmpty(form["Longitude"].FirstOrDefault()) &&
-                    double.TryParse(form["Longitude"].FirstOrDefault(), out var lon))
-                {
-                    longitude = lon;
-                }
-
-                // Get photos
-                var photos = form.Files.Where(f => f.Name == "Photos").ToList();
-
-
-                var interests = form["Interests"].FirstOrDefault();
-
-                // Create command
-                var command = new UpdateUserCommand(
-                    identity,
-                    form["Bio"].FirstOrDefault(),
-                    latitude,
-                    longitude,
-                    form["City"].FirstOrDefault(),
-                    form["Country"].FirstOrDefault(),
-                    interests,
-                    photos.Any() ? photos : null
-                );
-
-                Result result = await sender.Send(command);
-
-                return result.Match(Results.NoContent, ApiResults.Problem);
-            }
-            catch (Exception ex)
-            {
-                var logger = context.RequestServices.GetRequiredService<ILogger<UpdateUserProfile>>();
-                logger.LogError(ex, "Unhandled exception in user registration");
-
-                return Results.Problem(
-                    detail: "An internal server error occurred",
-                    statusCode: StatusCodes.Status500InternalServerError
-                );
-            }
+            return result.Match(Results.NoContent, ApiResults.Problem);
         })
         .RequireAuthorization(Permissions.ModifyUser)
         .WithTags(Tags.Users);
     }
 
-    // Helper method for flexible date parsing
-    private static bool TryParseDate(string dateString, out DateTime date)
+    internal sealed class Request
     {
-        // Try multiple date formats
-        string[] formats = {
-        "yyyy-MM-dd",
-        "yyyy/MM/dd",
-        "MM/dd/yyyy",
-        "dd/MM/yyyy",
-        "yyyy-MM-ddTHH:mm:ss",
-        "yyyy-MM-ddTHH:mm:ssZ",
-        "yyyy-MM-dd HH:mm:ss"
-    };
-
-        if (DateTime.TryParseExact(dateString, formats, CultureInfo.InvariantCulture, DateTimeStyles.None, out date))
-        {
-            return true;
-        }
-
-        // Fallback to default parsing
-        return DateTime.TryParse(dateString, out date);
+        public string? Bio { get; init; }
+        public double? Latitude { get; init; }
+        public double? Longitude { get; init; }
+        public string? City { get; init; }
+        public string? Country { get; init; }
+        public string? Interests { get; init; }
     }
 }

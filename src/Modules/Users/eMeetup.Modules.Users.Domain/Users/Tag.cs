@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using eMeetup.Common.Domain;
 using eMeetup.Modules.Users.Domain.Errors;
+using eMeetup.Modules.Users.Domain.UserInterests;
 
 namespace eMeetup.Modules.Users.Domain.Users;
 

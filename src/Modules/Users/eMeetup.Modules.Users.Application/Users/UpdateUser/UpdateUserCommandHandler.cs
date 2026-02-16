@@ -15,7 +15,8 @@ namespace eMeetup.Modules.Users.Application.Users.UpdateUser;
 
 internal sealed class UpdateUserCommandHandler(
     IUserRepository userRepository,
-    IUserPhotoService userPhotoService,
+    IUserInterestRepository userInterestRepository,
+    ISlugService slugService,
     IIdentityProviderService identityProviderService,
     IGeocodingService geocodingService,
     IUnitOfWork unitOfWork,
@@ -32,41 +33,51 @@ internal sealed class UpdateUserCommandHandler(
 
             // 1. Get user
             var user = await userRepository.GetByIdentityIdAsync(request.IdentityId, cancellationToken);
-            if (user == null) return Result.Failure(UserErrors.NotFoundByIdentity(request.IdentityId));
+            if (user == null)
+                return Result.Failure(UserErrors.NotFoundByIdentity(request.IdentityId));
 
             var updates = new UserUpdateSet(user);
 
-            // 2. Handle photos (using service)
-            await HandlePhotosAsync(user, request.Photos, updates, cancellationToken);
-
-            // 3. Handle bio
-            if (request.Bio != null && request.Bio != user.Bio)
+            // 2. Handle bio
+            if (request.Bio != user.Bio)
             {
                 user.UpdateBio(request.Bio);
                 updates.Bio = request.Bio;
+                logger.LogInformation("Updated bio for user {UserId}", user.Id);
             }
 
-            // 4. Handle location
-            await HandleLocationAsync(user, request, updates, cancellationToken);
+            // 3. Handle location
+            var locationResult = await HandleLocationAsync(user, request, cancellationToken);
+            if (locationResult.IsFailure)
+                return locationResult;
 
-            // 5. Update timestamp
+            if (locationResult.Value)
+            {
+                updates.LocationUpdated = true;
+                updates.Latitude = user.Location?.Latitude;
+                updates.Longitude = user.Location?.Longitude;
+                updates.City = user.Location?.City;
+                updates.Country = user.Location?.Country;
+            }
 
-            // 6. Save changes
+            // 4. Handle interests
+            var interestsResult = await HandleInterestsAsync(user, request, updates, cancellationToken);
+            if (interestsResult.IsFailure)
+                return interestsResult;
+
+            // 5. Save changes
             await unitOfWork.SaveChangesAsync(cancellationToken);
 
-            // 7. Update Keycloak if needed
+            // 6. Update Keycloak if needed
             if (updates.HasUpdates)
             {
                 var keycloakResult = await UpdateKeycloakWithRetryAsync(
-                    request.IdentityId, updates, cancellationToken);
+                    request.IdentityId, updates, user.ProfilePictureUrl, cancellationToken);
 
                 if (keycloakResult.IsFailure)
                 {
-                    // Cleanup uploaded photos
-                    
-
-                    // Attempt to rollback Keycloak changes
-                    await RollbackKeycloakChangesAsync(request.IdentityId, updates, cancellationToken);
+                    // Attempt to rollback changes
+                    await RollbackChangesAsync(request.IdentityId, updates, cancellationToken);
 
                     logger.LogError("Keycloak update failed: {Error}", keycloakResult.Error);
                     return Result.Failure(keycloakResult.Error);
@@ -85,76 +96,132 @@ internal sealed class UpdateUserCommandHandler(
         }
     }
 
-    private async Task HandlePhotosAsync(
+    private async Task<Result<bool>> HandleLocationAsync(
         User user,
-        List<IFormFile>? photos,
-        UserUpdateSet updates,
+        UpdateUserCommand request,
         CancellationToken cancellationToken)
     {
-        if (photos?.Count == 0) return;
+        // Check if any location parameters were provided
+        bool locationParamsProvided = request.Latitude.HasValue ||
+                                      request.Longitude.HasValue ||
+                                      request.City != null ||
+                                      request.Country != null;
 
-        var result = await userPhotoService.ProcessPhotosAndUpdateProfileAsync(
-            user.Id, photos, cancellationToken);
+        if (!locationParamsProvided)
+            return Result.Success(false);
 
-        if (result.IsSuccess && result.Value != null)
+        // Determine what's being updated
+        bool coordinatesProvided = request.Latitude.HasValue || request.Longitude.HasValue;
+        bool addressProvided = request.City != null || request.Country != null;
+
+        // If only coordinates are provided, try to get city/country via reverse geocoding
+        if (coordinatesProvided && !addressProvided && request.Latitude.HasValue && request.Longitude.HasValue)
         {
-            updates.ProfilePictureUrl = result.Value;
+            var geocodingResult = await geocodingService.ReverseGeocodeAsync(
+                request.Latitude.Value,
+                request.Longitude.Value,
+                cancellationToken);
+
+            if (geocodingResult.IsSuccess && geocodingResult.Value != null)
+            {
+                // Use geocoded location
+                var location = geocodingResult.Value;
+                user.UpdateLocation(location);
+                return Result.Success(true);
+            }
+
+            // If geocoding fails, create location with just coordinates
+            var coordinatesOnlyResult = Location.Create(request.Latitude, request.Longitude);
+            if (coordinatesOnlyResult.IsFailure)
+                return (Result<bool>)Result<bool>.Failure(coordinatesOnlyResult.Error);
+
+            user.UpdateLocation(coordinatesOnlyResult.Value);
+            return Result.Success(true);
         }
+
+        // If address is provided (with or without coordinates), use it directly
+        if (addressProvided)
+        {
+            var locationResult = Location.Create(
+                request.Latitude,
+                request.Longitude,
+                request.City,
+                request.Country);
+
+            if (locationResult.IsFailure)
+                return (Result<bool>)Result<bool>.Failure(locationResult.Error);
+
+            user.UpdateLocation(locationResult.Value);
+            return Result.Success(true);
+        }
+
+        return Result.Success(false);
     }
 
-    private async Task HandleLocationAsync(
+    private async Task<Result> HandleInterestsAsync(
         User user,
         UpdateUserCommand request,
         UserUpdateSet updates,
         CancellationToken cancellationToken)
     {
-        if (!request.Latitude.HasValue || !request.Longitude.HasValue) return;
+        // Get current interests
+        var currentInterests = await userInterestRepository.GetByUserIdAsync(user.Id, cancellationToken);
+        var currentInterestsSet = new HashSet<string>(
+            currentInterests.Select(ui => ui.Tag.Name.Trim()),
+            StringComparer.OrdinalIgnoreCase);
 
-        var locationResult = await CreateLocationAsync(
-            request.Latitude.Value,
-            request.Longitude.Value,
-            request.City,
-            request.Country,
-            cancellationToken);
+        // Parse requested interests
+        var requestedInterestsSet = ParseInterestNames(request.Interests);
 
-        if (locationResult.IsSuccess)
+        // Check if interests changed (order doesn't matter)
+        if (!AreInterestSetsEqual(currentInterestsSet, requestedInterestsSet))
         {
-            user.UpdateLocation(locationResult.Value);
-            updates.Latitude = request.Latitude;
-            updates.Longitude = request.Longitude;
-            updates.City = request.City;
-            updates.Country = request.Country;
+            // Update user interests
+            var updatedInterests = await userInterestRepository.UpdateUserInterestsAsync(
+                user.Id,
+                request.Interests ?? string.Empty,
+                cancellationToken);
+
+            // Create comma-separated string of tag names for Keycloak
+            updates.Interests = updatedInterests.Any()
+                ? string.Join(", ", updatedInterests.Select(ui => ui.Tag.Name))
+                : null;
+
+            logger.LogInformation("Updated interests for user {UserId}: {Interests}",
+                user.Id, updates.Interests ?? "none");
         }
+
+        return Result.Success();
     }
 
-    private async Task<Result<Location>> CreateLocationAsync(
-        double latitude,
-        double longitude,
-        string? city,
-        string? country,
-        CancellationToken cancellationToken)
+    private HashSet<string> ParseInterestNames(string? interests)
     {
-        try
-        {
-            if (!string.IsNullOrWhiteSpace(city) && !string.IsNullOrWhiteSpace(country))
-            {
-                return Location.Create(latitude, longitude, city, country);
-            }
+        if (string.IsNullOrWhiteSpace(interests))
+            return new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
-            var geocodingResult = await geocodingService.ReverseGeocodeAsync(latitude, longitude, cancellationToken);
-            return geocodingResult.IsSuccess
-                ? geocodingResult
-                : Location.Create(latitude, longitude, "Unknown", "Unknown");
-        }
-        catch (Exception)
-        {
-            return Location.Create(latitude, longitude, "Unknown", "Unknown");
-        }
+        return interests.Split(',', StringSplitOptions.RemoveEmptyEntries)
+            .Select(i => i.Trim())
+            .Where(i => !string.IsNullOrWhiteSpace(i))
+            .ToHashSet(StringComparer.OrdinalIgnoreCase);
+    }
+
+    private bool AreInterestSetsEqual(HashSet<string>? set1, HashSet<string>? set2)
+    {
+        // If both are null or empty
+        if ((set1 == null || set1.Count == 0) && (set2 == null || set2.Count == 0))
+            return true;
+
+        // If one is null/empty and the other has items
+        if (set1 == null || set2 == null)
+            return false;
+
+        return set1.Count == set2.Count && set1.SetEquals(set2);
     }
 
     private async Task<Result> UpdateKeycloakWithRetryAsync(
         Guid identityId,
         UserUpdateSet updates,
+        string? profilePictureUrl,
         CancellationToken cancellationToken)
     {
         const int maxRetries = 3;
@@ -172,7 +239,7 @@ internal sealed class UpdateUserCommandHandler(
                     city: updates.City,
                     country: updates.Country,
                     interests: updates.Interests,
-                    profilePictureUrl: updates.ProfilePictureUrl,
+                    profilePictureUrl: profilePictureUrl,
                     cancellationToken);
 
                 if (result.IsSuccess)
@@ -226,67 +293,121 @@ internal sealed class UpdateUserCommandHandler(
         return Result.Failure(UserErrors.KeycloakUpdateFailed);
     }
 
-    private async Task RollbackKeycloakChangesAsync(
+    private async Task RollbackChangesAsync(
         Guid identityId,
         UserUpdateSet attemptedUpdates,
         CancellationToken cancellationToken)
     {
         try
         {
-            logger.LogWarning("Attempting to rollback Keycloak changes for {IdentityId}", identityId);
+            logger.LogWarning("Attempting to rollback changes for {IdentityId}", identityId);
+
+            var user = await userRepository.GetByIdentityIdAsync(identityId, cancellationToken);
+            if (user == null) return;
+
+            // Rollback bio
+            if (attemptedUpdates.Bio != attemptedUpdates.OriginalBio)
+            {
+                user.UpdateBio(attemptedUpdates.OriginalBio);
+                logger.LogInformation("Rolled back bio for user {UserId}", user.Id);
+            }
+
+            // Rollback location
+            if (attemptedUpdates.LocationUpdated)
+            {
+                var originalLocationResult = Location.Create(
+                    attemptedUpdates.OriginalLatitude,
+                    attemptedUpdates.OriginalLongitude,
+                    attemptedUpdates.OriginalCity,
+                    attemptedUpdates.OriginalCountry);
+
+                if (originalLocationResult.IsSuccess)
+                {
+                    user.UpdateLocation(originalLocationResult.Value);
+                    logger.LogInformation("Rolled back location for user {UserId}", user.Id);
+                }
+            }
+
+            // Rollback interests
+            if (attemptedUpdates.Interests != attemptedUpdates.OriginalInterests)
+            {
+                await userInterestRepository.UpdateUserInterestsAsync(
+                    user.Id,
+                    attemptedUpdates.OriginalInterests ?? string.Empty,
+                    cancellationToken);
+
+                logger.LogInformation("Rolled back interests for user {UserId}", user.Id);
+            }
+
+            await unitOfWork.SaveChangesAsync(cancellationToken);
 
             logger.LogWarning("""
-                Keycloak rollback needed for {IdentityId}. 
+                Rollback completed for {IdentityId}. 
                 Attempted updates: {Updates}
-                Manual intervention may be required.
                 """,
                 identityId,
                 attemptedUpdates.UpdatedFieldsString);
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Failed to rollback Keycloak changes for {IdentityId}", identityId);
+            logger.LogError(ex, "Failed to rollback changes for {IdentityId}", identityId);
         }
     }
 
     private class UserUpdateSet
     {
+        // Current values
         public string? Bio { get; set; }
         public double? Latitude { get; set; }
         public double? Longitude { get; set; }
         public string? City { get; set; }
         public string? Country { get; set; }
         public string? Interests { get; set; }
-        public string? ProfilePictureUrl { get; set; }
+        public bool LocationUpdated { get; set; }
+
+        // Original values
+        public string? OriginalBio { get; }
+        public double? OriginalLatitude { get; }
+        public double? OriginalLongitude { get; }
+        public string? OriginalCity { get; }
+        public string? OriginalCountry { get; }
+        public string? OriginalInterests { get; }
 
         public bool HasUpdates =>
-            Bio != null ||
-            Latitude.HasValue ||
-            Longitude.HasValue ||
-            City != null ||
-            Country != null ||
-            Interests != null ||
-            ProfilePictureUrl != null;
+            Bio != OriginalBio ||
+            LocationUpdated ||
+            Interests != OriginalInterests;
 
         public string UpdatedFieldsString
         {
             get
             {
                 var fields = new List<string>();
-                if (Bio != null) fields.Add("Bio");
-                if (Latitude.HasValue) fields.Add("Latitude");
-                if (Longitude.HasValue) fields.Add("Longitude");
-                if (City != null) fields.Add("City");
-                if (Country != null) fields.Add("Country");
-                if (Interests != null) fields.Add("Interests");
-                if (ProfilePictureUrl != null) fields.Add("ProfilePictureUrl");
+                if (Bio != OriginalBio) fields.Add("Bio");
+                if (LocationUpdated) fields.Add("Location");
+                if (Interests != OriginalInterests) fields.Add("Interests");
                 return fields.Count > 0 ? string.Join(", ", fields) : "None";
             }
         }
 
         public UserUpdateSet(User user)
         {
-            // Store original values for potential rollback
+            // Store original values
+            OriginalBio = user.Bio;
+
+            OriginalLatitude = user.Location?.Latitude;
+            OriginalLongitude = user.Location?.Longitude;
+            OriginalCity = user.Location?.City;
+            OriginalCountry = user.Location?.Country;
+
+            if (user.Interests != null && user.Interests.Any())
+            {
+                OriginalInterests = string.Join(", ", user.Interests.Select(i => i.Tag.Name));
+            }
+
+            // Initialize current values
+            Bio = user.Bio;
+            Interests = OriginalInterests;
         }
     }
 }

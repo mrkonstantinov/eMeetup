@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using eMeetup.Modules.Users.Domain.Users;
+﻿using eMeetup.Modules.Users.Domain.Users;
 
 namespace eMeetup.Modules.Users.Domain.Interfaces.Repositories;
 

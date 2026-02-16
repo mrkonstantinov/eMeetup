@@ -1,8 +1,10 @@
 ﻿using eMeetup.Common.Infrastructure.Inbox;
 using eMeetup.Common.Infrastructure.Outbox;
 using eMeetup.Modules.Users.Application.Abstractions.Data;
+using eMeetup.Modules.Users.Domain.UserInterests;
 using eMeetup.Modules.Users.Domain.Users;
 using eMeetup.Modules.Users.Infrastructure.Photos;
+using eMeetup.Modules.Users.Infrastructure.UserInterests;
 using eMeetup.Modules.Users.Infrastructure.Users;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,6 +17,7 @@ public sealed class UsersDbContext(DbContextOptions<UsersDbContext> options) : D
     public DbSet<User> Users { get; set; }
     public DbSet<Tag> Tags { get; set; }
     public DbSet<UserPhoto> UserPhotos { get; set; }
+    public DbSet<UserInterest> UserInterests { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

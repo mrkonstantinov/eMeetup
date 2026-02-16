@@ -11,5 +11,4 @@ public sealed record UpdateUserCommand(
     double? Longitude,
     string? City,
     string? Country,
-    string? Interests,
-    List<IFormFile>? Photos = null) : ICommand;
+    string? Interests) : ICommand;

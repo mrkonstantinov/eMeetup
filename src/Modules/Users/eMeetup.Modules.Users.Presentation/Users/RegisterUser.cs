@@ -50,4 +50,27 @@ internal sealed class RegisterUser : IEndpoint
 
         public Gender Gender { get; init; }
     }
+
+    // Helper method for flexible date parsing
+    private static bool TryParseDate(string dateString, out DateTime date)
+    {
+        // Try multiple date formats
+        string[] formats = {
+        "yyyy-MM-dd",
+        "yyyy/MM/dd",
+        "MM/dd/yyyy",
+        "dd/MM/yyyy",
+        "yyyy-MM-ddTHH:mm:ss",
+        "yyyy-MM-ddTHH:mm:ssZ",
+        "yyyy-MM-dd HH:mm:ss"
+    };
+
+        if (DateTime.TryParseExact(dateString, formats, CultureInfo.InvariantCulture, DateTimeStyles.None, out date))
+        {
+            return true;
+        }
+
+        // Fallback to default parsing
+        return DateTime.TryParse(dateString, out date);
+    }
 }
