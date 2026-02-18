@@ -1,5 +1,5 @@
 ﻿using eMeetup.Modules.Users.Domain.Interfaces.Repositories;
-using eMeetup.Modules.Users.Domain.Users;
+using eMeetup.Modules.Users.Domain.Tags;
 using eMeetup.Modules.Users.Infrastructure.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;

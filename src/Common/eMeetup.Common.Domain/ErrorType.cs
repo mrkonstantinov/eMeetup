@@ -2,11 +2,11 @@
 
 public enum ErrorType
 {
-    Failure = 0,
-    Validation = 1,
-    Problem = 2,
-    NotFound = 3,
-    Conflict = 4,
-    Unauthorized = 5,
-    Forbidden = 6
+    Validation = 0,
+    NotFound = 1,
+    Conflict = 2,
+    Failure = 3,
+    Unauthorized = 4,
+    Forbidden = 5,
+    Problem = 6
 }

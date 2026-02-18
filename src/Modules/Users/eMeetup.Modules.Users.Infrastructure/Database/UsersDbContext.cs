@@ -1,9 +1,11 @@
 ﻿using eMeetup.Common.Infrastructure.Inbox;
 using eMeetup.Common.Infrastructure.Outbox;
 using eMeetup.Modules.Users.Application.Abstractions.Data;
+using eMeetup.Modules.Users.Domain.Tags;
 using eMeetup.Modules.Users.Domain.UserInterests;
 using eMeetup.Modules.Users.Domain.Users;
 using eMeetup.Modules.Users.Infrastructure.Photos;
+using eMeetup.Modules.Users.Infrastructure.Tags;
 using eMeetup.Modules.Users.Infrastructure.UserInterests;
 using eMeetup.Modules.Users.Infrastructure.Users;
 using Microsoft.EntityFrameworkCore;
@@ -33,6 +35,7 @@ public sealed class UsersDbContext(DbContextOptions<UsersDbContext> options) : D
         modelBuilder.ApplyConfiguration(new UserInterestConfiguration());
         modelBuilder.ApplyConfiguration(new RoleConfiguration());
         modelBuilder.ApplyConfiguration(new PermissionConfiguration());
+        modelBuilder.ApplyConfiguration(new TagGroupConfiguration());
         modelBuilder.ApplyConfiguration(new TagConfiguration());      
     }
 }

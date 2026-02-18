@@ -1,6 +1,6 @@
 ﻿using eMeetup.Common.Domain;
+using eMeetup.Modules.Users.Domain.Tags;
 using eMeetup.Modules.Users.Domain.UserInterests;
-using eMeetup.Modules.Users.Domain.Users;
 
 namespace eMeetup.Modules.Users.Domain.Interfaces.Repositories;
 

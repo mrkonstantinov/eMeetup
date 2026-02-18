@@ -1,4 +1,4 @@
-﻿using eMeetup.Modules.Users.Domain.Users;
+﻿using eMeetup.Modules.Users.Domain.Tags;
 
 namespace eMeetup.Modules.Users.Domain.Interfaces.Repositories;
 

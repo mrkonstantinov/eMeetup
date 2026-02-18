@@ -3,6 +3,8 @@ using eMeetup.Modules.Users.Domain.Errors;
 using eMeetup.Modules.Users.Domain.Helpers;
 using eMeetup.Modules.Users.Domain.Interfaces.Repositories;
 using eMeetup.Modules.Users.Domain.Interfaces.Services;
+using eMeetup.Modules.Users.Domain.Tags;
+using eMeetup.Modules.Users.Domain.UserInterests;
 using eMeetup.Modules.Users.Domain.Users;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Logging;
@@ -143,7 +145,7 @@ public class SlugService : ISlugService
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error syncing user interests from slug string for user {UserId}", user.Id);
-            return Result.Failure(UserErrors.InterestSyncFailed);
+            return Result.Failure(UserInterestErrors.InterestSyncFailed);
         }
     }
 }

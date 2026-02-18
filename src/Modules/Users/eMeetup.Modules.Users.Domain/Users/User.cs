@@ -2,6 +2,7 @@
 using System.Xml.Linq;
 using eMeetup.Common.Domain;
 using eMeetup.Modules.Users.Domain.Errors;
+using eMeetup.Modules.Users.Domain.Tags;
 using eMeetup.Modules.Users.Domain.UserInterests;
 
 namespace eMeetup.Modules.Users.Domain.Users;
@@ -280,7 +281,7 @@ public sealed class User : Entity
             return Result.Failure(TagErrors.NotFound);
 
         if (_interests.Any(ui => ui.TagId == tag.Id))
-            return Result.Failure(UserErrors.InterestAlreadyAdded);
+            return Result.Failure(UserInterestErrors.InterestAlreadyAdded);
 
         var userInterest = UserInterest.Create(Id, tag.Id).Value;
 
@@ -289,33 +290,11 @@ public sealed class User : Entity
         return Result.Success();
     }
 
-    public void UpdateInterests(IEnumerable<Tag> tags)
-    {
-        if (tags == null)
-            return;
-
-        // Clear existing interests
-        _interests.Clear();
-
-        // Add new interests
-        foreach (var tag in tags)
-        {
-            if (tag != null && tag.IsActive)
-            {
-                var userInterestResult = UserInterest.Create(Id, tag.Id);
-                if (userInterestResult.IsSuccess)
-                {
-                    _interests.Add(userInterestResult.Value);
-                }
-            }
-        }
-    }
-
     public Result RemoveInterest(Guid tagId)
     {
         var userInterest = _interests.FirstOrDefault(i => i.TagId == tagId);
         if (userInterest == null)
-            return Result.Failure(UserErrors.InterestNotFound);
+            return Result.Failure(UserInterestErrors.InterestNotFound);
 
         _interests.Remove(userInterest);
 
@@ -328,7 +307,7 @@ public sealed class User : Entity
             i.Tag.Slug.Equals(slug, StringComparison.OrdinalIgnoreCase));
 
         if (userInterest == null)
-            return Result.Failure(UserErrors.InterestNotFound);
+            return Result.Failure(UserInterestErrors.InterestNotFound);
 
         _interests.Remove(userInterest);
 

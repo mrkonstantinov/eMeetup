@@ -135,31 +135,6 @@ public static class UserErrors
     public static Error DuplicateFileNames => 
         Error.Failure("User.DuplicateFileNames", "Duplicate file names found");
 
-    // Interest errors
-    public static Error InvalidTagSlug => 
-        Error.Validation("User.InvalidTagSlug", "Tag slug is invalid");
-
-    public static Error InterestAddFailed => 
-        Error.Validation("User.InterestAddFailed", "Failed to add interest to user");
-
-    public static Error InterestRemoveFailed => 
-        Error.Validation("User.InterestRemoveFailed", "Failed to remove interest from user");
-
-    public static Error InterestSyncFailed => 
-        Error.Validation("User.InterestSyncFailed", "Failed to sync user interests");
-
-    public static Error InterestRetrievalFailed => 
-        Error.Validation("User.InterestRetrievalFailed", "Failed to retrieve user interests");
-
-    public static Error InterestAlreadyAdded => 
-        Error.Validation("User.InterestAlreadyAdded", "This interest has already been added to the user");
-
-    public static Error TooManyInterests(int maxInterests) =>
-    Error.Validation("User.TooManyInterests", $"Cannot add more than {maxInterests} interests");
-
-    public static Error InterestNotFound => 
-        Error.NotFound("User.InterestNotFound", "Interest was not found for this user");
-
     // General errors
     public static Error OperationFailed =>
         Error.Failure("Users.OperationFailed", "The operation failed. Please try again.");
