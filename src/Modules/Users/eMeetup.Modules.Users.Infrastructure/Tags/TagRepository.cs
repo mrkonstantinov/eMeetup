@@ -10,6 +10,23 @@ internal sealed class TagRepository(UsersDbContext context, ILogger<TagRepositor
 {
     private readonly UsersDbContext _context = context;
 
+    public async Task<Tag?> GetById(Guid id, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            if (id == Guid.Empty)
+                return null;
+
+            return await _context.Tags
+                .FirstOrDefaultAsync(t => t.Id == id, cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Error getting tag by ID: {TagId}", id);
+            throw;
+        }
+    }
+
     public async Task<Tag?> GetBySlugAsync(string slug, CancellationToken cancellationToken = default)
     {
         try

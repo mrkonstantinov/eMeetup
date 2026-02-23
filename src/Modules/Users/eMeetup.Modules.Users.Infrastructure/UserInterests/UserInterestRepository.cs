@@ -193,11 +193,15 @@ public class UserInterestRepository(UsersDbContext context, ITagRepository tagRe
             _context.UserInterests.RemoveRange(interestsToRemove);
 
             // Decrement usage count for removed tags
-            var removedTags = uniqueTags.Where(t => tagsToRemove.Contains(t.Id)).ToList();
-            foreach (var tag in removedTags)
+            var removedTags = tagsToRemove;//777uniqueTags.Where(t => tagsToRemove.Contains(t.Id)).ToList();
+            foreach (var id in removedTags)
             {
-                tag.DecrementUsage();
-                _context.Tags.Update(tag);
+                var tag = await tagRepository.GetById(id);
+                if (tag != null)
+                {
+                    tag!.DecrementUsage();
+                    _context.Tags.Update(tag);
+                }
             }
         }
 

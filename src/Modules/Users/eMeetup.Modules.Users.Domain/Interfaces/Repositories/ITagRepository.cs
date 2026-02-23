@@ -4,6 +4,7 @@ namespace eMeetup.Modules.Users.Domain.Interfaces.Repositories;
 
 public interface ITagRepository
 {
+    Task<Tag?> GetById(Guid id, CancellationToken cancellationToken = default);
     Task<Tag?> GetBySlugAsync(string slug, CancellationToken cancellationToken = default);
     Task<IEnumerable<Tag>> GetAsync(CancellationToken cancellationToken = default);
     Task<IEnumerable<Tag>> GetPopularAsync(int count, CancellationToken cancellationToken = default);
