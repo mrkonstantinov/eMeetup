@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 
-namespace Evently.Modules.Users.Presentation.Users;
+namespace eMeetup.Modules.Users.Presentation.Users;
 
 internal sealed class GetUserProfile : IEndpoint
 {

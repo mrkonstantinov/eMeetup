@@ -1,8 +1,6 @@
-﻿using Dapper;
-using eMeetup.Common.Application.Authorization;
+﻿using eMeetup.Common.Application.Authorization;
 using eMeetup.Common.Application.EventBus;
 using eMeetup.Common.Application.Messaging;
-using eMeetup.Common.Infrastructure.Data;
 using eMeetup.Common.Infrastructure.Outbox;
 using eMeetup.Common.Presentation.Endpoints;
 using eMeetup.Modules.Users.Application.Abstractions.Data;
@@ -25,7 +23,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
-using Npgsql;
 
 namespace eMeetup.Modules.Users.Infrastructure;
 

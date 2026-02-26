@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Common\eMeetup.Common.Application\eMeetup.Common.Application.csproj" />
+    <ProjectReference Include="..\eMeetup.Modules.Events.Domain\eMeetup.Modules.Events.Domain.csproj" />
+    <ProjectReference Include="..\eMeetup.Modules.Events.IntegrationEvents\eMeetup.Modules.Events.IntegrationEvents.csproj" />
+  </ItemGroup>
+
+</Project>
