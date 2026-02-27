@@ -57,7 +57,7 @@ internal sealed class UpdateUserCommandHandler(
                 updates.Latitude = user.Location?.Latitude;
                 updates.Longitude = user.Location?.Longitude;
                 updates.City = user.Location?.City;
-                updates.Country = user.Location?.Country;
+                updates.Street = user.Location?.Street;
             }
 
             // 4. Handle interests
@@ -105,16 +105,16 @@ internal sealed class UpdateUserCommandHandler(
         bool locationParamsProvided = request.Latitude.HasValue ||
                                       request.Longitude.HasValue ||
                                       request.City != null ||
-                                      request.Country != null;
+                                      request.Street != null;
 
         if (!locationParamsProvided)
             return Result.Success(false);
 
         // Determine what's being updated
         bool coordinatesProvided = request.Latitude.HasValue || request.Longitude.HasValue;
-        bool addressProvided = request.City != null || request.Country != null;
+        bool addressProvided = request.City != null || request.Street != null;
 
-        // If only coordinates are provided, try to get city/country via reverse geocoding
+        // If only coordinates are provided, try to get city/street via reverse geocoding
         if (coordinatesProvided && !addressProvided && request.Latitude.HasValue && request.Longitude.HasValue)
         {
             var geocodingResult = await geocodingService.ReverseGeocodeAsync(
@@ -146,7 +146,7 @@ internal sealed class UpdateUserCommandHandler(
                 request.Latitude,
                 request.Longitude,
                 request.City,
-                request.Country);
+                request.Street);
 
             if (locationResult.IsFailure)
                 return (Result<bool>)Result<bool>.Failure(locationResult.Error);
@@ -237,7 +237,7 @@ internal sealed class UpdateUserCommandHandler(
                     latitude: updates.Latitude,
                     longitude: updates.Longitude,
                     city: updates.City,
-                    country: updates.Country,
+                    street: updates.Street,
                     interests: updates.Interests,
                     profilePictureUrl: profilePictureUrl,
                     cancellationToken);
@@ -319,7 +319,7 @@ internal sealed class UpdateUserCommandHandler(
                     attemptedUpdates.OriginalLatitude,
                     attemptedUpdates.OriginalLongitude,
                     attemptedUpdates.OriginalCity,
-                    attemptedUpdates.OriginalCountry);
+                    attemptedUpdates.OriginalStreet);
 
                 if (originalLocationResult.IsSuccess)
                 {
@@ -361,7 +361,7 @@ internal sealed class UpdateUserCommandHandler(
         public double? Latitude { get; set; }
         public double? Longitude { get; set; }
         public string? City { get; set; }
-        public string? Country { get; set; }
+        public string? Street { get; set; }
         public string? Interests { get; set; }
         public bool LocationUpdated { get; set; }
 
@@ -370,7 +370,7 @@ internal sealed class UpdateUserCommandHandler(
         public double? OriginalLatitude { get; }
         public double? OriginalLongitude { get; }
         public string? OriginalCity { get; }
-        public string? OriginalCountry { get; }
+        public string? OriginalStreet { get; }
         public string? OriginalInterests { get; }
 
         public bool HasUpdates =>
@@ -398,7 +398,7 @@ internal sealed class UpdateUserCommandHandler(
             OriginalLatitude = user.Location?.Latitude;
             OriginalLongitude = user.Location?.Longitude;
             OriginalCity = user.Location?.City;
-            OriginalCountry = user.Location?.Country;
+            OriginalStreet = user.Location?.Street;
 
             if (user.Interests != null && user.Interests.Any())
             {

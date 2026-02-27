@@ -20,7 +20,7 @@ public static class LocationConfiguration
         builder.Property(l => l.City)
             .HasMaxLength(100);
 
-        builder.Property(l => l.Country)
+        builder.Property(l => l.Street)
             .HasMaxLength(100);
 
         return builder;

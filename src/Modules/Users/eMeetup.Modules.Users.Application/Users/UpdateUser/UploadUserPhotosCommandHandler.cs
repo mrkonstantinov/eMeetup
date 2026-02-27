@@ -147,7 +147,7 @@ internal sealed class UploadUserPhotosCommandHandler(
                     latitude: user.Location?.Latitude,
                     longitude: user.Location?.Longitude,
                     city: user.Location?.City,
-                    country: user.Location?.Country,
+                    street: user.Location?.Street,
                     interests: user.Interests.ToString(),
                     profilePictureUrl: profilePictureUrl,
                     cancellationToken: cancellationToken);
@@ -369,7 +369,7 @@ internal sealed class UploadUserPhotosCommandHandler(
                 latitude: user.Location?.Latitude,
                 longitude: user.Location?.Longitude,
                 city: user.Location?.City,
-                country: user.Location?.Country,
+                street: user.Location?.Street,
                 interests: user.Interests.ToString(),
                 profilePictureUrl: originalProfilePictureUrl,
                 cancellationToken: cancellationToken);

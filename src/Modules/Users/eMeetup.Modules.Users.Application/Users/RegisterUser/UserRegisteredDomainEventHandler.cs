@@ -38,7 +38,7 @@ internal sealed class UserRegisteredDomainEventHandler(ISender sender, IEventBus
                 result.Value.Latitude,
                 result.Value.Longitude,
                 result.Value.City,
-                result.Value.Country),
+                result.Value.Street),
             cancellationToken);
     }
 }

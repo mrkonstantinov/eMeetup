@@ -17,7 +17,7 @@ public sealed record UpdateUserModel(
     double? Latitude,
     double? Longitude,
     string? City,
-    string? Country,
+    string? Street,
     string? Interests,
     string? ProfilePictureUrl,
     List<IFormFile>? Photos = null
@@ -34,7 +34,7 @@ public sealed record UserProfileModel(
     double? Latitude,
     double? Longitude,
     string? City,
-    string? Country,
+    string? Street,
     string? Interests,
     string? ProfilePictureUrl
     );

@@ -14,11 +14,11 @@ public static class LocationErrors
     public static Error CityTooLong =>
         Error.Validation("Location.CityTooLong", "City name cannot exceed 100 characters");
 
-    public static Error InvalidCountry =>
-        Error.Validation("Location.InvalidCountry", "Country is required");
+    public static Error InvalidStreet =>
+        Error.Validation("Location.InvalidStreet", "Street is required");
 
-    public static Error CountryTooLong =>
-        Error.Validation("Location.CountryTooLong", "Country name cannot exceed 100 characters");
+    public static Error StreetTooLong =>
+        Error.Validation("Location.StreetTooLong", "Street name cannot exceed 250 characters");
 
     public static Error InvalidCoordinates =>
         Error.Validation("Location.InvalidCoordinates", "Invalid coordinates provided");

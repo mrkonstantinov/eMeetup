@@ -35,9 +35,9 @@ namespace eMeetup.Modules.Users.Application.Users.UpdateUser
             //    .MaximumLength(100).WithMessage("City name cannot exceed 100 characters")
             //    .When(x => !string.IsNullOrEmpty(x.City));
 
-            //RuleFor(x => x.Country)
-            //    .MaximumLength(100).WithMessage("Country name cannot exceed 100 characters")
-            //    .When(x => !string.IsNullOrEmpty(x.Country));
+            //RuleFor(x => x.Street)
+            //    .MaximumLength(100).WithMessage("Street name cannot exceed 100 characters")
+            //    .When(x => !string.IsNullOrEmpty(x.Street));
 
             // Photo validation
             //RuleFor(x => x.Photos)
@@ -66,8 +66,8 @@ namespace eMeetup.Modules.Users.Application.Users.UpdateUser
             //    .OverridePropertyName("Location");
 
             //RuleFor(x => x)
-            //    .Must(HaveCityAndCountryIfCoordinatesProvided)
-            //    .WithMessage("City and country are recommended when providing coordinates")
+            //    .Must(HaveCityAndStreetIfCoordinatesProvided)
+            //    .WithMessage("City and street are recommended when providing coordinates")
             //    .When(x => x.Latitude.HasValue && x.Longitude.HasValue);
         }
 
@@ -83,13 +83,13 @@ namespace eMeetup.Modules.Users.Application.Users.UpdateUser
             //       (!command.Latitude.HasValue && !command.Longitude.HasValue);
         }
 
-        //private static bool HaveCityAndCountryIfCoordinatesProvided(UpdateUserCommand command)
+        //private static bool HaveCityAndStreetIfCoordinatesProvided(UpdateUserCommand command)
         //{
         //    if (!command.Latitude.HasValue || !command.Longitude.HasValue)
         //        return true;
 
         //    return !string.IsNullOrWhiteSpace(command.City) &&
-        //           !string.IsNullOrWhiteSpace(command.Country);
+        //           !string.IsNullOrWhiteSpace(command.Street);
         //}
     }
 }

@@ -32,7 +32,7 @@ internal sealed record UserProfileRepresentation(
     //public string? Bio => GetSingleAttributeValue("bio");
     //public string? ProfilePictureUrl => GetSingleAttributeValue("profilePictureUrl");
     //public string? City => GetSingleAttributeValue("city");
-    //public string? Country => GetSingleAttributeValue("country");
+    //public string? Street => GetSingleAttributeValue("street");
     //public string? Interests => GetSingleAttributeValue("interests");
 
     //public double? Latitude => GetSingleAttributeValue("latitude") is string latStr
@@ -84,7 +84,7 @@ internal sealed record UserProfileRepresentation(
         AddAttributeIfNotEmpty(attributes, "bio", model.Bio);
         AddAttributeIfNotEmpty(attributes, "profilePictureUrl", model.ProfilePictureUrl);
         AddAttributeIfNotEmpty(attributes, "city", model.City);
-        AddAttributeIfNotEmpty(attributes, "country", model.Country);
+        AddAttributeIfNotEmpty(attributes, "street", model.Street);
         AddAttributeIfNotEmpty(attributes, "interests", model.Interests);
 
         if (model.Latitude.HasValue)

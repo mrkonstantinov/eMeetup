@@ -10,5 +10,5 @@ public sealed record UpdateUserCommand(
     double? Latitude,
     double? Longitude,
     string? City,
-    string? Country,
+    string? Street,
     string? Interests) : ICommand;

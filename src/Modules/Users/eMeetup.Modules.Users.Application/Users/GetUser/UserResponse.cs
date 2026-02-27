@@ -14,7 +14,7 @@ public sealed class UserResponse
     public double? Latitude { get; init; }
     public double? Longitude { get; init; }
     public string? City { get; init; }
-    public string? Country { get; init; }
+    public string? Street { get; init; }
     public DateTime CreatedAt { get; init; }
     public DateTime? UpdatedAt { get; init; }
 

@@ -19,7 +19,7 @@ internal sealed class IdentityProviderService(KeyCloakClient keyCloakClient, ILo
         "latitude",
         "longitude",
         "city",
-        "country",
+        "street",
         "interests",
         "profilePictureUrl"
     };
@@ -63,7 +63,7 @@ internal sealed class IdentityProviderService(KeyCloakClient keyCloakClient, ILo
                 { "profilePictureUrl", !string.IsNullOrEmpty(user.ProfilePictureUrl) ? new List<string> { user.ProfilePictureUrl } : new List<string>() },
                 { "bio", !string.IsNullOrEmpty(user.Bio) ? new List<string> { user.Bio } : new List<string>() },
                 { "city", !string.IsNullOrWhiteSpace(user.City) ? new List<string> { user.City! } : new List<string>() },
-                { "country", !string.IsNullOrWhiteSpace(user.City) ? new List<string> { user.City! } : new List<string>() },
+                { "street", !string.IsNullOrWhiteSpace(user.Street) ? new List<string> { user.Street! } : new List<string>() },
                 { "latitude", user.Latitude.HasValue ? new List<string> { user.Latitude.Value.ToString(CultureInfo.InvariantCulture) } : new List<string>() },
                 { "longitude", user.Longitude.HasValue ? new List<string> { user.Longitude.Value.ToString(CultureInfo.InvariantCulture) } : new List<string>() },
                 { "interests", !string.IsNullOrEmpty(user.Interests) ? new List<string> { user.Interests } : new List<string>() }
@@ -166,7 +166,7 @@ internal sealed class IdentityProviderService(KeyCloakClient keyCloakClient, ILo
             Latitude: latitude,
             Longitude: longitude,
             City: GetAttributeValue("city"),
-            Country: GetAttributeValue("country"),
+            Street: GetAttributeValue("street"),
             Interests: GetAttributeValue("interests"),
             ProfilePictureUrl: GetAttributeValue("profilePictureUrl")
         );
@@ -196,7 +196,7 @@ internal sealed class IdentityProviderService(KeyCloakClient keyCloakClient, ILo
         double? latitude,
         double? longitude,
         string? city,
-        string? country,
+        string? street,
         string? interests,
         string? profilePictureUrl,
         CancellationToken cancellationToken = default)
@@ -222,7 +222,7 @@ internal sealed class IdentityProviderService(KeyCloakClient keyCloakClient, ILo
             // Update only the allowed attributes
             UpdateAttributeIfNotNull(updatedAttributes, "bio", bio);
             UpdateAttributeIfNotNull(updatedAttributes, "city", city);
-            UpdateAttributeIfNotNull(updatedAttributes, "country", country);
+            UpdateAttributeIfNotNull(updatedAttributes, "street", street);
             UpdateAttributeIfNotNull(updatedAttributes, "interests", interests);
             UpdateAttributeIfNotNull(updatedAttributes, "profilePictureUrl", profilePictureUrl);
 

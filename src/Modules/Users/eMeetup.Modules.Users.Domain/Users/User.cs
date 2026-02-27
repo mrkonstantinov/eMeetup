@@ -229,9 +229,9 @@ public sealed class User : Entity
         return Result.Success();
     }
 
-    public Result UpdateLocation(double latitude, double longitude, string city, string country)
+    public Result UpdateLocation(double latitude, double longitude, string city, string street)
     {
-        var locationResult = Location.Create(latitude, longitude, city, country);
+        var locationResult = Location.Create(latitude, longitude, city, street);
         if (locationResult.IsFailure)
             return Result.Failure(locationResult.Error);
 

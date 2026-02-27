@@ -14,7 +14,7 @@ public interface IIdentityProviderService
         double? latitude,
         double? longitude,
         string? city,
-        string? country,
+        string? street,
         string? interests,
         string? profilePictureUrl,
         CancellationToken cancellationToken = default);

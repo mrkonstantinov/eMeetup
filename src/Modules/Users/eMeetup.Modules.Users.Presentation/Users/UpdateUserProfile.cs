@@ -28,7 +28,7 @@ internal sealed class UpdateUserProfile : IEndpoint
                 request.Latitude,
                 request.Longitude,
                 request.City,
-                request.Country,
+                request.Street,
                 request.Interests));
 
             return result.Match(Results.NoContent, ApiResults.Problem);
@@ -43,7 +43,7 @@ internal sealed class UpdateUserProfile : IEndpoint
         public double? Latitude { get; init; }
         public double? Longitude { get; init; }
         public string? City { get; init; }
-        public string? Country { get; init; }
+        public string? Street { get; init; }
         public string? Interests { get; init; }
     }
 }

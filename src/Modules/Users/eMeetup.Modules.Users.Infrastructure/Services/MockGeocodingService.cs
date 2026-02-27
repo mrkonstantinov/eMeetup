@@ -30,12 +30,12 @@ public class MockGeocodingService : IGeocodingService
 
         // Mock data based on coordinates
         var city = GetMockCity(latitude, longitude);
-        var country = GetMockCountry(latitude, longitude);
+        var street = GetMockStreet(latitude, longitude);
 
-        var location = Location.Create(latitude, longitude, city, country).Value;
+        var location = Location.Create(latitude, longitude, city, street).Value;
 
-        _logger.LogInformation("Mock reverse geocoding: {Latitude}, {Longitude} -> {City}, {Country}",
-            latitude, longitude, city, country);
+        _logger.LogInformation("Mock reverse geocoding: {Latitude}, {Longitude} -> {City}, {Street}",
+            latitude, longitude, city, street);
 
         return location;
     }
@@ -53,7 +53,7 @@ public class MockGeocodingService : IGeocodingService
 
         // Mock coordinates based on address
         var (latitude, longitude) = GetMockCoordinates(address);
-        var location = Location.Create(latitude, longitude, "Mock City", "Mock Country").Value;
+        var location = Location.Create(latitude, longitude, "Mock City", "Mock Street").Value;
 
         _logger.LogInformation("Mock geocoding: {Address} -> {Latitude}, {Longitude}",
             address, latitude, longitude);
@@ -80,7 +80,7 @@ public class MockGeocodingService : IGeocodingService
         };
     }
 
-    private static string GetMockCountry(double latitude, double longitude)
+    private static string GetMockStreet(double latitude, double longitude)
     {
         return (latitude, longitude) switch
         {
@@ -88,7 +88,7 @@ public class MockGeocodingService : IGeocodingService
             ( > 50.0 and < 60.0, > -10.0 and < 2.0) => "United Kingdom",
             ( > 41.0 and < 52.0, > -5.0 and < 10.0) => "France",
             ( > 35.0 and < 46.0, > 125.0 and < 146.0) => "Japan",
-            _ => "Unknown Country"
+            _ => "Unknown Street"
         };
     }
 

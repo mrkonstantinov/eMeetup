@@ -17,7 +17,7 @@ public sealed class UserRegisteredIntegrationEvent : IntegrationEvent
         double? latitude,
         double? longitude,
         string? city,
-        string? country)
+        string? street)
         : base(id, occurredOnUtc)
     {
         UserId = userId;
@@ -29,7 +29,7 @@ public sealed class UserRegisteredIntegrationEvent : IntegrationEvent
         Latitude = latitude;
         Longitude = longitude;
         City = city;
-        Country = country;
+        Street = street;
     }
 
     public Guid UserId { get; init; }
@@ -41,5 +41,5 @@ public sealed class UserRegisteredIntegrationEvent : IntegrationEvent
     public double? Latitude { get; init; }
     public double? Longitude { get; init; }
     public string? City { get; init; }
-    public string? Country { get; init; }
+    public string? Street { get; init; }
 }

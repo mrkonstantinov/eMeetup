@@ -43,7 +43,7 @@ internal sealed class GetUserQueryHandler(IDbConnectionFactory dbConnectionFacto
             u.location_latitude AS Latitude,
             u.location_longitude AS Longitude,
             u.location_city AS City,
-            u.location_country AS Country,
+            u.location_street AS Street,
             u.created_at AS CreatedAt,
             u.updated_at AS UpdatedAt
         FROM users.users u

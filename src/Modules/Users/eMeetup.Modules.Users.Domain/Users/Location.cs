@@ -14,23 +14,23 @@ namespace eMeetup.Modules.Users.Domain.Users
         public double? Latitude { get; }
         public double? Longitude { get; }
         public string? City { get; }
-        public string? Country { get; }
+        public string? Street { get; }
 
         public Location()
         {
             
         }
 
-        private Location(double? latitude, double? longitude, string? city, string? country)
+        private Location(double? latitude, double? longitude, string? city, string? street)
         {
             Latitude = latitude;
             Longitude = longitude;
             City = city;
-            Country = country;
+            Street = street;
         }
 
         // Factory method for full location with validation
-        public static Result<Location> Create(double? latitude, double? longitude, string? city, string? country)
+        public static Result<Location> Create(double? latitude, double? longitude, string? city, string? street)
         {
             // Validate coordinates if provided
             if (latitude.HasValue && (latitude.Value < -90 || latitude.Value > 90))
@@ -43,19 +43,19 @@ namespace eMeetup.Modules.Users.Domain.Users
             if (city != null && city.Length > 100)
                 return Result.Failure<Location>(LocationErrors.CityTooLong);
 
-            // Validate country if provided
-            if (country != null && country.Length > 100)
-                return Result.Failure<Location>(LocationErrors.CountryTooLong);
+            // Validate street if provided
+            if (street != null && street.Length > 250)
+                return Result.Failure<Location>(LocationErrors.StreetTooLong);
 
             // Trim strings if they exist
             var trimmedCity = string.IsNullOrWhiteSpace(city) ? null : city.Trim();
-            var trimmedCountry = string.IsNullOrWhiteSpace(country) ? null : country.Trim();
+            var trimmedStreet = string.IsNullOrWhiteSpace(street) ? null : street.Trim();
 
             var location = new Location(
                 latitude.HasValue ? Math.Round(latitude.Value, 6) : (double?)null,
                 longitude.HasValue ? Math.Round(longitude.Value, 6) : (double?)null,
                 trimmedCity,
-                trimmedCountry);
+                trimmedStreet);
 
             return Result.Success(location);
         }
@@ -66,10 +66,10 @@ namespace eMeetup.Modules.Users.Domain.Users
             return Create(latitude, longitude, null, null);
         }
 
-        // Factory method with only city and country
-        public static Result<Location> Create(string city, string country)
+        // Factory method with only city and street
+        public static Result<Location> Create(string city, string street)
         {
-            return Create(null, null, city, country);
+            return Create(null, null, city, street);
         }
 
         // Factory method for coordinates only (nullable)
@@ -83,35 +83,35 @@ namespace eMeetup.Modules.Users.Domain.Users
             double? latitude = null,
             double? longitude = null,
             string? city = null,
-            string? country = null)
+            string? street = null)
         {
             return Create(
                 latitude ?? existing.Latitude,
                 longitude ?? existing.Longitude,
                 city ?? existing.City,
-                country ?? existing.Country
+                street ?? existing.Street
             );
         }
 
         // Methods for updating location
         public Result<Location> WithCoordinates(double? latitude, double? longitude)
         {
-            return Create(latitude, longitude, City, Country);
+            return Create(latitude, longitude, City, Street);
         }
 
         public Result<Location> WithCity(string? city)
         {
-            return Create(Latitude, Longitude, city, Country);
+            return Create(Latitude, Longitude, city, Street);
         }
 
-        public Result<Location> WithCountry(string? country)
+        public Result<Location> WithStreet(string? street)
         {
-            return Create(Latitude, Longitude, City, country);
+            return Create(Latitude, Longitude, City, street);
         }
 
-        public Result<Location> WithCityAndCountry(string? city, string? country)
+        public Result<Location> WithCityAndStreet(string? city, string? street)
         {
-            return Create(Latitude, Longitude, city, country);
+            return Create(Latitude, Longitude, city, street);
         }
 
         // Business logic methods
@@ -119,18 +119,18 @@ namespace eMeetup.Modules.Users.Domain.Users
 
         public bool HasCity() => !string.IsNullOrWhiteSpace(City);
 
-        public bool HasCountry() => !string.IsNullOrWhiteSpace(Country);
+        public bool HasStreet() => !string.IsNullOrWhiteSpace(Street);
 
-        public bool IsComplete() => HasCoordinates() && HasCity() && HasCountry();
+        public bool IsComplete() => HasCoordinates() && HasCity() && HasStreet();
 
         public bool IsValid()
         {
             var validLatitude = !Latitude.HasValue || (Latitude.Value >= -90 && Latitude.Value <= 90);
             var validLongitude = !Longitude.HasValue || (Longitude.Value >= -180 && Longitude.Value <= 180);
             var validCity = City == null || City.Length <= 100;
-            var validCountry = Country == null || Country.Length <= 100;
+            var validStreet = Street == null || Street.Length <= 250;
 
-            return validLatitude && validLongitude && validCity && validCountry;
+            return validLatitude && validLongitude && validCity && validStreet;
         }
 
         public double? CalculateDistanceTo(Location other)
@@ -177,8 +177,8 @@ namespace eMeetup.Modules.Users.Domain.Users
             if (!string.IsNullOrWhiteSpace(City))
                 parts.Add(City!);
 
-            if (!string.IsNullOrWhiteSpace(Country))
-                parts.Add(Country!);
+            if (!string.IsNullOrWhiteSpace(Street))
+                parts.Add(Street!);
 
             return parts.Count > 0
                 ? string.Join(", ", parts)
@@ -193,7 +193,7 @@ namespace eMeetup.Modules.Users.Domain.Users
             yield return Latitude;
             yield return Longitude;
             yield return City;
-            yield return Country;
+            yield return Street;
         }
 
         // Helper methods for dictionary/list creation
@@ -218,10 +218,10 @@ namespace eMeetup.Modules.Users.Domain.Users
                 : new List<string>();
         }
 
-        public List<string> GetCountryAsStringList()
+        public List<string> GetStreetAsStringList()
         {
-            return !string.IsNullOrWhiteSpace(Country)
-                ? new List<string> { Country! }
+            return !string.IsNullOrWhiteSpace(Street)
+                ? new List<string> { Street! }
                 : new List<string>();
         }
 
