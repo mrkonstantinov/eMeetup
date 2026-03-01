@@ -2,101 +2,29 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
-using eMeetup.Modules.Users.Infrastructure.Database;
+using eMeetup.Modules.Events.Infrastructure.Database;
 
 #nullable disable
 
-namespace eMeetup.Modules.Users.Infrastructure.Database.Migrations
+namespace eMeetup.Modules.Events.Infrastructure.Database.Migrations
 {
-    [DbContext(typeof(UsersDbContext))]
-    partial class UsersDbContextModelSnapshot : ModelSnapshot
+    [DbContext(typeof(EventsDbContext))]
+    [Migration("20260301194639_InitialMigration")]
+    partial class InitialMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasDefaultSchema("users")
+                .HasDefaultSchema("events")
                 .HasAnnotation("ProductVersion", "10.0.0-rc.1.25451.107")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
-
-            modelBuilder.Entity("PermissionRole", b =>
-                {
-                    b.Property<string>("PermissionCode")
-                        .HasColumnType("character varying(100)")
-                        .HasColumnName("permission_code");
-
-                    b.Property<string>("RoleName")
-                        .HasColumnType("character varying(50)")
-                        .HasColumnName("role_name");
-
-                    b.HasKey("PermissionCode", "RoleName")
-                        .HasName("pk_role_permissions");
-
-                    b.HasIndex("RoleName")
-                        .HasDatabaseName("ix_role_permissions_role_name");
-
-                    b.ToTable("role_permissions", "users");
-
-                    b.HasData(
-                        new
-                        {
-                            PermissionCode = "users:read",
-                            RoleName = "Member"
-                        },
-                        new
-                        {
-                            PermissionCode = "users:update",
-                            RoleName = "Member"
-                        },
-                        new
-                        {
-                            PermissionCode = "tags:read",
-                            RoleName = "Member"
-                        },
-                        new
-                        {
-                            PermissionCode = "users:read",
-                            RoleName = "Administrator"
-                        },
-                        new
-                        {
-                            PermissionCode = "users:update",
-                            RoleName = "Administrator"
-                        },
-                        new
-                        {
-                            PermissionCode = "tags:read",
-                            RoleName = "Administrator"
-                        },
-                        new
-                        {
-                            PermissionCode = "event-statistics:read",
-                            RoleName = "Administrator"
-                        });
-                });
-
-            modelBuilder.Entity("RoleUser", b =>
-                {
-                    b.Property<string>("RolesName")
-                        .HasColumnType("character varying(50)")
-                        .HasColumnName("role_name");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("user_id");
-
-                    b.HasKey("RolesName", "UserId")
-                        .HasName("pk_user_roles");
-
-                    b.HasIndex("UserId")
-                        .HasDatabaseName("ix_user_roles_user_id");
-
-                    b.ToTable("user_roles", "users");
-                });
 
             modelBuilder.Entity("eMeetup.Common.Infrastructure.Inbox.InboxMessage", b =>
                 {
@@ -131,7 +59,7 @@ namespace eMeetup.Modules.Users.Infrastructure.Database.Migrations
                     b.HasKey("Id")
                         .HasName("pk_inbox_messages");
 
-                    b.ToTable("inbox_messages", "users");
+                    b.ToTable("inbox_messages", "events");
                 });
 
             modelBuilder.Entity("eMeetup.Common.Infrastructure.Inbox.InboxMessageConsumer", b =>
@@ -148,7 +76,7 @@ namespace eMeetup.Modules.Users.Infrastructure.Database.Migrations
                     b.HasKey("InboxMessageId", "Name")
                         .HasName("pk_inbox_message_consumers");
 
-                    b.ToTable("inbox_message_consumers", "users");
+                    b.ToTable("inbox_message_consumers", "events");
                 });
 
             modelBuilder.Entity("eMeetup.Common.Infrastructure.Outbox.OutboxMessage", b =>
@@ -184,7 +112,7 @@ namespace eMeetup.Modules.Users.Infrastructure.Database.Migrations
                     b.HasKey("Id")
                         .HasName("pk_outbox_messages");
 
-                    b.ToTable("outbox_messages", "users");
+                    b.ToTable("outbox_messages", "events");
                 });
 
             modelBuilder.Entity("eMeetup.Common.Infrastructure.Outbox.OutboxMessageConsumer", b =>
@@ -201,10 +129,95 @@ namespace eMeetup.Modules.Users.Infrastructure.Database.Migrations
                     b.HasKey("OutboxMessageId", "Name")
                         .HasName("pk_outbox_message_consumers");
 
-                    b.ToTable("outbox_message_consumers", "users");
+                    b.ToTable("outbox_message_consumers", "events");
                 });
 
-            modelBuilder.Entity("eMeetup.Modules.Users.Domain.Tags.Tag", b =>
+            modelBuilder.Entity("eMeetup.Modules.Events.Domain.EventInterests.EventTag", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<Guid>("EventId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("event_id");
+
+                    b.Property<Guid>("TagId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("tag_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_event_tags");
+
+                    b.HasIndex("EventId")
+                        .HasDatabaseName("ix_event_tags_event_id");
+
+                    b.HasIndex("TagId")
+                        .HasDatabaseName("ix_event_tags_tag_id");
+
+                    b.ToTable("event_tags", "events");
+                });
+
+            modelBuilder.Entity("eMeetup.Modules.Events.Domain.Events.Event", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateTime?>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<string>("CreatedByUserDisplayName")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("created_by_user_display_name");
+
+                    b.Property<string>("CreatedByUserEmail")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("created_by_user_email");
+
+                    b.Property<Guid>("CreatedByUserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("created_by_user_id");
+
+                    b.Property<string>("CreatedByUserName")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("created_by_user_name");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("description");
+
+                    b.Property<DateTime?>("EndsAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("ends_at_utc");
+
+                    b.Property<DateTime>("StartsAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("starts_at_utc");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer")
+                        .HasColumnName("status");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("title");
+
+                    b.HasKey("Id")
+                        .HasName("pk_events");
+
+                    b.ToTable("events", "events");
+                });
+
+            modelBuilder.Entity("eMeetup.Modules.Events.Domain.Tags.Tag", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -268,7 +281,7 @@ namespace eMeetup.Modules.Users.Infrastructure.Database.Migrations
                     b.HasIndex("UsageCount")
                         .HasDatabaseName("ix_tags_usage_count");
 
-                    b.ToTable("tags", "users");
+                    b.ToTable("tags", "events");
 
                     b.HasData(
                         new
@@ -763,7 +776,7 @@ namespace eMeetup.Modules.Users.Infrastructure.Database.Migrations
                         });
                 });
 
-            modelBuilder.Entity("eMeetup.Modules.Users.Domain.Tags.TagGroup", b =>
+            modelBuilder.Entity("eMeetup.Modules.Events.Domain.Tags.TagGroup", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -816,7 +829,7 @@ namespace eMeetup.Modules.Users.Infrastructure.Database.Migrations
                         .IsUnique()
                         .HasDatabaseName("ix_tag_groups_name");
 
-                    b.ToTable("tag_groups", "users");
+                    b.ToTable("tag_groups", "events");
 
                     b.HasData(
                         new
@@ -902,301 +915,32 @@ namespace eMeetup.Modules.Users.Infrastructure.Database.Migrations
                         });
                 });
 
-            modelBuilder.Entity("eMeetup.Modules.Users.Domain.UserInterests.UserInterest", b =>
+            modelBuilder.Entity("eMeetup.Modules.Events.Domain.EventInterests.EventTag", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("id")
-                        .HasDefaultValueSql("gen_random_uuid()");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_at")
-                        .HasDefaultValueSql("NOW()");
-
-                    b.Property<Guid>("TagId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("tag_id");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("user_id");
-
-                    b.HasKey("Id")
-                        .HasName("pk_user_interests");
-
-                    b.HasIndex("CreatedAt")
-                        .HasDatabaseName("ix_user_interests_created_at");
-
-                    NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex("CreatedAt"), "brin");
-
-                    b.HasIndex("TagId")
-                        .HasDatabaseName("ix_user_interests_tag_id");
-
-                    NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex("TagId"), "hash");
-
-                    b.HasIndex("UserId")
-                        .HasDatabaseName("ix_user_interests_user_id");
-
-                    NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex("UserId"), "hash");
-
-                    b.HasIndex("UserId", "TagId")
-                        .IsUnique()
-                        .HasDatabaseName("ix_user_interests_user_tag_unique");
-
-                    b.ToTable("user_interests", "users", t =>
-                        {
-                            t.HasComment("Junction table for user interests and tags");
-                        });
-                });
-
-            modelBuilder.Entity("eMeetup.Modules.Users.Domain.Users.Permission", b =>
-                {
-                    b.Property<string>("Code")
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)")
-                        .HasColumnName("code");
-
-                    b.HasKey("Code")
-                        .HasName("pk_permissions");
-
-                    b.ToTable("permissions", "users");
-
-                    b.HasData(
-                        new
-                        {
-                            Code = "users:read"
-                        },
-                        new
-                        {
-                            Code = "users:update"
-                        },
-                        new
-                        {
-                            Code = "tags:read"
-                        },
-                        new
-                        {
-                            Code = "event-statistics:read"
-                        });
-                });
-
-            modelBuilder.Entity("eMeetup.Modules.Users.Domain.Users.Role", b =>
-                {
-                    b.Property<string>("Name")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
-                        .HasColumnName("name");
-
-                    b.HasKey("Name")
-                        .HasName("pk_roles");
-
-                    b.ToTable("roles", "users");
-
-                    b.HasData(
-                        new
-                        {
-                            Name = "Member"
-                        },
-                        new
-                        {
-                            Name = "Administrator"
-                        });
-                });
-
-            modelBuilder.Entity("eMeetup.Modules.Users.Domain.Users.User", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("id");
-
-                    b.Property<string>("Bio")
-                        .HasMaxLength(500)
-                        .HasColumnType("character varying(500)")
-                        .HasColumnName("bio");
-
-                    b.Property<DateTime?>("CreatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_at");
-
-                    b.Property<DateTime>("DateOfBirth")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("date_of_birth");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasMaxLength(300)
-                        .HasColumnType("character varying(300)")
-                        .HasColumnName("email");
-
-                    b.Property<int>("Gender")
-                        .HasColumnType("integer")
-                        .HasColumnName("gender");
-
-                    b.Property<string>("IdentityId")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("identity_id");
-
-                    b.Property<DateTime?>("LastActive")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("last_active");
-
-                    b.Property<string>("ProfilePictureUrl")
-                        .HasColumnType("text")
-                        .HasColumnName("profile_picture_url");
-
-                    b.Property<int?>("Status")
-                        .HasColumnType("integer")
-                        .HasColumnName("status");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("updated_at");
-
-                    b.Property<string>("UserName")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("character varying(200)")
-                        .HasColumnName("user_name");
-
-                    b.HasKey("Id")
-                        .HasName("pk_users");
-
-                    b.HasIndex("Email")
-                        .IsUnique()
-                        .HasDatabaseName("ix_users_email");
-
-                    b.HasIndex("IdentityId")
-                        .IsUnique()
-                        .HasDatabaseName("ix_users_identity_id");
-
-                    b.ToTable("users", "users");
-                });
-
-            modelBuilder.Entity("eMeetup.Modules.Users.Domain.Users.UserPhoto", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("id");
-
-                    b.Property<int>("DisplayOrder")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasDefaultValue(0)
-                        .HasColumnName("display_order");
-
-                    b.Property<bool>("IsPrimary")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("boolean")
-                        .HasDefaultValue(false)
-                        .HasColumnName("is_primary");
-
-                    b.Property<DateTime>("UploadedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("uploaded_at");
-
-                    b.Property<string>("Url")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("character varying(500)")
-                        .HasColumnName("url");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("user_id");
-
-                    b.HasKey("Id")
-                        .HasName("pk_user_photos");
-
-                    b.HasIndex("UserId")
-                        .HasDatabaseName("ix_user_photos_user_id");
-
-                    b.HasIndex("UserId", "DisplayOrder")
-                        .HasDatabaseName("ix_user_photos_user_id_display_order");
-
-                    b.HasIndex("UserId", "IsPrimary")
-                        .HasDatabaseName("ix_user_photos_user_id_is_primary")
-                        .HasFilter("is_primary = true");
-
-                    b.ToTable("user_photos", "users");
-                });
-
-            modelBuilder.Entity("PermissionRole", b =>
-                {
-                    b.HasOne("eMeetup.Modules.Users.Domain.Users.Permission", null)
-                        .WithMany()
-                        .HasForeignKey("PermissionCode")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_role_permissions_permissions_permission_code");
-
-                    b.HasOne("eMeetup.Modules.Users.Domain.Users.Role", null)
-                        .WithMany()
-                        .HasForeignKey("RoleName")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_role_permissions_roles_role_name");
-                });
-
-            modelBuilder.Entity("RoleUser", b =>
-                {
-                    b.HasOne("eMeetup.Modules.Users.Domain.Users.Role", null)
-                        .WithMany()
-                        .HasForeignKey("RolesName")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_user_roles_roles_roles_name");
-
-                    b.HasOne("eMeetup.Modules.Users.Domain.Users.User", null)
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_user_roles_users_user_id");
-                });
-
-            modelBuilder.Entity("eMeetup.Modules.Users.Domain.Tags.Tag", b =>
-                {
-                    b.HasOne("eMeetup.Modules.Users.Domain.Tags.TagGroup", "TagGroup")
+                    b.HasOne("eMeetup.Modules.Events.Domain.Events.Event", "Event")
                         .WithMany("Tags")
-                        .HasForeignKey("TagGroupId")
-                        .OnDelete(DeleteBehavior.SetNull)
-                        .HasConstraintName("fk_tags_tag_group_tag_group_id");
-
-                    b.Navigation("TagGroup");
-                });
-
-            modelBuilder.Entity("eMeetup.Modules.Users.Domain.UserInterests.UserInterest", b =>
-                {
-                    b.HasOne("eMeetup.Modules.Users.Domain.Tags.Tag", "Tag")
-                        .WithMany("UserInterests")
-                        .HasForeignKey("TagId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired()
-                        .HasConstraintName("fk_user_interests_tags_tag_id");
-
-                    b.HasOne("eMeetup.Modules.Users.Domain.Users.User", "User")
-                        .WithMany("Interests")
-                        .HasForeignKey("UserId")
+                        .HasForeignKey("EventId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("fk_user_interests_users_user_id");
+                        .HasConstraintName("fk_event_tags_events_event_id");
+
+                    b.HasOne("eMeetup.Modules.Events.Domain.Tags.Tag", "Tag")
+                        .WithMany("EventTags")
+                        .HasForeignKey("TagId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_event_tags_tags_tag_id");
+
+                    b.Navigation("Event");
 
                     b.Navigation("Tag");
-
-                    b.Navigation("User");
                 });
 
-            modelBuilder.Entity("eMeetup.Modules.Users.Domain.Users.User", b =>
+            modelBuilder.Entity("eMeetup.Modules.Events.Domain.Events.Event", b =>
                 {
-                    b.OwnsOne("eMeetup.Modules.Users.Domain.Users.Location", "Location", b1 =>
+                    b.OwnsOne("eMeetup.Modules.Events.Domain.Events.Location", "Location", b1 =>
                         {
-                            b1.Property<Guid>("UserId")
+                            b1.Property<Guid>("EventId")
                                 .HasColumnType("uuid")
                                 .HasColumnName("id");
 
@@ -1218,45 +962,43 @@ namespace eMeetup.Modules.Users.Infrastructure.Database.Migrations
                                 .HasColumnType("character varying(100)")
                                 .HasColumnName("location_street");
 
-                            b1.HasKey("UserId");
+                            b1.HasKey("EventId");
 
-                            b1.ToTable("users", "users");
+                            b1.ToTable("events", "events");
 
                             b1.WithOwner()
-                                .HasForeignKey("UserId")
-                                .HasConstraintName("fk_users_users_id");
+                                .HasForeignKey("EventId")
+                                .HasConstraintName("fk_events_events_id");
                         });
 
-                    b.Navigation("Location");
+                    b.Navigation("Location")
+                        .IsRequired();
                 });
 
-            modelBuilder.Entity("eMeetup.Modules.Users.Domain.Users.UserPhoto", b =>
+            modelBuilder.Entity("eMeetup.Modules.Events.Domain.Tags.Tag", b =>
                 {
-                    b.HasOne("eMeetup.Modules.Users.Domain.Users.User", "User")
-                        .WithMany("Photos")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_user_photos_users_user_id");
+                    b.HasOne("eMeetup.Modules.Events.Domain.Tags.TagGroup", "TagGroup")
+                        .WithMany("Tags")
+                        .HasForeignKey("TagGroupId")
+                        .OnDelete(DeleteBehavior.SetNull)
+                        .HasConstraintName("fk_tags_tag_group_tag_group_id");
 
-                    b.Navigation("User");
+                    b.Navigation("TagGroup");
                 });
 
-            modelBuilder.Entity("eMeetup.Modules.Users.Domain.Tags.Tag", b =>
-                {
-                    b.Navigation("UserInterests");
-                });
-
-            modelBuilder.Entity("eMeetup.Modules.Users.Domain.Tags.TagGroup", b =>
+            modelBuilder.Entity("eMeetup.Modules.Events.Domain.Events.Event", b =>
                 {
                     b.Navigation("Tags");
                 });
 
-            modelBuilder.Entity("eMeetup.Modules.Users.Domain.Users.User", b =>
+            modelBuilder.Entity("eMeetup.Modules.Events.Domain.Tags.Tag", b =>
                 {
-                    b.Navigation("Interests");
+                    b.Navigation("EventTags");
+                });
 
-                    b.Navigation("Photos");
+            modelBuilder.Entity("eMeetup.Modules.Events.Domain.Tags.TagGroup", b =>
+                {
+                    b.Navigation("Tags");
                 });
 #pragma warning restore 612, 618
         }

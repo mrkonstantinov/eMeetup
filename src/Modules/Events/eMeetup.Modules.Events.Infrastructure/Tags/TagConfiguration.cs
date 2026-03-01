@@ -1,8 +1,8 @@
-﻿using eMeetup.Modules.Users.Domain.Tags;
+﻿using eMeetup.Modules.Events.Domain.Tags;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace eMeetup.Modules.Users.Infrastructure.Tags;
+namespace eMeetup.Modules.Events.Infrastructure.Tags;
 
 public class TagConfiguration : IEntityTypeConfiguration<Tag>
 {
@@ -151,7 +151,6 @@ public class TagConfiguration : IEntityTypeConfiguration<Tag>
             Tag.CreateForSeeding(Guid.Parse("99999999-9999-9999-9999-ffffffffffff"), "Trail Running Race", "Off-road running competitions", sportsEventsGroupId).Value,
         };
 
-        // Add tags to context
         builder.HasData(tags);
     }
 }

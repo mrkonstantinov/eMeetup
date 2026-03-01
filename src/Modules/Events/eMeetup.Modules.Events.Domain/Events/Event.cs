@@ -1,31 +1,43 @@
-﻿using eMeetup.Common.Domain;
+﻿using System.Data;
+using eMeetup.Common.Domain;
+using eMeetup.Modules.Events.Domain.EventInterests;
 
 namespace eMeetup.Modules.Events.Domain.Events;
 
 public sealed class Event : Entity
 {
+    // Private fields
+    private readonly List<EventTag> _tags = new();
     private Event()
     {
     }
 
     public Guid Id { get; private set; }
+    // User information - COMPLETE SNAPSHOT at creation time
+    public Guid CreatedByUserId { get; set; }
+    public string CreatedByUserName { get; set; }      // Snapshot!
+    public string CreatedByUserEmail { get; set; }     // Snapshot!
+    public string CreatedByUserDisplayName { get; set; } // Snapshot!
 
     public string Title { get; private set; }
-
     public string Description { get; private set; }
-
-    public string Location { get; private set; }
+    public Location Location { get; private set; }
 
     public DateTime StartsAtUtc { get; private set; }
-
     public DateTime? EndsAtUtc { get; private set; }
 
+    public DateTime? CreatedAt { get; private set; }
     public EventStatus Status { get; private set; }
+
+
+    // Navigation properties
+    public ICollection<EventTag> Tags => _tags.AsReadOnly();
+
 
     public static Result<Event> Create(
         string title,
         string description,
-        string location,
+        Location location,
         DateTime startsAtUtc,
         DateTime? endsAtUtc)
     {

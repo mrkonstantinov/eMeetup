@@ -1,6 +1,4 @@
-﻿using System.Reflection.Emit;
-using eMeetup.Common.Domain;
-using eMeetup.Modules.Users.Domain.Users;
+﻿using eMeetup.Modules.Users.Domain.Users;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

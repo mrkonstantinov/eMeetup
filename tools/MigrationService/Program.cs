@@ -1,4 +1,5 @@
-﻿using eMeetup.Modules.Users.Infrastructure.Database;
+﻿using eMeetup.Modules.Events.Infrastructure.Database;
+using eMeetup.Modules.Users.Infrastructure.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using MigrationService;
@@ -28,6 +29,16 @@ builder.Services.AddDbContext<UsersDbContext>(options =>
         npgsqlOptions => { })
         .UseSnakeCaseNamingConvention();
 });
+
+builder.Services.AddScoped<EventsDbContextInitializer>();
+
+builder.Services.AddDbContext<EventsDbContext>(options =>
+{
+    options.UseNpgsql(databaseConnectionString,
+        npgsqlOptions => { })
+        .UseSnakeCaseNamingConvention();
+});
+
 
 //builder.Services.AddScoped<TicketingDbContextInitializer>();
 //builder.AddNpgsqlDbContext<TicketingDbContext>("meetupDb");

@@ -5,13 +5,8 @@ namespace eMeetup.Modules.Events.Domain.Tags;
 public static class TagErrors
 {
     public static Error NotFound =>
-    Error.NotFound("Tag.NotFound", "Tag not found");
+    Error.NotFound("Tag.NotFound", "Tag not found"); 
 
-    public static Error SlugNotFound(string slug) =>
-        Error.NotFound("Tag.SlugNotFound", $"Tag with slug '{slug}' was not found");
-
-    public static Error SlugParseFailed =>
-        Error.Conflict("Tag.SlugParseFailed", "Failed to parse slugs");
     public static Error InvalidName() =>
         Error.Validation("Tag.InvalidName", "Tag name is required");
 

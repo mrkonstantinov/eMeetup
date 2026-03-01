@@ -353,7 +353,7 @@ public class UserInterestRepository(UsersDbContext context, ITagRepository tagRe
         var slug = GenerateSlug(tagName);
 
         // Try to get existing tag
-        var existingTag = await _tagRepository.GetBySlugAsync(slug, cancellationToken);
+        var existingTag = await _tagRepository.GetByTagAsync(slug, cancellationToken);
         if (existingTag != null)
             return existingTag;
 

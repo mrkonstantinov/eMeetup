@@ -8,6 +8,11 @@ internal sealed class EventConfiguration : IEntityTypeConfiguration<Event>
 {
     public void Configure(EntityTypeBuilder<Event> builder)
     {
-        //builder.HasOne<Category>().WithMany();
+        builder.ToTable("events");
+
+        builder.HasKey(u => u.Id);
+
+        builder.OwnsOne(u => u.Location, locationBuilder =>
+            locationBuilder.ConfigureLocation());
     }
 }

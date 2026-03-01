@@ -17,7 +17,7 @@ internal class UsersDbContextInitializer : DbContextInitializerBase<UsersDbConte
         {
             // Seed the database
             await using var transaction = await DbContext.Database.BeginTransactionAsync(cancellationToken);
-            var tags = await SeedTags();
+            //var tags = await SeedTags();
             //await SeedEventsAsync(categories);
             await DbContext.SaveChangesAsync(cancellationToken);
             await transaction.CommitAsync(cancellationToken);

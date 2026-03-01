@@ -16,7 +16,6 @@ namespace eMeetup.Modules.Users.Application.Users.UpdateUser;
 internal sealed class UpdateUserCommandHandler(
     IUserRepository userRepository,
     IUserInterestRepository userInterestRepository,
-    ISlugService slugService,
     IIdentityProviderService identityProviderService,
     IGeocodingService geocodingService,
     IUnitOfWork unitOfWork,

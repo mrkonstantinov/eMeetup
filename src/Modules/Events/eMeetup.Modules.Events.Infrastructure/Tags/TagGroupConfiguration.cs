@@ -1,8 +1,8 @@
-﻿using eMeetup.Modules.Users.Domain.Tags;
+﻿using eMeetup.Modules.Events.Domain.Tags;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace eMeetup.Modules.Users.Infrastructure.Tags;
+namespace eMeetup.Modules.Events.Infrastructure.Tags;
 
 public class TagGroupConfiguration : IEntityTypeConfiguration<TagGroup>
 {

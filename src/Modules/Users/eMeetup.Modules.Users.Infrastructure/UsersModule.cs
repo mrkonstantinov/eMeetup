@@ -90,9 +90,8 @@ public static class UsersModule
         services.AddScoped<IUserInterestRepository, UserInterestRepository>();
 
         services.AddScoped<IGeocodingService, MockGeocodingService>();
-        services.AddScoped<ISlugService, SlugService>();
-        
 
+       
         services.AddScoped<IUnitOfWork>(sp => sp.GetRequiredService<UsersDbContext>());
 
         services.Configure<OutboxOptions>(configuration.GetSection("Users:Outbox"));

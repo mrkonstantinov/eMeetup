@@ -15,7 +15,7 @@ public class Tag
     public bool IsActive { get; private set; } = true;
 
     // Navigation property back to UserInterests
-    public virtual ICollection<EventInterest>? EventInterests { get; set; } = new List<EventInterest>();
+    public virtual ICollection<EventTag>? EventTags { get; set; } = new List<EventTag>();
 
     // New group relationship
     public Guid? TagGroupId { get; private set; }

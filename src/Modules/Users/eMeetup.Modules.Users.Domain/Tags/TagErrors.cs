@@ -7,11 +7,11 @@ public static class TagErrors
     public static Error NotFound =>
     Error.NotFound("Tag.NotFound", "Tag not found");
 
-    public static Error SlugNotFound(string slug) =>
-        Error.NotFound("Tag.SlugNotFound", $"Tag with slug '{slug}' was not found");
+    public static Error TagNotFound(string tag) =>
+        Error.NotFound("Tag.TagNotFound", $"Tag with tag '{tag}' was not found");
 
-    public static Error SlugParseFailed =>
-        Error.Conflict("Tag.SlugParseFailed", "Failed to parse slugs");
+    public static Error TagParseFailed =>
+        Error.Conflict("Tag.TagParseFailed", "Failed to parse tags");
     public static Error InvalidName() =>
         Error.Validation("Tag.InvalidName", "Tag name is required");
 

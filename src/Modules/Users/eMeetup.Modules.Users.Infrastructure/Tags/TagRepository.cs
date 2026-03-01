@@ -27,20 +27,20 @@ internal sealed class TagRepository(UsersDbContext context, ILogger<TagRepositor
         }
     }
 
-    public async Task<Tag?> GetBySlugAsync(string slug, CancellationToken cancellationToken = default)
+    public async Task<Tag?> GetByTagAsync(string tag, CancellationToken cancellationToken = default)
     {
         try
         {
-            if (string.IsNullOrWhiteSpace(slug))
+            if (string.IsNullOrWhiteSpace(tag))
                 return null;
 
-            var normalizedSlug = slug.Trim().ToLowerInvariant();
+            var normalizedTag = tag.Trim().ToLowerInvariant();
             return await _context.Tags
-                .FirstOrDefaultAsync(t => t.Slug.ToLower() == normalizedSlug, cancellationToken);
+                .FirstOrDefaultAsync(t => t.Name.ToLower() == normalizedTag, cancellationToken);
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Error getting tag by slug: {Slug}", slug);
+            logger.LogError(ex, "Error getting tag: {Tag}", tag);
             throw;
         }
     }
@@ -89,8 +89,7 @@ internal sealed class TagRepository(UsersDbContext context, ILogger<TagRepositor
             return await _context.Tags
                 .Where(t => t.IsActive &&
                            (t.Name.ToLower().Contains(term) ||
-                            t.Description.ToLower().Contains(term) ||
-                            t.Slug.ToLower().Contains(term)))
+                            t.Description.ToLower().Contains(term)))
                 .OrderBy(t => t.Name)
                 .ToListAsync(cancellationToken);
         }
@@ -117,40 +116,40 @@ internal sealed class TagRepository(UsersDbContext context, ILogger<TagRepositor
         }
     }
 
-    public async Task<IEnumerable<Tag>> GetBySlugsAsync(IEnumerable<string> slugs, CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<Tag>> GetByTagsAsync(IEnumerable<string> tags, CancellationToken cancellationToken = default)
     {
         try
         {
-            var slugList = slugs.Select(s => s.Trim().ToLowerInvariant()).ToList();
-            if (!slugList.Any())
+            var tagList = tags.Select(s => s.Trim().ToLowerInvariant()).ToList();
+            if (!tagList.Any())
                 return Enumerable.Empty<Tag>();
 
             return await _context.Tags
-                .Where(t => slugList.Contains(t.Slug.ToLower()))
+                .Where(t => tagList.Contains(t.Name.ToLower()))
                 .OrderBy(t => t.Name)
                 .ToListAsync(cancellationToken);
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Error getting tags by slugs");
+            logger.LogError(ex, "Error getting tags");
             throw;
         }
     }
 
-    public async Task<bool> SlugExistsAsync(string slug, CancellationToken cancellationToken = default)
+    public async Task<bool> TagExistsAsync(string tag, CancellationToken cancellationToken = default)
     {
         try
         {
-            if (string.IsNullOrWhiteSpace(slug))
+            if (string.IsNullOrWhiteSpace(tag))
                 return false;
 
-            var normalizedSlug = slug.Trim().ToLowerInvariant();
+            var normalizedTag = tag.Trim().ToLowerInvariant();
             return await _context.Tags
-                .AnyAsync(t => t.Slug.ToLower() == normalizedSlug, cancellationToken);
+                .AnyAsync(t => t.Name.ToLower() == normalizedTag, cancellationToken);
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Error checking if tag exists by slug: {Slug}", slug);
+            logger.LogError(ex, "Error checking if tag exists by tag: {Tag}", tag);
             throw;
         }
     }

@@ -5,6 +5,10 @@
   </PropertyGroup>  
 
   <ItemGroup>
+    <Compile Remove="Services\TagService.cs" />
+  </ItemGroup>  
+
+  <ItemGroup>
     <ProjectReference Include="..\..\..\Common\eMeetup.Common.Infrastructure\eMeetup.Common.Infrastructure.csproj" />
     <ProjectReference Include="..\eMeetup.Modules.Users.Application\eMeetup.Modules.Users.Application.csproj" />
     <ProjectReference Include="..\eMeetup.Modules.Users.Presentation\eMeetup.Modules.Users.Presentation.csproj" />

@@ -26,6 +26,7 @@ public class Worker(
             var environment = scope.ServiceProvider.GetRequiredService<IHostEnvironment>();
 
             var usersInitializer = scope.ServiceProvider.GetRequiredService<UsersDbContextInitializer>();
+            var eventsInitializer = scope.ServiceProvider.GetRequiredService<EventsDbContextInitializer>();
             await usersInitializer.EnsureDatabaseAsync(cancellationToken);
             await usersInitializer.RunMigrationAsync(cancellationToken);
 

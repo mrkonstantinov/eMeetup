@@ -1,7 +1,4 @@
-﻿using System.Reflection;
-using System.Xml.Linq;
-using eMeetup.Common.Domain;
-using eMeetup.Modules.Users.Domain.Errors;
+﻿using eMeetup.Common.Domain;
 using eMeetup.Modules.Users.Domain.Tags;
 using eMeetup.Modules.Users.Domain.UserInterests;
 

@@ -1,13 +1,10 @@
-﻿using eMeetup.Common.Domain;
-using eMeetup.Modules.Users.Domain.Interfaces.Repositories;
+﻿using eMeetup.Modules.Users.Domain.Interfaces.Repositories;
 using eMeetup.Modules.Users.Domain.Interfaces.Services;
 using eMeetup.Modules.Users.Domain.Users;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace eMeetup.Modules.Users.Infrastructure.Services;
-
 
 
 public class UserPhotoUpdateService : IUserPhotoUpdateService
@@ -31,7 +28,7 @@ public class UserPhotoUpdateService : IUserPhotoUpdateService
         CancellationToken cancellationToken = default)
     {
         var result = new PhotoUpdateResult
-        {
+        { 
             UserId = userId
         };
 

@@ -1,0 +1,349 @@
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
+
+#nullable disable
+
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
+namespace eMeetup.Modules.Events.Infrastructure.Database.Migrations
+{
+    /// <inheritdoc />
+    public partial class InitialMigration : Migration
+    {
+        /// <inheritdoc />
+        protected override void Up(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.EnsureSchema(
+                name: "events");
+
+            migrationBuilder.CreateTable(
+                name: "events",
+                schema: "events",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "uuid", nullable: false),
+                    created_by_user_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    created_by_user_name = table.Column<string>(type: "text", nullable: false),
+                    created_by_user_email = table.Column<string>(type: "text", nullable: false),
+                    created_by_user_display_name = table.Column<string>(type: "text", nullable: false),
+                    title = table.Column<string>(type: "text", nullable: false),
+                    description = table.Column<string>(type: "text", nullable: false),
+                    location_latitude = table.Column<double>(type: "numeric(9,6)", nullable: false),
+                    location_longitude = table.Column<double>(type: "numeric(9,6)", nullable: false),
+                    location_city = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
+                    location_street = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
+                    starts_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    ends_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    status = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_events", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "inbox_message_consumers",
+                schema: "events",
+                columns: table => new
+                {
+                    inbox_message_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    name = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_inbox_message_consumers", x => new { x.inbox_message_id, x.name });
+                });
+
+            migrationBuilder.CreateTable(
+                name: "inbox_messages",
+                schema: "events",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "uuid", nullable: false),
+                    type = table.Column<string>(type: "text", nullable: false),
+                    content = table.Column<string>(type: "jsonb", maxLength: 2000, nullable: false),
+                    occurred_on_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    processed_on_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    error = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_inbox_messages", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "outbox_message_consumers",
+                schema: "events",
+                columns: table => new
+                {
+                    outbox_message_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    name = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_outbox_message_consumers", x => new { x.outbox_message_id, x.name });
+                });
+
+            migrationBuilder.CreateTable(
+                name: "outbox_messages",
+                schema: "events",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "uuid", nullable: false),
+                    type = table.Column<string>(type: "text", nullable: false),
+                    content = table.Column<string>(type: "jsonb", maxLength: 2000, nullable: false),
+                    occurred_on_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    processed_on_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    error = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_outbox_messages", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "tag_groups",
+                schema: "events",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
+                    name = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
+                    description = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: true, defaultValue: ""),
+                    icon = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true, defaultValue: ""),
+                    display_order = table.Column<int>(type: "integer", nullable: false, defaultValue: 0),
+                    is_active = table.Column<bool>(type: "boolean", nullable: false, defaultValue: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_tag_groups", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "tags",
+                schema: "events",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
+                    name = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
+                    slug = table.Column<string>(type: "character varying(60)", maxLength: 60, nullable: false),
+                    description = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false, defaultValue: ""),
+                    usage_count = table.Column<int>(type: "integer", nullable: false, defaultValue: 0),
+                    is_active = table.Column<bool>(type: "boolean", nullable: false, defaultValue: true),
+                    tag_group_id = table.Column<Guid>(type: "uuid", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_tags", x => x.id);
+                    table.ForeignKey(
+                        name: "fk_tags_tag_group_tag_group_id",
+                        column: x => x.tag_group_id,
+                        principalSchema: "events",
+                        principalTable: "tag_groups",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.SetNull);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "event_tags",
+                schema: "events",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "uuid", nullable: false),
+                    event_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    tag_id = table.Column<Guid>(type: "uuid", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_event_tags", x => x.id);
+                    table.ForeignKey(
+                        name: "fk_event_tags_events_event_id",
+                        column: x => x.event_id,
+                        principalSchema: "events",
+                        principalTable: "events",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "fk_event_tags_tags_tag_id",
+                        column: x => x.tag_id,
+                        principalSchema: "events",
+                        principalTable: "tags",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.InsertData(
+                schema: "events",
+                table: "tag_groups",
+                columns: new[] { "id", "description", "display_order", "icon", "is_active", "name" },
+                values: new object[,]
+                {
+                    { new Guid("11111111-1111-1111-1111-111111111111"), "Running, swimming, cycling and other sports activities", 1, "🏃", true, "Active Lifestyle" },
+                    { new Guid("22222222-2222-2222-2222-222222222222"), "Skiing, snowboarding, ice skating and snow tubing", 2, "❄️", true, "Winter Activities" },
+                    { new Guid("33333333-3333-3333-3333-333333333333"), "Hiking, biking tours and picnics in nature", 3, "⛰️", true, "Adventure & Outdoors" },
+                    { new Guid("44444444-4444-4444-4444-444444444444"), "Packrafting, SUP, kayaking and other water hikes", 4, "🚣", true, "Water Adventures" },
+                    { new Guid("55555555-5555-5555-5555-555555555555"), "Music, food and cultural festivals celebrations", 5, "🎪", true, "Festivals & Events" },
+                    { new Guid("66666666-6666-6666-6666-666666666666"), "City trips, sightseeing, food tours and road trips", 6, "✈️", true, "Travel & Exploration" },
+                    { new Guid("77777777-7777-7777-7777-777777777777"), "Cinema, theater, concerts and rock shows", 7, "🎭", true, "Culture & Entertainment" },
+                    { new Guid("88888888-8888-8888-8888-888888888888"), "Pub meetups, terrace cafes and relaxing time", 8, "😎", true, "Chill & Hangout" },
+                    { new Guid("99999999-9999-9999-9999-999999999999"), "Marathons, triathlons, competitions and races in other cities", 9, "🏆", true, "Sports Events" }
+                });
+
+            migrationBuilder.InsertData(
+                schema: "events",
+                table: "tags",
+                columns: new[] { "id", "description", "is_active", "name", "slug", "tag_group_id" },
+                values: new object[,]
+                {
+                    { new Guid("11111111-1111-1111-1111-aaaaaaaaaaaa"), "Jogging and running activities", true, "Running", "running", new Guid("11111111-1111-1111-1111-111111111111") },
+                    { new Guid("11111111-1111-1111-1111-bbbbbbbbbbbb"), "Pool swimming and training", true, "Swimming", "swimming", new Guid("11111111-1111-1111-1111-111111111111") },
+                    { new Guid("11111111-1111-1111-1111-cccccccccccc"), "Road and city bike rides", true, "Cycling", "cycling", new Guid("11111111-1111-1111-1111-111111111111") },
+                    { new Guid("11111111-1111-1111-1111-dddddddddddd"), "Fitness and strength training", true, "Gym Workout", "gym-workout", new Guid("11111111-1111-1111-1111-111111111111") },
+                    { new Guid("11111111-1111-1111-1111-eeeeeeeeeeee"), "Yoga and stretching sessions", true, "Yoga", "yoga", new Guid("11111111-1111-1111-1111-111111111111") },
+                    { new Guid("22222222-2222-2222-2222-aaaaaaaaaaaa"), "Downhill skiing on slopes", true, "Alpine Skiing", "alpine-skiing", new Guid("22222222-2222-2222-2222-222222222222") },
+                    { new Guid("22222222-2222-2222-2222-bbbbbbbbbbbb"), "Nordic skiing on trails", true, "Cross-Country Skiing", "cross-country-skiing", new Guid("22222222-2222-2222-2222-222222222222") },
+                    { new Guid("22222222-2222-2222-2222-cccccccccccc"), "Snowboarding on slopes and parks", true, "Snowboarding", "snowboarding", new Guid("22222222-2222-2222-2222-222222222222") },
+                    { new Guid("22222222-2222-2222-2222-dddddddddddd"), "Skating on ice rinks", true, "Ice Skating", "ice-skating", new Guid("22222222-2222-2222-2222-222222222222") },
+                    { new Guid("22222222-2222-2222-2222-eeeeeeeeeeee"), "Snow sliding with tubes", true, "Snow Tubing", "snow-tubing", new Guid("22222222-2222-2222-2222-222222222222") },
+                    { new Guid("22222222-2222-2222-2222-ffffffffffff"), "Hiking with snowshoes", true, "Winter Hiking", "winter-hiking", new Guid("22222222-2222-2222-2222-222222222222") },
+                    { new Guid("33333333-3333-3333-3333-aaaaaaaaaaaa"), "Day hiking on trails", true, "Hike", "hike", new Guid("33333333-3333-3333-3333-333333333333") },
+                    { new Guid("33333333-3333-3333-3333-bbbbbbbbbbbb"), "Multi-day cycling adventures", true, "Bike Touring", "bike-touring", new Guid("33333333-3333-3333-3333-333333333333") },
+                    { new Guid("33333333-3333-3333-3333-cccccccccccc"), "Outdoor meals in nature", true, "Picnic", "picnic", new Guid("33333333-3333-3333-3333-333333333333") },
+                    { new Guid("33333333-3333-3333-3333-dddddddddddd"), "Overnight stays in nature", true, "Camping", "camping", new Guid("33333333-3333-3333-3333-333333333333") },
+                    { new Guid("33333333-3333-3333-3333-eeeeeeeeeeee"), "Running on nature trails", true, "Trail Running", "trail-running", new Guid("33333333-3333-3333-3333-333333333333") },
+                    { new Guid("44444444-4444-4444-4444-aaaaaaaaaaaa"), "Lightweight portable rafting", true, "Packrafting", "packrafting", new Guid("44444444-4444-4444-4444-444444444444") },
+                    { new Guid("44444444-4444-4444-4444-bbbbbbbbbbbb"), "Stand-Up Paddleboarding", true, "SUP", "sup", new Guid("44444444-4444-4444-4444-444444444444") },
+                    { new Guid("44444444-4444-4444-4444-cccccccccccc"), "Kayaking on rivers and lakes", true, "Kayaking", "kayaking", new Guid("44444444-4444-4444-4444-444444444444") },
+                    { new Guid("44444444-4444-4444-4444-dddddddddddd"), "Canoe trips on calm waters", true, "Canoeing", "canoeing", new Guid("44444444-4444-4444-4444-444444444444") },
+                    { new Guid("44444444-4444-4444-4444-eeeeeeeeeeee"), "White water rafting", true, "Rafting", "rafting", new Guid("44444444-4444-4444-4444-444444444444") },
+                    { new Guid("44444444-4444-4444-4444-ffffffffffff"), "Swimming in lakes and seas", true, "Open Water Swimming", "open-water-swimming", new Guid("44444444-4444-4444-4444-444444444444") },
+                    { new Guid("55555555-5555-5555-5555-aaaaaaaaaaaa"), "Live music and concerts festivals", true, "Music Festival", "music-festival", new Guid("55555555-5555-5555-5555-555555555555") },
+                    { new Guid("55555555-5555-5555-5555-bbbbbbbbbbbb"), "Culinary and gastronomy events", true, "Food Festival", "food-festival", new Guid("55555555-5555-5555-5555-555555555555") },
+                    { new Guid("55555555-5555-5555-5555-cccccccccccc"), "Traditional and cultural celebrations", true, "Cultural Festival", "cultural-festival", new Guid("55555555-5555-5555-5555-555555555555") },
+                    { new Guid("55555555-5555-5555-5555-dddddddddddd"), "Local city festivals and fairs", true, "City Celebration", "city-celebration", new Guid("55555555-5555-5555-5555-555555555555") },
+                    { new Guid("55555555-5555-5555-5555-eeeeeeeeeeee"), "Craft beer and brewery events", true, "Beer Festival", "beer-festival", new Guid("55555555-5555-5555-5555-555555555555") },
+                    { new Guid("66666666-6666-6666-6666-aaaaaaaaaaaa"), "Sightseeing in cities", true, "City Trip", "city-trip", new Guid("66666666-6666-6666-6666-666666666666") },
+                    { new Guid("66666666-6666-6666-6666-bbbbbbbbbbbb"), "Gastronomy and local food tours", true, "Food Tourism", "food-tourism", new Guid("66666666-6666-6666-6666-666666666666") },
+                    { new Guid("66666666-6666-6666-6666-cccccccccccc"), "Traveling by car", true, "Road Trip", "road-trip", new Guid("66666666-6666-6666-6666-666666666666") },
+                    { new Guid("66666666-6666-6666-6666-dddddddddddd"), "Museums and architecture tours", true, "Cultural Tour", "cultural-tour", new Guid("66666666-6666-6666-6666-666666666666") },
+                    { new Guid("66666666-6666-6666-6666-eeeeeeeeeeee"), "Short trips out of town", true, "Weekend Getaway", "weekend-getaway", new Guid("66666666-6666-6666-6666-666666666666") },
+                    { new Guid("77777777-7777-7777-7777-aaaaaaaaaaaa"), "Movies and film screenings", true, "Cinema", "cinema", new Guid("77777777-7777-7777-7777-777777777777") },
+                    { new Guid("77777777-7777-7777-7777-bbbbbbbbbbbb"), "Plays and theatrical performances", true, "Theater", "theater", new Guid("77777777-7777-7777-7777-777777777777") },
+                    { new Guid("77777777-7777-7777-7777-cccccccccccc"), "Live music performances", true, "Concert", "concert", new Guid("77777777-7777-7777-7777-777777777777") },
+                    { new Guid("77777777-7777-7777-7777-dddddddddddd"), "Rock and metal gigs", true, "Rock Show", "rock-show", new Guid("77777777-7777-7777-7777-777777777777") },
+                    { new Guid("77777777-7777-7777-7777-eeeeeeeeeeee"), "Gallery and art shows", true, "Art Exhibition", "art-exhibition", new Guid("77777777-7777-7777-7777-777777777777") },
+                    { new Guid("77777777-7777-7777-7777-ffffffffffff"), "Stand-up comedy performances", true, "Comedy Show", "comedy-show", new Guid("77777777-7777-7777-7777-777777777777") },
+                    { new Guid("88888888-8888-8888-8888-aaaaaaaaaaaa"), "Bar and pub meetups", true, "Pub", "pub", new Guid("88888888-8888-8888-8888-888888888888") },
+                    { new Guid("88888888-8888-8888-8888-bbbbbbbbbbbb"), "Outdoor cafes and terraces", true, "Patio", "patio", new Guid("88888888-8888-8888-8888-888888888888") },
+                    { new Guid("88888888-8888-8888-8888-cccccccccccc"), "Casual coffee meetings", true, "Coffee Date", "coffee-date", new Guid("88888888-8888-8888-8888-888888888888") },
+                    { new Guid("88888888-8888-8888-8888-dddddddddddd"), "Board game nights", true, "Board Games", "board-games", new Guid("88888888-8888-8888-8888-888888888888") },
+                    { new Guid("88888888-8888-8888-8888-eeeeeeeeeeee"), "Relaxed park gatherings", true, "Picnic in Park", "picnic-in-park", new Guid("88888888-8888-8888-8888-888888888888") },
+                    { new Guid("99999999-9999-9999-9999-aaaaaaaaaaaa"), "Swim, bike, run races", true, "Triathlon", "triathlon", new Guid("99999999-9999-9999-9999-999999999999") },
+                    { new Guid("99999999-9999-9999-9999-bbbbbbbbbbbb"), "Running marathons in other cities", true, "Marathon", "marathon", new Guid("99999999-9999-9999-9999-999999999999") },
+                    { new Guid("99999999-9999-9999-9999-cccccccccccc"), "Tough mudder and obstacle courses", true, "Obstacle Race", "obstacle-race", new Guid("99999999-9999-9999-9999-999999999999") },
+                    { new Guid("99999999-9999-9999-9999-dddddddddddd"), "Competitive bike racing", true, "Cycling Race", "cycling-race", new Guid("99999999-9999-9999-9999-999999999999") },
+                    { new Guid("99999999-9999-9999-9999-eeeeeeeeeeee"), "Open water or pool races", true, "Swimming Competition", "swimming-competition", new Guid("99999999-9999-9999-9999-999999999999") },
+                    { new Guid("99999999-9999-9999-9999-ffffffffffff"), "Off-road running competitions", true, "Trail Running Race", "trail-running-race", new Guid("99999999-9999-9999-9999-999999999999") }
+                });
+
+            migrationBuilder.CreateIndex(
+                name: "ix_event_tags_event_id",
+                schema: "events",
+                table: "event_tags",
+                column: "event_id");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_event_tags_tag_id",
+                schema: "events",
+                table: "event_tags",
+                column: "tag_id");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_tag_groups_display_order",
+                schema: "events",
+                table: "tag_groups",
+                column: "display_order");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_tag_groups_is_active",
+                schema: "events",
+                table: "tag_groups",
+                column: "is_active");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_tag_groups_name",
+                schema: "events",
+                table: "tag_groups",
+                column: "name",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "ix_tags_is_active",
+                schema: "events",
+                table: "tags",
+                column: "is_active");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_tags_name",
+                schema: "events",
+                table: "tags",
+                column: "name",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "ix_tags_slug",
+                schema: "events",
+                table: "tags",
+                column: "slug",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "ix_tags_tag_group_id",
+                schema: "events",
+                table: "tags",
+                column: "tag_group_id");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_tags_usage_count",
+                schema: "events",
+                table: "tags",
+                column: "usage_count");
+        }
+
+        /// <inheritdoc />
+        protected override void Down(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.DropTable(
+                name: "event_tags",
+                schema: "events");
+
+            migrationBuilder.DropTable(
+                name: "inbox_message_consumers",
+                schema: "events");
+
+            migrationBuilder.DropTable(
+                name: "inbox_messages",
+                schema: "events");
+
+            migrationBuilder.DropTable(
+                name: "outbox_message_consumers",
+                schema: "events");
+
+            migrationBuilder.DropTable(
+                name: "outbox_messages",
+                schema: "events");
+
+            migrationBuilder.DropTable(
+                name: "events",
+                schema: "events");
+
+            migrationBuilder.DropTable(
+                name: "tags",
+                schema: "events");
+
+            migrationBuilder.DropTable(
+                name: "tag_groups",
+                schema: "events");
+        }
+    }
+}
