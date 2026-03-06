@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
 
-namespace eMeetup.Modules.Events.Infrastructure.Database.Migrations
+namespace eMeetup.Modules.Users.Infrastructure.Database.Migrations
 {
     /// <inheritdoc />
     public partial class InitialMigration : Migration
@@ -14,37 +14,11 @@ namespace eMeetup.Modules.Events.Infrastructure.Database.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.EnsureSchema(
-                name: "events");
-
-            migrationBuilder.CreateTable(
-                name: "events",
-                schema: "events",
-                columns: table => new
-                {
-                    id = table.Column<Guid>(type: "uuid", nullable: false),
-                    created_by_user_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    created_by_user_name = table.Column<string>(type: "text", nullable: false),
-                    created_by_user_email = table.Column<string>(type: "text", nullable: false),
-                    created_by_user_display_name = table.Column<string>(type: "text", nullable: false),
-                    title = table.Column<string>(type: "text", nullable: false),
-                    description = table.Column<string>(type: "text", nullable: false),
-                    location_latitude = table.Column<double>(type: "numeric(9,6)", nullable: false),
-                    location_longitude = table.Column<double>(type: "numeric(9,6)", nullable: false),
-                    location_city = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
-                    location_street = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
-                    starts_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    ends_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    status = table.Column<int>(type: "integer", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("pk_events", x => x.id);
-                });
+                name: "users");
 
             migrationBuilder.CreateTable(
                 name: "inbox_message_consumers",
-                schema: "events",
+                schema: "users",
                 columns: table => new
                 {
                     inbox_message_id = table.Column<Guid>(type: "uuid", nullable: false),
@@ -57,7 +31,7 @@ namespace eMeetup.Modules.Events.Infrastructure.Database.Migrations
 
             migrationBuilder.CreateTable(
                 name: "inbox_messages",
-                schema: "events",
+                schema: "users",
                 columns: table => new
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
@@ -74,7 +48,7 @@ namespace eMeetup.Modules.Events.Infrastructure.Database.Migrations
 
             migrationBuilder.CreateTable(
                 name: "outbox_message_consumers",
-                schema: "events",
+                schema: "users",
                 columns: table => new
                 {
                     outbox_message_id = table.Column<Guid>(type: "uuid", nullable: false),
@@ -87,7 +61,7 @@ namespace eMeetup.Modules.Events.Infrastructure.Database.Migrations
 
             migrationBuilder.CreateTable(
                 name: "outbox_messages",
-                schema: "events",
+                schema: "users",
                 columns: table => new
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
@@ -103,8 +77,32 @@ namespace eMeetup.Modules.Events.Infrastructure.Database.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "permissions",
+                schema: "users",
+                columns: table => new
+                {
+                    code = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_permissions", x => x.code);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "roles",
+                schema: "users",
+                columns: table => new
+                {
+                    name = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_roles", x => x.name);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "tag_groups",
-                schema: "events",
+                schema: "users",
                 columns: table => new
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
@@ -120,8 +118,60 @@ namespace eMeetup.Modules.Events.Infrastructure.Database.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "users",
+                schema: "users",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "uuid", nullable: false),
+                    identity_id = table.Column<string>(type: "text", nullable: false),
+                    email = table.Column<string>(type: "character varying(300)", maxLength: 300, nullable: false),
+                    user_name = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
+                    date_of_birth = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    gender = table.Column<int>(type: "integer", nullable: false),
+                    locality = table.Column<string>(type: "text", nullable: true),
+                    street = table.Column<string>(type: "text", nullable: true),
+                    bio = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
+                    uri = table.Column<string>(type: "text", nullable: true),
+                    status = table.Column<int>(type: "integer", nullable: true),
+                    created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    last_active = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_users", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "role_permissions",
+                schema: "users",
+                columns: table => new
+                {
+                    permission_code = table.Column<string>(type: "character varying(100)", nullable: false),
+                    role_name = table.Column<string>(type: "character varying(50)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_role_permissions", x => new { x.permission_code, x.role_name });
+                    table.ForeignKey(
+                        name: "fk_role_permissions_permissions_permission_code",
+                        column: x => x.permission_code,
+                        principalSchema: "users",
+                        principalTable: "permissions",
+                        principalColumn: "code",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "fk_role_permissions_roles_role_name",
+                        column: x => x.role_name,
+                        principalSchema: "users",
+                        principalTable: "roles",
+                        principalColumn: "name",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "tags",
-                schema: "events",
+                schema: "users",
                 columns: table => new
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
@@ -138,42 +188,120 @@ namespace eMeetup.Modules.Events.Infrastructure.Database.Migrations
                     table.ForeignKey(
                         name: "fk_tags_tag_group_tag_group_id",
                         column: x => x.tag_group_id,
-                        principalSchema: "events",
+                        principalSchema: "users",
                         principalTable: "tag_groups",
                         principalColumn: "id",
                         onDelete: ReferentialAction.SetNull);
                 });
 
             migrationBuilder.CreateTable(
-                name: "event_tags",
-                schema: "events",
+                name: "user_photos",
+                schema: "users",
                 columns: table => new
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
-                    event_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    tag_id = table.Column<Guid>(type: "uuid", nullable: false)
+                    user_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    url = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false),
+                    display_order = table.Column<int>(type: "integer", nullable: false, defaultValue: 0),
+                    is_primary = table.Column<bool>(type: "boolean", nullable: false, defaultValue: false),
+                    uploaded_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pk_event_tags", x => x.id);
+                    table.PrimaryKey("pk_user_photos", x => x.id);
                     table.ForeignKey(
-                        name: "fk_event_tags_events_event_id",
-                        column: x => x.event_id,
-                        principalSchema: "events",
-                        principalTable: "events",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "fk_event_tags_tags_tag_id",
-                        column: x => x.tag_id,
-                        principalSchema: "events",
-                        principalTable: "tags",
+                        name: "fk_user_photos_users_user_id",
+                        column: x => x.user_id,
+                        principalSchema: "users",
+                        principalTable: "users",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "user_roles",
+                schema: "users",
+                columns: table => new
+                {
+                    role_name = table.Column<string>(type: "character varying(50)", nullable: false),
+                    user_id = table.Column<Guid>(type: "uuid", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_user_roles", x => new { x.role_name, x.user_id });
+                    table.ForeignKey(
+                        name: "fk_user_roles_roles_roles_name",
+                        column: x => x.role_name,
+                        principalSchema: "users",
+                        principalTable: "roles",
+                        principalColumn: "name",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "fk_user_roles_users_user_id",
+                        column: x => x.user_id,
+                        principalSchema: "users",
+                        principalTable: "users",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "user_interests",
+                schema: "users",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
+                    user_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    tag_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "NOW()")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_user_interests", x => x.id);
+                    table.ForeignKey(
+                        name: "fk_user_interests_tags_tag_id",
+                        column: x => x.tag_id,
+                        principalSchema: "users",
+                        principalTable: "tags",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "fk_user_interests_users_user_id",
+                        column: x => x.user_id,
+                        principalSchema: "users",
+                        principalTable: "users",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                },
+                comment: "Junction table for user interests and tags");
+
             migrationBuilder.InsertData(
-                schema: "events",
+                schema: "users",
+                table: "permissions",
+                column: "code",
+                values: new object[]
+                {
+                    "event-statistics:read",
+                    "events:read",
+                    "events:search",
+                    "events:update",
+                    "tags:read",
+                    "users:read",
+                    "users:update"
+                });
+
+            migrationBuilder.InsertData(
+                schema: "users",
+                table: "roles",
+                column: "name",
+                values: new object[]
+                {
+                    "Administrator",
+                    "Member"
+                });
+
+            migrationBuilder.InsertData(
+                schema: "users",
                 table: "tag_groups",
                 columns: new[] { "id", "description", "display_order", "icon", "is_active", "name" },
                 values: new object[,]
@@ -190,7 +318,28 @@ namespace eMeetup.Modules.Events.Infrastructure.Database.Migrations
                 });
 
             migrationBuilder.InsertData(
-                schema: "events",
+                schema: "users",
+                table: "role_permissions",
+                columns: new[] { "permission_code", "role_name" },
+                values: new object[,]
+                {
+                    { "event-statistics:read", "Administrator" },
+                    { "events:read", "Administrator" },
+                    { "events:read", "Member" },
+                    { "events:search", "Administrator" },
+                    { "events:search", "Member" },
+                    { "events:update", "Administrator" },
+                    { "events:update", "Member" },
+                    { "tags:read", "Administrator" },
+                    { "tags:read", "Member" },
+                    { "users:read", "Administrator" },
+                    { "users:read", "Member" },
+                    { "users:update", "Administrator" },
+                    { "users:update", "Member" }
+                });
+
+            migrationBuilder.InsertData(
+                schema: "users",
                 table: "tags",
                 columns: new[] { "id", "description", "is_active", "name", "slug", "tag_group_id" },
                 values: new object[,]
@@ -247,103 +396,184 @@ namespace eMeetup.Modules.Events.Infrastructure.Database.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "ix_event_tags_event_id",
-                schema: "events",
-                table: "event_tags",
-                column: "event_id");
-
-            migrationBuilder.CreateIndex(
-                name: "ix_event_tags_tag_id",
-                schema: "events",
-                table: "event_tags",
-                column: "tag_id");
+                name: "ix_role_permissions_role_name",
+                schema: "users",
+                table: "role_permissions",
+                column: "role_name");
 
             migrationBuilder.CreateIndex(
                 name: "ix_tag_groups_display_order",
-                schema: "events",
+                schema: "users",
                 table: "tag_groups",
                 column: "display_order");
 
             migrationBuilder.CreateIndex(
                 name: "ix_tag_groups_is_active",
-                schema: "events",
+                schema: "users",
                 table: "tag_groups",
                 column: "is_active");
 
             migrationBuilder.CreateIndex(
                 name: "ix_tag_groups_name",
-                schema: "events",
+                schema: "users",
                 table: "tag_groups",
                 column: "name",
                 unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "ix_tags_is_active",
-                schema: "events",
+                schema: "users",
                 table: "tags",
                 column: "is_active");
 
             migrationBuilder.CreateIndex(
                 name: "ix_tags_name",
-                schema: "events",
+                schema: "users",
                 table: "tags",
                 column: "name",
                 unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "ix_tags_slug",
-                schema: "events",
+                schema: "users",
                 table: "tags",
                 column: "slug",
                 unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "ix_tags_tag_group_id",
-                schema: "events",
+                schema: "users",
                 table: "tags",
                 column: "tag_group_id");
 
             migrationBuilder.CreateIndex(
                 name: "ix_tags_usage_count",
-                schema: "events",
+                schema: "users",
                 table: "tags",
                 column: "usage_count");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_user_interests_created_at",
+                schema: "users",
+                table: "user_interests",
+                column: "created_at")
+                .Annotation("Npgsql:IndexMethod", "brin");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_user_interests_tag_id",
+                schema: "users",
+                table: "user_interests",
+                column: "tag_id")
+                .Annotation("Npgsql:IndexMethod", "hash");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_user_interests_user_id",
+                schema: "users",
+                table: "user_interests",
+                column: "user_id")
+                .Annotation("Npgsql:IndexMethod", "hash");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_user_interests_user_tag_unique",
+                schema: "users",
+                table: "user_interests",
+                columns: new[] { "user_id", "tag_id" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "ix_user_photos_user_id",
+                schema: "users",
+                table: "user_photos",
+                column: "user_id");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_user_photos_user_id_display_order",
+                schema: "users",
+                table: "user_photos",
+                columns: new[] { "user_id", "display_order" });
+
+            migrationBuilder.CreateIndex(
+                name: "ix_user_photos_user_id_is_primary",
+                schema: "users",
+                table: "user_photos",
+                columns: new[] { "user_id", "is_primary" },
+                filter: "is_primary = true");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_user_roles_user_id",
+                schema: "users",
+                table: "user_roles",
+                column: "user_id");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_users_email",
+                schema: "users",
+                table: "users",
+                column: "email",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "ix_users_identity_id",
+                schema: "users",
+                table: "users",
+                column: "identity_id",
+                unique: true);
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "event_tags",
-                schema: "events");
-
-            migrationBuilder.DropTable(
                 name: "inbox_message_consumers",
-                schema: "events");
+                schema: "users");
 
             migrationBuilder.DropTable(
                 name: "inbox_messages",
-                schema: "events");
+                schema: "users");
 
             migrationBuilder.DropTable(
                 name: "outbox_message_consumers",
-                schema: "events");
+                schema: "users");
 
             migrationBuilder.DropTable(
                 name: "outbox_messages",
-                schema: "events");
+                schema: "users");
 
             migrationBuilder.DropTable(
-                name: "events",
-                schema: "events");
+                name: "role_permissions",
+                schema: "users");
+
+            migrationBuilder.DropTable(
+                name: "user_interests",
+                schema: "users");
+
+            migrationBuilder.DropTable(
+                name: "user_photos",
+                schema: "users");
+
+            migrationBuilder.DropTable(
+                name: "user_roles",
+                schema: "users");
+
+            migrationBuilder.DropTable(
+                name: "permissions",
+                schema: "users");
 
             migrationBuilder.DropTable(
                 name: "tags",
-                schema: "events");
+                schema: "users");
+
+            migrationBuilder.DropTable(
+                name: "roles",
+                schema: "users");
+
+            migrationBuilder.DropTable(
+                name: "users",
+                schema: "users");
 
             migrationBuilder.DropTable(
                 name: "tag_groups",
-                schema: "events");
+                schema: "users");
         }
     }
 }

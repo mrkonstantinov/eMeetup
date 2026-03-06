@@ -35,15 +35,13 @@ internal sealed class GetUserQueryHandler(IDbConnectionFactory dbConnectionFacto
         SELECT 
             u.id AS Id,
             u.email AS Email,
-            u.user_name AS UserName,
+            u.user_name UserName,
             u.date_of_birth AS DateOfBirth,
             u.gender AS Gender,
             u.bio AS Bio,
-            u.profile_picture_url AS ProfilePictureUrl,
-            u.location_latitude AS Latitude,
-            u.location_longitude AS Longitude,
-            u.location_city AS City,
-            u.location_street AS Street,
+            u.uri AS Uri,
+            u.locality AS Locality,
+            u.street AS street,
             u.created_at AS CreatedAt,
             u.updated_at AS UpdatedAt
         FROM users.users u

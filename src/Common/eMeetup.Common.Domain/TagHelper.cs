@@ -1,7 +1,9 @@
-﻿using eMeetup.Modules.Users.Domain.Interfaces.Repositories;
-using eMeetup.Modules.Users.Domain.Tags;
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
 
-namespace eMeetup.Modules.Users.Domain.Helpers;
+namespace eMeetup.Common.Domain;
+
 public static class TagHelper
 {
     private const string TagSeparator = ",";
@@ -49,11 +51,11 @@ public static class TagHelper
         return string.Join(separator, tags.Where(s => !string.IsNullOrWhiteSpace(s)).Select(s => s.Trim()));
     }
 
-    public static string CombineTags(IEnumerable<Tag> tags, bool includeSpaces = true)
-    {
-        if (tags == null) return string.Empty;
-        return CombineTags(tags.Select(t => t?.Name), includeSpaces);
-    }
+    //public static string CombineTags(IEnumerable<Tag> tags, bool includeSpaces = true)
+    //{
+    //    if (tags == null) return string.Empty;
+    //    return CombineTags(tags.Select(t => t?.Name), includeSpaces);
+    //}
 
     // Normalize a single tag
     public static string NormalizeTag(string tag)
@@ -65,9 +67,9 @@ public static class TagHelper
     }
 
     // Filter out non-existing tags using a repository
-    public static async Task<string[]> GetExistingTagsAsync(
+    public static async Task<string[]> GetExistingTagsAsync<T>(
         string tags,
-        ITagRepository tagRepository,
+        ITagRepository<T> tagRepository,
         CancellationToken cancellationToken = default)
     {
         var allTags = SplitAndNormalizeTags(tags);
@@ -75,13 +77,18 @@ public static class TagHelper
             return Array.Empty<string>();
 
         var existingTags = await tagRepository.GetByTagsAsync(allTags, cancellationToken);
-        return existingTags.Select(t => t.Name).ToArray();
+        // Assuming T has a Name property - you might need to adjust this based on your entity
+        return existingTags.Select(t =>
+        {
+            var property = typeof(T).GetProperty("Name");
+            return property?.GetValue(t)?.ToString() ?? string.Empty;
+        }).Where(name => !string.IsNullOrWhiteSpace(name)).ToArray();
     }
 
     // Parse tags and return only existing ones as a combined string
-    public static async Task<string> ParseAndCombineExistingTagsAsync(
+    public static async Task<string> ParseAndCombineExistingTagsAsync<T>(
         string tag,
-        ITagRepository tagRepository,
+        ITagRepository<T> tagRepository,
         CancellationToken cancellationToken = default,
         bool includeSpaces = true)
     {

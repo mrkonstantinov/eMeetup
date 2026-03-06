@@ -1,6 +1,7 @@
 ﻿using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text.Json.Serialization;
+using MassTransit;
 using Microsoft.Extensions.Options;
 
 namespace eMeetup.Modules.Users.Infrastructure.Identity;
@@ -18,6 +19,15 @@ internal sealed class KeyCloakAuthDelegatingHandler(IOptions<KeyCloakOptions> op
         request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", authorizationToken.AccessToken);
 
         HttpResponseMessage httpResponseMessage = await base.SendAsync(request, cancellationToken);
+
+
+        if (!httpResponseMessage.IsSuccessStatusCode)
+        {
+            string errorContent = await httpResponseMessage.Content.ReadAsStringAsync();
+            string errorMessage = $"HTTP {(int)httpResponseMessage.StatusCode} {httpResponseMessage.StatusCode}: {httpResponseMessage.ReasonPhrase}\n{errorContent}";
+
+            throw new HttpRequestException(errorMessage, null, httpResponseMessage.StatusCode);
+        }
 
         httpResponseMessage.EnsureSuccessStatusCode();
 

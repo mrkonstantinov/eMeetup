@@ -167,16 +167,6 @@ namespace eMeetup.Modules.Events.Infrastructure.Database.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at");
 
-                    b.Property<string>("CreatedByUserDisplayName")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("created_by_user_display_name");
-
-                    b.Property<string>("CreatedByUserEmail")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("created_by_user_email");
-
                     b.Property<Guid>("CreatedByUserId")
                         .HasColumnType("uuid")
                         .HasColumnName("created_by_user_id");
@@ -187,17 +177,8 @@ namespace eMeetup.Modules.Events.Infrastructure.Database.Migrations
                         .HasColumnName("created_by_user_name");
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("description");
-
-                    b.Property<DateTime?>("EndsAtUtc")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("ends_at_utc");
-
-                    b.Property<DateTime>("StartsAtUtc")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("starts_at_utc");
 
                     b.Property<int>("Status")
                         .HasColumnType("integer")
@@ -207,6 +188,10 @@ namespace eMeetup.Modules.Events.Infrastructure.Database.Migrations
                         .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("title");
+
+                    b.Property<string>("Url")
+                        .HasColumnType("text")
+                        .HasColumnName("url");
 
                     b.HasKey("Id")
                         .HasName("pk_events");
@@ -931,45 +916,6 @@ namespace eMeetup.Modules.Events.Infrastructure.Database.Migrations
                     b.Navigation("Event");
 
                     b.Navigation("Tag");
-                });
-
-            modelBuilder.Entity("eMeetup.Modules.Events.Domain.Events.Event", b =>
-                {
-                    b.OwnsOne("eMeetup.Modules.Events.Domain.Events.Location", "Location", b1 =>
-                        {
-                            b1.Property<Guid>("EventId")
-                                .HasColumnType("uuid")
-                                .HasColumnName("id");
-
-                            b1.Property<string>("City")
-                                .HasMaxLength(100)
-                                .HasColumnType("character varying(100)")
-                                .HasColumnName("location_city");
-
-                            b1.Property<double>("Latitude")
-                                .HasColumnType("decimal(9,6)")
-                                .HasColumnName("location_latitude");
-
-                            b1.Property<double>("Longitude")
-                                .HasColumnType("decimal(9,6)")
-                                .HasColumnName("location_longitude");
-
-                            b1.Property<string>("Street")
-                                .HasMaxLength(100)
-                                .HasColumnType("character varying(100)")
-                                .HasColumnName("location_street");
-
-                            b1.HasKey("EventId");
-
-                            b1.ToTable("events", "events");
-
-                            b1.WithOwner()
-                                .HasForeignKey("EventId")
-                                .HasConstraintName("fk_events_events_id");
-                        });
-
-                    b.Navigation("Location")
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("eMeetup.Modules.Events.Domain.Tags.Tag", b =>

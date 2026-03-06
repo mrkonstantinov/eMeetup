@@ -3,7 +3,9 @@ using eMeetup.Common.Application.Messaging;
 using eMeetup.Common.Infrastructure.Outbox;
 using eMeetup.Common.Presentation.Endpoints;
 using eMeetup.Modules.Events.Application.Abstractions.Data;
+using eMeetup.Modules.Events.Domain.Events;
 using eMeetup.Modules.Events.Infrastructure.Database;
+using eMeetup.Modules.Events.Infrastructure.Events;
 using eMeetup.Modules.Events.Infrastructure.Inbox;
 using eMeetup.Modules.Events.Infrastructure.Outbox;
 using Microsoft.EntityFrameworkCore;
@@ -34,6 +36,7 @@ public static class EventsModule
 
     private static void AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
+        string databaseConnectionString = configuration.GetConnectionString("meetupDb")!;
         services.AddDbContext<EventsDbContext>((sp, options) =>
             options
                 .UseNpgsql(
@@ -45,7 +48,7 @@ public static class EventsModule
 
         services.AddScoped<IUnitOfWork>(sp => sp.GetRequiredService<EventsDbContext>());
 
-        //services.AddScoped<IEventRepository, EventRepository>();
+        services.AddScoped<IEventRepository, EventRepository>();
 
         services.Configure<OutboxOptions>(configuration.GetSection("Events:Outbox"));
 

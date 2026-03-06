@@ -4,6 +4,7 @@ using eMeetup.Api.Middleware;
 using eMeetup.Common.Application;
 using eMeetup.Common.Infrastructure;
 using eMeetup.Common.Presentation.Endpoints;
+using eMeetup.Modules.Events.Infrastructure;
 using eMeetup.Modules.Users.Infrastructure;
 using Serilog;
 
@@ -33,7 +34,7 @@ builder.Services.AddSwaggerGen(options =>
 
 builder.Services.AddApplication([
     eMeetup.Modules.Users.Application.AssemblyReference.Assembly,
-    //eMeetup.Modules.Ticketing.Application.AssemblyReference.Assembly,
+    eMeetup.Modules.Events.Application.AssemblyReference.Assembly,
     //eMeetup.Modules.Attendance.Application.AssemblyReference.Assembly
     ]);
 
@@ -45,9 +46,10 @@ builder.Services.AddInfrastructure(
     builder.Configuration.GetConnectionString("meetupDb")!,
     builder.Configuration.GetConnectionString("Cache")!);
 
-builder.Configuration.AddModuleConfiguration(["users"]);
+builder.Configuration.AddModuleConfiguration(["users", "events"]);
 
 builder.Services.AddUsersModule(builder.Configuration);
+builder.Services.AddEventsModule(builder.Configuration);
 //builder.Services.AddTicketingModule(builder.Configuration);
 //builder.Services.AddAttendanceModule(builder.Configuration);
 

@@ -11,6 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\Common\eMeetup.Common.Infrastructure\eMeetup.Common.Infrastructure.csproj" />
     <ProjectReference Include="..\..\..\Common\eMeetup.Common.Presentation\eMeetup.Common.Presentation.csproj" />
     <ProjectReference Include="..\eMeetup.Modules.Events.Application\eMeetup.Modules.Events.Application.csproj" />
     <ProjectReference Include="..\eMeetup.Modules.Events.IntegrationEvents\eMeetup.Modules.Events.IntegrationEvents.csproj" />

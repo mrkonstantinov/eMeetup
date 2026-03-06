@@ -26,7 +26,6 @@ public class Worker(
             var environment = scope.ServiceProvider.GetRequiredService<IHostEnvironment>();
 
             var usersInitializer = scope.ServiceProvider.GetRequiredService<UsersDbContextInitializer>();
-            var eventsInitializer = scope.ServiceProvider.GetRequiredService<EventsDbContextInitializer>();
             await usersInitializer.EnsureDatabaseAsync(cancellationToken);
             await usersInitializer.RunMigrationAsync(cancellationToken);
 
@@ -34,6 +33,10 @@ public class Worker(
             {
                 await usersInitializer.SeedDataAsync(cancellationToken);
             }
+
+            var eventsInitializer = scope.ServiceProvider.GetRequiredService<EventsDbContextInitializer>();
+            await eventsInitializer.EnsureDatabaseAsync(cancellationToken);
+            await eventsInitializer.RunMigrationAsync(cancellationToken);
 
             sw.Stop();
             logger.LogInformation($"DB creation and seeding took {sw.Elapsed} ");

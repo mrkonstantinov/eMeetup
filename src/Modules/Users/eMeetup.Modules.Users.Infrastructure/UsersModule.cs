@@ -89,8 +89,6 @@ public static class UsersModule
         services.AddScoped<ITagRepository, TagRepository>();
         services.AddScoped<IUserInterestRepository, UserInterestRepository>();
 
-        services.AddScoped<IGeocodingService, MockGeocodingService>();
-
        
         services.AddScoped<IUnitOfWork>(sp => sp.GetRequiredService<UsersDbContext>());
 

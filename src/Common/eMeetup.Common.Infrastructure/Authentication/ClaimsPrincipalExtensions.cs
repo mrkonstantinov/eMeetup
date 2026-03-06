@@ -20,6 +20,12 @@ public static class ClaimsPrincipalExtensions
                throw new EmeetupException("User identity is unavailable");
     }
 
+    public static string GetUserName(this ClaimsPrincipal? principal)
+    {
+        return principal?.FindFirst(CustomClaims.Username)?.Value ??
+               throw new EmeetupException("User name is unavailable");
+    }
+
     public static HashSet<string> GetPermissions(this ClaimsPrincipal? principal)
     {
         IEnumerable<Claim> permissionClaims = principal?.FindAll(CustomClaims.Permission) ??

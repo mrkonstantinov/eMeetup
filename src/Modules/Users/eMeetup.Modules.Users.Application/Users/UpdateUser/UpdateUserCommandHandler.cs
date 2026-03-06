@@ -17,7 +17,6 @@ internal sealed class UpdateUserCommandHandler(
     IUserRepository userRepository,
     IUserInterestRepository userInterestRepository,
     IIdentityProviderService identityProviderService,
-    IGeocodingService geocodingService,
     IUnitOfWork unitOfWork,
     ILogger<UpdateUserCommandHandler> logger)
     : ICommandHandler<UpdateUserCommand>
@@ -46,17 +45,16 @@ internal sealed class UpdateUserCommandHandler(
             }
 
             // 3. Handle location
-            var locationResult = await HandleLocationAsync(user, request, cancellationToken);
-            if (locationResult.IsFailure)
-                return locationResult;
-
-            if (locationResult.Value)
+            if (request.Locality != user.Locality)
             {
-                updates.LocationUpdated = true;
-                updates.Latitude = user.Location?.Latitude;
-                updates.Longitude = user.Location?.Longitude;
-                updates.City = user.Location?.City;
-                updates.Street = user.Location?.Street;
+                user.UpdateLocality(request.Locality);
+                updates.Locality = request.Locality;
+            }
+
+            if (request.Street != user.Street)
+            {
+                user.UpdateStreet(request.Street);
+                updates.Street = request.Street;
             }
 
             // 4. Handle interests
@@ -71,7 +69,7 @@ internal sealed class UpdateUserCommandHandler(
             if (updates.HasUpdates)
             {
                 var keycloakResult = await UpdateKeycloakWithRetryAsync(
-                    request.IdentityId, updates, user.ProfilePictureUrl, cancellationToken);
+                    request.IdentityId, updates, user.Uri, cancellationToken);
 
                 if (keycloakResult.IsFailure)
                 {
@@ -93,68 +91,6 @@ internal sealed class UpdateUserCommandHandler(
             logger.LogError(ex, "User update failed for {IdentityId}", request.IdentityId);
             return Result.Failure(UserErrors.UpdateFailed);
         }
-    }
-
-    private async Task<Result<bool>> HandleLocationAsync(
-        User user,
-        UpdateUserCommand request,
-        CancellationToken cancellationToken)
-    {
-        // Check if any location parameters were provided
-        bool locationParamsProvided = request.Latitude.HasValue ||
-                                      request.Longitude.HasValue ||
-                                      request.City != null ||
-                                      request.Street != null;
-
-        if (!locationParamsProvided)
-            return Result.Success(false);
-
-        // Determine what's being updated
-        bool coordinatesProvided = request.Latitude.HasValue || request.Longitude.HasValue;
-        bool addressProvided = request.City != null || request.Street != null;
-
-        // If only coordinates are provided, try to get city/street via reverse geocoding
-        if (coordinatesProvided && !addressProvided && request.Latitude.HasValue && request.Longitude.HasValue)
-        {
-            var geocodingResult = await geocodingService.ReverseGeocodeAsync(
-                request.Latitude.Value,
-                request.Longitude.Value,
-                cancellationToken);
-
-            if (geocodingResult.IsSuccess && geocodingResult.Value != null)
-            {
-                // Use geocoded location
-                var location = geocodingResult.Value;
-                user.UpdateLocation(location);
-                return Result.Success(true);
-            }
-
-            // If geocoding fails, create location with just coordinates
-            var coordinatesOnlyResult = Location.Create(request.Latitude, request.Longitude);
-            if (coordinatesOnlyResult.IsFailure)
-                return (Result<bool>)Result<bool>.Failure(coordinatesOnlyResult.Error);
-
-            user.UpdateLocation(coordinatesOnlyResult.Value);
-            return Result.Success(true);
-        }
-
-        // If address is provided (with or without coordinates), use it directly
-        if (addressProvided)
-        {
-            var locationResult = Location.Create(
-                request.Latitude,
-                request.Longitude,
-                request.City,
-                request.Street);
-
-            if (locationResult.IsFailure)
-                return (Result<bool>)Result<bool>.Failure(locationResult.Error);
-
-            user.UpdateLocation(locationResult.Value);
-            return Result.Success(true);
-        }
-
-        return Result.Success(false);
     }
 
     private async Task<Result> HandleInterestsAsync(
@@ -220,7 +156,7 @@ internal sealed class UpdateUserCommandHandler(
     private async Task<Result> UpdateKeycloakWithRetryAsync(
         Guid identityId,
         UserUpdateSet updates,
-        string? profilePictureUrl,
+        string? uri,
         CancellationToken cancellationToken)
     {
         const int maxRetries = 3;
@@ -232,13 +168,11 @@ internal sealed class UpdateUserCommandHandler(
             {
                 var result = await identityProviderService.UpdateKeycloakUserAttributesAsync(
                     identityId: identityId,
-                    bio: updates.Bio,
-                    latitude: updates.Latitude,
-                    longitude: updates.Longitude,
-                    city: updates.City,
+                    locality: updates.Locality,
                     street: updates.Street,
+                    bio: updates.Bio,
                     interests: updates.Interests,
-                    profilePictureUrl: profilePictureUrl,
+                    uri: uri,
                     cancellationToken);
 
                 if (result.IsSuccess)
@@ -311,20 +245,18 @@ internal sealed class UpdateUserCommandHandler(
                 logger.LogInformation("Rolled back bio for user {UserId}", user.Id);
             }
 
-            // Rollback location
-            if (attemptedUpdates.LocationUpdated)
+            // Rollback locality
+            if (attemptedUpdates.Locality != attemptedUpdates.OriginalLocality)
             {
-                var originalLocationResult = Location.Create(
-                    attemptedUpdates.OriginalLatitude,
-                    attemptedUpdates.OriginalLongitude,
-                    attemptedUpdates.OriginalCity,
-                    attemptedUpdates.OriginalStreet);
+                user.UpdateLocality(attemptedUpdates.OriginalLocality);
+                logger.LogInformation("Rolled back locality for user {UserId}", user.Id);
+            }
 
-                if (originalLocationResult.IsSuccess)
-                {
-                    user.UpdateLocation(originalLocationResult.Value);
-                    logger.LogInformation("Rolled back location for user {UserId}", user.Id);
-                }
+            // Rollback street
+            if (attemptedUpdates.Street != attemptedUpdates.OriginalStreet)
+            {
+                user.UpdateStreet(attemptedUpdates.OriginalStreet);
+                logger.LogInformation("Rolled back street for user {UserId}", user.Id);
             }
 
             // Rollback interests
@@ -357,24 +289,20 @@ internal sealed class UpdateUserCommandHandler(
     {
         // Current values
         public string? Bio { get; set; }
-        public double? Latitude { get; set; }
-        public double? Longitude { get; set; }
-        public string? City { get; set; }
+        public string? Locality { get; set; }
         public string? Street { get; set; }
         public string? Interests { get; set; }
-        public bool LocationUpdated { get; set; }
 
         // Original values
         public string? OriginalBio { get; }
-        public double? OriginalLatitude { get; }
-        public double? OriginalLongitude { get; }
-        public string? OriginalCity { get; }
+        public string? OriginalLocality { get; }
         public string? OriginalStreet { get; }
         public string? OriginalInterests { get; }
 
         public bool HasUpdates =>
             Bio != OriginalBio ||
-            LocationUpdated ||
+            Locality != OriginalLocality ||
+            Street != OriginalStreet ||
             Interests != OriginalInterests;
 
         public string UpdatedFieldsString
@@ -383,7 +311,8 @@ internal sealed class UpdateUserCommandHandler(
             {
                 var fields = new List<string>();
                 if (Bio != OriginalBio) fields.Add("Bio");
-                if (LocationUpdated) fields.Add("Location");
+                if (Locality != OriginalLocality) fields.Add("Locality");
+                if (Street != OriginalStreet) fields.Add("Street");
                 if (Interests != OriginalInterests) fields.Add("Interests");
                 return fields.Count > 0 ? string.Join(", ", fields) : "None";
             }
@@ -394,10 +323,8 @@ internal sealed class UpdateUserCommandHandler(
             // Store original values
             OriginalBio = user.Bio;
 
-            OriginalLatitude = user.Location?.Latitude;
-            OriginalLongitude = user.Location?.Longitude;
-            OriginalCity = user.Location?.City;
-            OriginalStreet = user.Location?.Street;
+            OriginalLocality = user.Locality;
+            OriginalStreet = user.Street;
 
             if (user.Interests != null && user.Interests.Any())
             {
@@ -405,6 +332,8 @@ internal sealed class UpdateUserCommandHandler(
             }
 
             // Initialize current values
+            Locality = user.Locality;
+            Street = user.Street;
             Bio = user.Bio;
             Interests = OriginalInterests;
         }

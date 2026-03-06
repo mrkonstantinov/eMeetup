@@ -57,10 +57,6 @@ public static class UserErrors
     public static Error DatabaseConcurrencyConflict => 
         Error.Conflict("User.DatabaseConcurrencyConflict", "Database concurrency conflict occurred");
 
-
-    public static Error InvalidLocation =>
-        Error.Validation("Users.InvalidLocation", "Invalid location provided");
-
     public static Error InvalidStatusTransition =>
         Error.Validation("Users.InvalidStatusTransition", "Invalid user status transition");
 

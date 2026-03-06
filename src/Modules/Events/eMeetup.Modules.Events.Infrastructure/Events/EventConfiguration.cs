@@ -12,7 +12,10 @@ internal sealed class EventConfiguration : IEntityTypeConfiguration<Event>
 
         builder.HasKey(u => u.Id);
 
-        builder.OwnsOne(u => u.Location, locationBuilder =>
-            locationBuilder.ConfigureLocation());
+        builder.Property(t => t.CreatedByUserId)
+            .IsRequired();
+
+        builder.Property(t => t.Title)
+            .IsRequired();
     }
 }

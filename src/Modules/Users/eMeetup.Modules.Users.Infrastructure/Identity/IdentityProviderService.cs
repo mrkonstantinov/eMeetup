@@ -15,13 +15,11 @@ internal sealed class IdentityProviderService(KeyCloakClient keyCloakClient, ILo
     // List of fields that can be updated in Keycloak based on permissions in your config
     private static readonly HashSet<string> AllowedKeycloakAttributes = new()
     {
-        "bio",
-        "latitude",
-        "longitude",
-        "city",
+        "locality",
         "street",
+        "bio",
         "interests",
-        "profilePictureUrl"
+        "uri"
     };
 
     // POST /admin/realms/{realm}/users
@@ -33,7 +31,7 @@ internal sealed class IdentityProviderService(KeyCloakClient keyCloakClient, ILo
             new Dictionary<string, List<string>>
             {
                { "gender", new List<string> { user.Gender.ToString() } },
-               { "dateOfBirth", new List<string> { user.DateOfBirth.ToString() } }
+               { "birthdate", new List<string> { user.DateOfBirth.ToString() } }
             },
             true,
             true,
@@ -60,12 +58,10 @@ internal sealed class IdentityProviderService(KeyCloakClient keyCloakClient, ILo
             user.UserName,
             new Dictionary<string, List<string>>
             {
-                { "profilePictureUrl", !string.IsNullOrEmpty(user.ProfilePictureUrl) ? new List<string> { user.ProfilePictureUrl } : new List<string>() },
+                { "uri", !string.IsNullOrEmpty(user.Uri) ? new List<string> { user.Uri } : new List<string>() },
                 { "bio", !string.IsNullOrEmpty(user.Bio) ? new List<string> { user.Bio } : new List<string>() },
-                { "city", !string.IsNullOrWhiteSpace(user.City) ? new List<string> { user.City! } : new List<string>() },
+                { "locality", !string.IsNullOrWhiteSpace(user.Locality) ? new List<string> { user.Locality! } : new List<string>() },
                 { "street", !string.IsNullOrWhiteSpace(user.Street) ? new List<string> { user.Street! } : new List<string>() },
-                { "latitude", user.Latitude.HasValue ? new List<string> { user.Latitude.Value.ToString(CultureInfo.InvariantCulture) } : new List<string>() },
-                { "longitude", user.Longitude.HasValue ? new List<string> { user.Longitude.Value.ToString(CultureInfo.InvariantCulture) } : new List<string>() },
                 { "interests", !string.IsNullOrEmpty(user.Interests) ? new List<string> { user.Interests } : new List<string>() }
             },            
             true,
@@ -123,13 +119,13 @@ internal sealed class IdentityProviderService(KeyCloakClient keyCloakClient, ILo
         }
 
         // Parse date of birth from attributes
-        DateTime? dateOfBirth = null;
-        var dateOfBirthStr = GetAttributeValue("dateOfBirth");
-        if (!string.IsNullOrEmpty(dateOfBirthStr))
+        DateTime? birthdate = null;
+        var birthdateStr = GetAttributeValue("birthdate");
+        if (!string.IsNullOrEmpty(birthdateStr))
         {
-            if (DateTime.TryParse(dateOfBirthStr, CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedDate))
+            if (DateTime.TryParse(birthdateStr, CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedDate))
             {
-                dateOfBirth = parsedDate;
+                birthdate = parsedDate;
             }
         }
 
@@ -141,34 +137,17 @@ internal sealed class IdentityProviderService(KeyCloakClient keyCloakClient, ILo
             gender = parsedGender;
         }
 
-        // Parse numeric values
-        double? latitude = null;
-        var latitudeStr = GetAttributeValue("latitude");
-        if (!string.IsNullOrEmpty(latitudeStr) && double.TryParse(latitudeStr, CultureInfo.InvariantCulture, out var parsedLatitude))
-        {
-            latitude = parsedLatitude;
-        }
-
-        double? longitude = null;
-        var longitudeStr = GetAttributeValue("longitude");
-        if (!string.IsNullOrEmpty(longitudeStr) && double.TryParse(longitudeStr, CultureInfo.InvariantCulture, out var parsedLongitude))
-        {
-            longitude = parsedLongitude;
-        }
-
         return new UserProfileModel(
             IdentityId: identityId,
             Email: keycloakUser.Email ?? string.Empty,
             UserName: keycloakUser.Username ?? string.Empty,
-            DateOfBirth: dateOfBirth ?? DateTime.MinValue, // Or use DateTime? in your record if allowed
+            DateOfBirth: birthdate ?? DateTime.MinValue, // Or use DateTime? in your record if allowed
             Gender: gender,
-            Bio: GetAttributeValue("bio"),
-            Latitude: latitude,
-            Longitude: longitude,
-            City: GetAttributeValue("city"),
+            Locality: GetAttributeValue("locality"),
             Street: GetAttributeValue("street"),
+            Bio: GetAttributeValue("bio"),
             Interests: GetAttributeValue("interests"),
-            ProfilePictureUrl: GetAttributeValue("profilePictureUrl")
+            Uri: GetAttributeValue("uri")
         );
     }
 
@@ -192,13 +171,11 @@ internal sealed class IdentityProviderService(KeyCloakClient keyCloakClient, ILo
 
     public async Task<Result> UpdateKeycloakUserAttributesAsync(
         Guid identityId,
-        string? bio,
-        double? latitude,
-        double? longitude,
-        string? city,
+        string? locality,
         string? street,
+        string? bio,
         string? interests,
-        string? profilePictureUrl,
+        string? uri,
         CancellationToken cancellationToken = default)
     {
         try
@@ -221,20 +198,10 @@ internal sealed class IdentityProviderService(KeyCloakClient keyCloakClient, ILo
 
             // Update only the allowed attributes
             UpdateAttributeIfNotNull(updatedAttributes, "bio", bio);
-            UpdateAttributeIfNotNull(updatedAttributes, "city", city);
+            UpdateAttributeIfNotNull(updatedAttributes, "locality", locality);
             UpdateAttributeIfNotNull(updatedAttributes, "street", street);
             UpdateAttributeIfNotNull(updatedAttributes, "interests", interests);
-            UpdateAttributeIfNotNull(updatedAttributes, "profilePictureUrl", profilePictureUrl);
-
-            if (latitude.HasValue)
-            {
-                updatedAttributes["latitude"] = new List<string> { latitude.Value.ToString(CultureInfo.InvariantCulture) };
-            }
-
-            if (longitude.HasValue)
-            {
-                updatedAttributes["longitude"] = new List<string> { longitude.Value.ToString(CultureInfo.InvariantCulture) };
-            }
+            UpdateAttributeIfNotNull(updatedAttributes, "uri", uri);
 
             // Create a minimal user representation for Keycloak update
             // Only include the attributes that can be updated

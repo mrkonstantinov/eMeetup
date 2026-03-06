@@ -82,20 +82,10 @@ internal sealed record UserProfileRepresentation(
         AddAttributeIfNotEmpty(attributes, "gender", model.Gender.ToString());
         AddAttributeIfNotEmpty(attributes, "dateOfBirth", model.DateOfBirth.ToString(CultureInfo.InvariantCulture));
         AddAttributeIfNotEmpty(attributes, "bio", model.Bio);
-        AddAttributeIfNotEmpty(attributes, "profilePictureUrl", model.ProfilePictureUrl);
-        AddAttributeIfNotEmpty(attributes, "city", model.City);
+        AddAttributeIfNotEmpty(attributes, "uri", model.Uri);
+        AddAttributeIfNotEmpty(attributes, "locality", model.Locality);
         AddAttributeIfNotEmpty(attributes, "street", model.Street);
         AddAttributeIfNotEmpty(attributes, "interests", model.Interests);
-
-        if (model.Latitude.HasValue)
-        {
-            AddAttributeIfNotEmpty(attributes, "latitude", model.Latitude.Value.ToString(CultureInfo.InvariantCulture));
-        }
-
-        if (model.Longitude.HasValue)
-        {
-            AddAttributeIfNotEmpty(attributes, "longitude", model.Longitude.Value.ToString(CultureInfo.InvariantCulture));
-        }
 
         return new UserProfileRepresentation(
             //IdentityId: model.IdentityId,

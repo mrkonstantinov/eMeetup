@@ -10,12 +10,10 @@ public interface IIdentityProviderService
 
     Task<Result> UpdateKeycloakUserAttributesAsync(
         Guid identityId,
-        string? bio,
-        double? latitude,
-        double? longitude,
-        string? city,
+        string? locality,
         string? street,
+        string? bio,
         string? interests,
-        string? profilePictureUrl,
+        string? uri,
         CancellationToken cancellationToken = default);
 }

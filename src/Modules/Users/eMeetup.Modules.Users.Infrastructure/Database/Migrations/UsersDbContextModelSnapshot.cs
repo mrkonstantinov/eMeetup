@@ -59,6 +59,21 @@ namespace eMeetup.Modules.Users.Infrastructure.Database.Migrations
                         },
                         new
                         {
+                            PermissionCode = "events:read",
+                            RoleName = "Member"
+                        },
+                        new
+                        {
+                            PermissionCode = "events:search",
+                            RoleName = "Member"
+                        },
+                        new
+                        {
+                            PermissionCode = "events:update",
+                            RoleName = "Member"
+                        },
+                        new
+                        {
                             PermissionCode = "users:read",
                             RoleName = "Administrator"
                         },
@@ -70,6 +85,21 @@ namespace eMeetup.Modules.Users.Infrastructure.Database.Migrations
                         new
                         {
                             PermissionCode = "tags:read",
+                            RoleName = "Administrator"
+                        },
+                        new
+                        {
+                            PermissionCode = "events:read",
+                            RoleName = "Administrator"
+                        },
+                        new
+                        {
+                            PermissionCode = "events:search",
+                            RoleName = "Administrator"
+                        },
+                        new
+                        {
+                            PermissionCode = "events:update",
                             RoleName = "Administrator"
                         },
                         new
@@ -979,6 +1009,18 @@ namespace eMeetup.Modules.Users.Infrastructure.Database.Migrations
                         },
                         new
                         {
+                            Code = "events:read"
+                        },
+                        new
+                        {
+                            Code = "events:search"
+                        },
+                        new
+                        {
+                            Code = "events:update"
+                        },
+                        new
+                        {
                             Code = "event-statistics:read"
                         });
                 });
@@ -1045,17 +1087,25 @@ namespace eMeetup.Modules.Users.Infrastructure.Database.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("last_active");
 
-                    b.Property<string>("ProfilePictureUrl")
+                    b.Property<string>("Locality")
                         .HasColumnType("text")
-                        .HasColumnName("profile_picture_url");
+                        .HasColumnName("locality");
 
                     b.Property<int?>("Status")
                         .HasColumnType("integer")
                         .HasColumnName("status");
 
+                    b.Property<string>("Street")
+                        .HasColumnType("text")
+                        .HasColumnName("street");
+
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at");
+
+                    b.Property<string>("Uri")
+                        .HasColumnType("text")
+                        .HasColumnName("uri");
 
                     b.Property<string>("UserName")
                         .IsRequired()
@@ -1190,44 +1240,6 @@ namespace eMeetup.Modules.Users.Infrastructure.Database.Migrations
                     b.Navigation("Tag");
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("eMeetup.Modules.Users.Domain.Users.User", b =>
-                {
-                    b.OwnsOne("eMeetup.Modules.Users.Domain.Users.Location", "Location", b1 =>
-                        {
-                            b1.Property<Guid>("UserId")
-                                .HasColumnType("uuid")
-                                .HasColumnName("id");
-
-                            b1.Property<string>("City")
-                                .HasMaxLength(100)
-                                .HasColumnType("character varying(100)")
-                                .HasColumnName("location_city");
-
-                            b1.Property<double>("Latitude")
-                                .HasColumnType("decimal(9,6)")
-                                .HasColumnName("location_latitude");
-
-                            b1.Property<double>("Longitude")
-                                .HasColumnType("decimal(9,6)")
-                                .HasColumnName("location_longitude");
-
-                            b1.Property<string>("Street")
-                                .HasMaxLength(100)
-                                .HasColumnType("character varying(100)")
-                                .HasColumnName("location_street");
-
-                            b1.HasKey("UserId");
-
-                            b1.ToTable("users", "users");
-
-                            b1.WithOwner()
-                                .HasForeignKey("UserId")
-                                .HasConstraintName("fk_users_users_id");
-                        });
-
-                    b.Navigation("Location");
                 });
 
             modelBuilder.Entity("eMeetup.Modules.Users.Domain.Users.UserPhoto", b =>

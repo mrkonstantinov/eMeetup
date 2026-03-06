@@ -19,7 +19,7 @@ public sealed record UpdateUserModel(
     string? City,
     string? Street,
     string? Interests,
-    string? ProfilePictureUrl,
+    string? Uri,
     List<IFormFile>? Photos = null
     );
 
@@ -30,11 +30,9 @@ public sealed record UserProfileModel(
     string UserName,
     DateTime DateOfBirth,
     Gender Gender,
-    string? Bio,
-    double? Latitude,
-    double? Longitude,
-    string? City,
+    string? Locality,
     string? Street,
+    string? Bio,
     string? Interests,
-    string? ProfilePictureUrl
+    string? Uri
     );

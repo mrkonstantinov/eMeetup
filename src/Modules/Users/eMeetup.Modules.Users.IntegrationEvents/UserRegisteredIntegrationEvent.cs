@@ -14,9 +14,7 @@ public sealed class UserRegisteredIntegrationEvent : IntegrationEvent
         Gender gender,
         DateTime dateOfBirth,
         string? bio,
-        double? latitude,
-        double? longitude,
-        string? city,
+        string? locality,
         string? street)
         : base(id, occurredOnUtc)
     {
@@ -26,9 +24,7 @@ public sealed class UserRegisteredIntegrationEvent : IntegrationEvent
         Gender = gender;
         DateOfBirth = dateOfBirth;
         Bio = bio;
-        Latitude = latitude;
-        Longitude = longitude;
-        City = city;
+        Locality = locality;
         Street = street;
     }
 
@@ -38,8 +34,6 @@ public sealed class UserRegisteredIntegrationEvent : IntegrationEvent
     public Gender Gender { get; init; }
     public DateTime DateOfBirth { get; init; }
     public string? Bio { get; init; }
-    public double? Latitude { get; init; }
-    public double? Longitude { get; init; }
-    public string? City { get; init; }
+    public string? Locality { get; init; }
     public string? Street { get; init; }
 }

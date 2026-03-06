@@ -49,6 +49,9 @@ internal sealed class UploadUserPhotosCommandHandler(
                 return Result.Failure(UserErrors.InvalidPhotos(string.Join("; ", validationResult.Errors)));
             }
 
+            // 3. Get current primary photo URL for potential rollback
+            var currentPrimaryPhotoUrl = await photoRepository.GetPrimaryPhotoUrlAsync(user.Id, cancellationToken);
+
             var photoUpdateResult = await photoUpdateService.UpdateUserPhotosAsync(
                 user.Id, request.Photos,
                 cancellationToken);
@@ -59,10 +62,8 @@ internal sealed class UploadUserPhotosCommandHandler(
                     user.Id, string.Join("; ", photoUpdateResult.Errors));
                 return Result.Failure(UserErrors.PhotoUpdateFailed(string.Join("; ", photoUpdateResult.Errors)));
             }
+            user.UpdateProfilePictureUrl(photoUpdateResult.NewPrimaryPhotoUrl);
 
-            // 3. Get current primary photo URL for potential rollback
-            var currentPrimaryPhotoUrl = await photoRepository.GetPrimaryPhotoUrlAsync(user.Id, cancellationToken);
-            user.UpdateProfilePictureUrl(currentPrimaryPhotoUrl);
 
             // 5. Save changes to database
             await unitOfWork.SaveChangesAsync(cancellationToken);
@@ -78,8 +79,8 @@ internal sealed class UploadUserPhotosCommandHandler(
                 var keycloakResult = await UpdateKeycloakWithRetryAsync(
                     identityId: request.IdentityId,
                     user: user,
-                    profilePictureUrl: photoUpdateResult.NewPrimaryPhotoUrl,
-                    originalProfilePictureUrl: currentPrimaryPhotoUrl,
+                    uri: photoUpdateResult.NewPrimaryPhotoUrl,
+                    originalUri: currentPrimaryPhotoUrl,
                     cancellationToken: cancellationToken);
 
                 if (keycloakResult.IsFailure)
@@ -127,15 +128,15 @@ internal sealed class UploadUserPhotosCommandHandler(
     private async Task<Result> UpdateKeycloakWithRetryAsync(
         Guid identityId,
         User user,
-        string? profilePictureUrl,
-        string? originalProfilePictureUrl,
+        string? uri,
+        string? originalUri,
         CancellationToken cancellationToken)
     {
         const int maxRetries = 3;
         int retryCount = 0;
 
         logger.LogDebug("Updating Keycloak for {IdentityId} with profile picture: {ProfilePictureUrl}",
-            identityId, profilePictureUrl);
+            identityId, uri);
 
         while (retryCount < maxRetries)
         {
@@ -143,13 +144,11 @@ internal sealed class UploadUserPhotosCommandHandler(
             {
                 var result = await identityProviderService.UpdateKeycloakUserAttributesAsync(
                     identityId: identityId,
+                    locality: user.Locality,
+                    street: user.Street,
                     bio: user.Bio,
-                    latitude: user.Location?.Latitude,
-                    longitude: user.Location?.Longitude,
-                    city: user.Location?.City,
-                    street: user.Location?.Street,
                     interests: user.Interests.ToString(),
-                    profilePictureUrl: profilePictureUrl,
+                    uri: uri,
                     cancellationToken: cancellationToken);
 
                 if (result.IsSuccess)
@@ -342,14 +341,14 @@ internal sealed class UploadUserPhotosCommandHandler(
 
     private async Task RollbackKeycloakChangesAsync(
         Guid identityId,
-        string? originalProfilePictureUrl,
+        string? originalUri,
         CancellationToken cancellationToken)
     {
         try
         {
             logger.LogWarning("Attempting to rollback Keycloak profile picture for {IdentityId}", identityId);
 
-            if (string.IsNullOrEmpty(originalProfilePictureUrl))
+            if (string.IsNullOrEmpty(originalUri))
             {
                 logger.LogWarning("No original profile picture URL to rollback for {IdentityId}", identityId);
                 return;
@@ -365,13 +364,11 @@ internal sealed class UploadUserPhotosCommandHandler(
 
             var rollbackResult = await identityProviderService.UpdateKeycloakUserAttributesAsync(
                 identityId: identityId,
+                locality: user.Locality,
+                street: user.Street,
                 bio: user.Bio,
-                latitude: user.Location?.Latitude,
-                longitude: user.Location?.Longitude,
-                city: user.Location?.City,
-                street: user.Location?.Street,
                 interests: user.Interests.ToString(),
-                profilePictureUrl: originalProfilePictureUrl,
+                uri: originalUri,
                 cancellationToken: cancellationToken);
 
             if (rollbackResult.IsSuccess)
@@ -396,7 +393,7 @@ internal sealed class UploadUserPhotosCommandHandler(
                 Original profile picture URL: {OriginalUrl}
                 """,
                 identityId,
-                originalProfilePictureUrl ?? "None");
+                originalUri ?? "None");
         }
     }
 }

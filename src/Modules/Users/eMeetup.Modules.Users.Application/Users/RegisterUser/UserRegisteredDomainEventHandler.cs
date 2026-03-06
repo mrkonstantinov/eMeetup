@@ -35,9 +35,7 @@ internal sealed class UserRegisteredDomainEventHandler(ISender sender, IEventBus
                 result.Value.Gender,
                 result.Value.DateOfBirth,
                 result.Value.Bio,
-                result.Value.Latitude,
-                result.Value.Longitude,
-                result.Value.City,
+                result.Value.Locality,
                 result.Value.Street),
             cancellationToken);
     }

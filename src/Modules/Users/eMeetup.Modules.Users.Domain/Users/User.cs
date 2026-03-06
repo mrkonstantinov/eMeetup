@@ -19,14 +19,15 @@ public sealed class User : Entity
     public string UserName { get; private set; } = null!;
     public DateTime DateOfBirth { get; private set; }
     public Gender Gender { get; private set; }
+    public string? Locality { get; private set; }
+    public string? Street { get; private set; }
     public string? Bio { get; private set; }
-    public string? ProfilePictureUrl { get; private set; }
-    public Location? Location { get; private set; }
+    public string? Uri { get; private set; }
     public UserStatus? Status { get; private set; }
     public DateTime? CreatedAt { get; private set; }
     public DateTime? UpdatedAt { get; private set; }
     public DateTime? LastActive { get; private set; }
-    // Concurrency token - using uint for xmin
+
 
     // Navigation properties
     public IReadOnlyCollection<UserPhoto> Photos => _photos
@@ -54,14 +55,14 @@ public sealed class User : Entity
     // Constructor for basic user registration (required fields only)
     private User(
         string email,
-        string username,
+        string name,
         DateTime dateOfBirth,
         Gender gender,
         string identityId)
     {
         Id = Guid.NewGuid();
         Email = email;
-        UserName = username;
+        UserName = name;
         DateOfBirth = dateOfBirth;
         Gender = gender;
         IdentityId = identityId;
@@ -77,7 +78,7 @@ public sealed class User : Entity
     // Factory method for registration (basic information only)
     public static Result<User> Create(
         string email,
-        string username,
+        string name,
         DateTime dateOfBirth,
         Gender gender,
         string identityId)
@@ -86,7 +87,7 @@ public sealed class User : Entity
         if (string.IsNullOrWhiteSpace(email))
             return Result.Failure<User>(UserErrors.InvalidEmail);
 
-        if (string.IsNullOrWhiteSpace(username))
+        if (string.IsNullOrWhiteSpace(name))
             return Result.Failure<User>(UserErrors.InvalidUsername);
 
         if (string.IsNullOrWhiteSpace(identityId))
@@ -97,7 +98,7 @@ public sealed class User : Entity
 
         var user = new User(
             email.Trim().ToLower(),
-            username.Trim(),
+            name.Trim(),
             dateOfBirth,
             gender,
             identityId);
@@ -112,9 +113,10 @@ public sealed class User : Entity
         string username,
         DateTime dateOfBirth,
         Gender gender,
+        string? locality,
+        string? street,
         string identityId,
         string? bio = null,
-        Location? location = null,
         IEnumerable<Tag>? tags = null)
     {
         var createResult = Create(email, username, dateOfBirth, gender, identityId);
@@ -128,11 +130,9 @@ public sealed class User : Entity
         {
             user.UpdateBio(bio);
         }
-
-        if (location != null)
-        {
-            user.UpdateLocation(location);
-        }
+ 
+        user.Locality = locality;
+        user.Street = street;
 
         if (tags != null && tags.Any())
         {
@@ -202,7 +202,25 @@ public sealed class User : Entity
 
     public Result UpdateProfilePictureUrl(string? profilePictureUrl)
     {
-        ProfilePictureUrl = profilePictureUrl?.Trim();
+        Uri = profilePictureUrl?.Trim();
+        return Result.Success();
+    }
+
+    public Result UpdateLocality(string? locality)
+    {
+        Locality = locality?.Trim();
+        return Result.Success();
+    }
+
+    public Result UpdateStreet(string? street)
+    {
+        Street = street?.Trim();
+        return Result.Success();
+    }
+
+    public Result UpdateUri(string? uri)
+    {
+        Uri = uri?.Trim();
         return Result.Success();
     }
 
@@ -214,32 +232,6 @@ public sealed class User : Entity
         Email = email.Trim().ToLower();
 
         return Result.Success();
-    }
-
-    public Result UpdateLocation(Location location)
-    {
-        if (location == null)
-            return Result.Failure(UserErrors.InvalidLocation);
-
-        Location = location;
-
-        return Result.Success();
-    }
-
-    public Result UpdateLocation(double latitude, double longitude, string city, string street)
-    {
-        var locationResult = Location.Create(latitude, longitude, city, street);
-        if (locationResult.IsFailure)
-            return Result.Failure(locationResult.Error);
-
-        Location = locationResult.Value;
-
-        return Result.Success();
-    }
-
-    public void ClearLocation()
-    {
-        Location = null;
     }
 
     // Role management methods
@@ -356,11 +348,6 @@ public sealed class User : Entity
     }
 
     // Business logic methods
-    public bool IsNearby(Location otherLocation, double radiusKm = 50)
-    {
-        return Location?.IsWithinRadius(otherLocation, radiusKm) ?? false;
-    }
-
     public int GetAge()
     {
         var age = DateTime.Today.Year - DateOfBirth.Year;

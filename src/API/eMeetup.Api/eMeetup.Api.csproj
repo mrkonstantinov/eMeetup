@@ -11,6 +11,7 @@
     <ProjectReference Include="..\..\Common\eMeetup.Common.Application\eMeetup.Common.Application.csproj" />
     <ProjectReference Include="..\..\Common\eMeetup.Common.Infrastructure\eMeetup.Common.Infrastructure.csproj" />
     <ProjectReference Include="..\..\eMeetup.ServiceDefaults\eMeetup.ServiceDefaults.csproj" />
+    <ProjectReference Include="..\..\Modules\Events\eMeetup.Modules.Events.Infrastructure\eMeetup.Modules.Events.Infrastructure.csproj" />
     <ProjectReference Include="..\..\Modules\Users\eMeetup.Modules.Users.Infrastructure\eMeetup.Modules.Users.Infrastructure.csproj" />
   </ItemGroup>
 

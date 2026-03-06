@@ -6,9 +6,7 @@ namespace eMeetup.Modules.Users.Application.Users.UpdateUser;
 
 public sealed record UpdateUserCommand(
     Guid IdentityId,
-    string? Bio,
-    double? Latitude,
-    double? Longitude,
-    string? City,
+    string? Locality,
     string? Street,
+    string? Bio,
     string? Interests) : ICommand;

@@ -28,10 +28,6 @@ internal sealed class UserConfiguration : IEntityTypeConfiguration<User>
         //    .HasDefaultValueSql("CURRENT_TIMESTAMP")
         //    .ValueGeneratedOnAddOrUpdate();
 
-        builder.OwnsOne(u => u.Location, locationBuilder =>
-            locationBuilder.ConfigureLocation()
-        );
-
         builder.HasIndex(u => u.Email).IsUnique();
 
         builder.HasIndex(u => u.IdentityId).IsUnique();

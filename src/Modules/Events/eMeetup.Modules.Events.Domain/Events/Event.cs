@@ -16,16 +16,10 @@ public sealed class Event : Entity
     // User information - COMPLETE SNAPSHOT at creation time
     public Guid CreatedByUserId { get; set; }
     public string CreatedByUserName { get; set; }      // Snapshot!
-    public string CreatedByUserEmail { get; set; }     // Snapshot!
-    public string CreatedByUserDisplayName { get; set; } // Snapshot!
 
     public string Title { get; private set; }
-    public string Description { get; private set; }
-    public Location Location { get; private set; }
-
-    public DateTime StartsAtUtc { get; private set; }
-    public DateTime? EndsAtUtc { get; private set; }
-
+    public string? Description { get; private set; }
+    public string? Url { get; private set; }
     public DateTime? CreatedAt { get; private set; }
     public EventStatus Status { get; private set; }
 
@@ -35,25 +29,25 @@ public sealed class Event : Entity
 
 
     public static Result<Event> Create(
+        Guid createdByUserId,
+        string createdByUserName,
         string title,
-        string description,
-        Location location,
-        DateTime startsAtUtc,
-        DateTime? endsAtUtc)
+        string? description,
+        string? url,        
+        string? tags)
     {
-        if (endsAtUtc.HasValue && endsAtUtc < startsAtUtc)
-        {
-            return Result.Failure<Event>(EventErrors.EndDatePrecedesStartDate);
-        }
+        //if (endsAtUtc.HasValue && endsAtUtc < startsAtUtc)
+        //{
+        //    return Result.Failure<Event>(EventErrors.EndDatePrecedesStartDate);
+        //}
 
         var @event = new Event
         {
             Id = Guid.NewGuid(),
+            CreatedByUserId = createdByUserId,
+            CreatedByUserName = createdByUserName,
             Title = title,
             Description = description,
-            Location = location,
-            StartsAtUtc = startsAtUtc,
-            EndsAtUtc = endsAtUtc,
             Status = EventStatus.Draft
         };
 
@@ -76,18 +70,18 @@ public sealed class Event : Entity
         return Result.Success();
     }
 
-    public void Reschedule(DateTime startsAtUtc, DateTime? endsAtUtc)
-    {
-        if (StartsAtUtc == startsAtUtc && EndsAtUtc == endsAtUtc)
-        {
-            return;
-        }
+    //public void Reschedule(DateTime startsAtUtc, DateTime? endsAtUtc)
+    //{
+    //    if (StartsAtUtc == startsAtUtc && EndsAtUtc == endsAtUtc)
+    //    {
+    //        return;
+    //    }
 
-        StartsAtUtc = startsAtUtc;
-        EndsAtUtc = endsAtUtc;
+    //    StartsAtUtc = startsAtUtc;
+    //    EndsAtUtc = endsAtUtc;
 
-        Raise(new EventRescheduledDomainEvent(Id, StartsAtUtc, EndsAtUtc));
-    }
+    //    Raise(new EventRescheduledDomainEvent(Id, StartsAtUtc, EndsAtUtc));
+    //}
 
     public Result Cancel(DateTime utcNow)
     {
@@ -96,10 +90,10 @@ public sealed class Event : Entity
             return Result.Failure(EventErrors.AlreadyCanceled);
         }
 
-        if (StartsAtUtc < utcNow)
-        {
-            return Result.Failure(EventErrors.AlreadyStarted);
-        }
+        //if (StartsAtUtc < utcNow)
+        //{
+        //    return Result.Failure(EventErrors.AlreadyStarted);
+        //}
 
         Status = EventStatus.Canceled;
 
