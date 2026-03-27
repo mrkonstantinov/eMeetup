@@ -2,7 +2,7 @@
 using eMeetup.Modules.Events.Domain.Events;
 using eMeetup.Modules.Events.Domain.Tags;
 
-namespace eMeetup.Modules.Events.Domain.EventInterests
+namespace eMeetup.Modules.Events.Domain.EventTags
 {
     public class EventTag
     {

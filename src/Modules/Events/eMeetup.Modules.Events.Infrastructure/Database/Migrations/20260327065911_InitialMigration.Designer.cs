@@ -12,7 +12,7 @@ using eMeetup.Modules.Events.Infrastructure.Database;
 namespace eMeetup.Modules.Events.Infrastructure.Database.Migrations
 {
     [DbContext(typeof(EventsDbContext))]
-    [Migration("20260305152208_InitialMigration")]
+    [Migration("20260327065911_InitialMigration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
@@ -132,7 +132,7 @@ namespace eMeetup.Modules.Events.Infrastructure.Database.Migrations
                     b.ToTable("outbox_message_consumers", "events");
                 });
 
-            modelBuilder.Entity("eMeetup.Modules.Events.Domain.EventInterests.EventTag", b =>
+            modelBuilder.Entity("eMeetup.Modules.Events.Domain.EventTags.EventTag", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -170,22 +170,22 @@ namespace eMeetup.Modules.Events.Infrastructure.Database.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at");
 
-                    b.Property<Guid>("CreatedByUserId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("created_by_user_id");
-
-                    b.Property<string>("CreatedByUserName")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("created_by_user_name");
-
                     b.Property<string>("Description")
                         .HasColumnType("text")
                         .HasColumnName("description");
 
-                    b.Property<int>("Status")
-                        .HasColumnType("integer")
-                        .HasColumnName("status");
+                    b.Property<bool>("IsArchived")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_archived");
+
+                    b.Property<Guid>("OrganizerId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("organizer_id");
+
+                    b.Property<string>("OrganizerName")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("organizer_name");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -272,490 +272,500 @@ namespace eMeetup.Modules.Events.Infrastructure.Database.Migrations
                         new
                         {
                             Id = new Guid("11111111-1111-1111-1111-aaaaaaaaaaaa"),
-                            Description = "Jogging and running activities",
+                            Description = "Занятия бегом и пробежки",
                             IsActive = true,
-                            Name = "Running",
-                            Slug = "running",
+                            Name = "Бег",
+                            Slug = "бег",
                             TagGroupId = new Guid("11111111-1111-1111-1111-111111111111"),
                             UsageCount = 0
                         },
                         new
                         {
                             Id = new Guid("11111111-1111-1111-1111-bbbbbbbbbbbb"),
-                            Description = "Pool swimming and training",
+                            Description = "Тренировки в бассейне",
                             IsActive = true,
-                            Name = "Swimming",
-                            Slug = "swimming",
+                            Name = "Плавание",
+                            Slug = "плавание",
                             TagGroupId = new Guid("11111111-1111-1111-1111-111111111111"),
                             UsageCount = 0
                         },
                         new
                         {
                             Id = new Guid("11111111-1111-1111-1111-cccccccccccc"),
-                            Description = "Road and city bike rides",
+                            Description = "Поездки по городу и шоссе",
                             IsActive = true,
-                            Name = "Cycling",
-                            Slug = "cycling",
+                            Name = "Велоспорт",
+                            Slug = "велоспорт",
                             TagGroupId = new Guid("11111111-1111-1111-1111-111111111111"),
                             UsageCount = 0
                         },
                         new
                         {
                             Id = new Guid("11111111-1111-1111-1111-dddddddddddd"),
-                            Description = "Fitness and strength training",
+                            Description = "Фитнес и силовые тренировки",
                             IsActive = true,
-                            Name = "Gym Workout",
-                            Slug = "gym-workout",
+                            Name = "Тренажерный зал",
+                            Slug = "тренажерный-зал",
                             TagGroupId = new Guid("11111111-1111-1111-1111-111111111111"),
                             UsageCount = 0
                         },
                         new
                         {
                             Id = new Guid("11111111-1111-1111-1111-eeeeeeeeeeee"),
-                            Description = "Yoga and stretching sessions",
+                            Description = "Занятия йогой и растяжка",
                             IsActive = true,
-                            Name = "Yoga",
-                            Slug = "yoga",
+                            Name = "Йога",
+                            Slug = "йога",
                             TagGroupId = new Guid("11111111-1111-1111-1111-111111111111"),
                             UsageCount = 0
                         },
                         new
                         {
                             Id = new Guid("22222222-2222-2222-2222-aaaaaaaaaaaa"),
-                            Description = "Downhill skiing on slopes",
+                            Description = "Катание на склонах",
                             IsActive = true,
-                            Name = "Alpine Skiing",
-                            Slug = "alpine-skiing",
+                            Name = "Горные лыжи",
+                            Slug = "горные-лыжи",
                             TagGroupId = new Guid("22222222-2222-2222-2222-222222222222"),
                             UsageCount = 0
                         },
                         new
                         {
                             Id = new Guid("22222222-2222-2222-2222-bbbbbbbbbbbb"),
-                            Description = "Nordic skiing on trails",
+                            Description = "Скандинавская ходьба на лыжах по трассам",
                             IsActive = true,
-                            Name = "Cross-Country Skiing",
-                            Slug = "cross-country-skiing",
+                            Name = "Беговые лыжи",
+                            Slug = "беговые-лыжи",
                             TagGroupId = new Guid("22222222-2222-2222-2222-222222222222"),
                             UsageCount = 0
                         },
                         new
                         {
                             Id = new Guid("22222222-2222-2222-2222-cccccccccccc"),
-                            Description = "Snowboarding on slopes and parks",
+                            Description = "Катание на склонах и в парках",
                             IsActive = true,
-                            Name = "Snowboarding",
-                            Slug = "snowboarding",
+                            Name = "Сноуборд",
+                            Slug = "сноуборд",
                             TagGroupId = new Guid("22222222-2222-2222-2222-222222222222"),
                             UsageCount = 0
                         },
                         new
                         {
                             Id = new Guid("22222222-2222-2222-2222-dddddddddddd"),
-                            Description = "Skating on ice rinks",
+                            Description = "Катание на ледовых катках",
                             IsActive = true,
-                            Name = "Ice Skating",
-                            Slug = "ice-skating",
+                            Name = "Катание на коньках",
+                            Slug = "катание-на-коньках",
                             TagGroupId = new Guid("22222222-2222-2222-2222-222222222222"),
                             UsageCount = 0
                         },
                         new
                         {
                             Id = new Guid("22222222-2222-2222-2222-eeeeeeeeeeee"),
-                            Description = "Snow sliding with tubes",
+                            Description = "Катание на ватрушках с горок",
                             IsActive = true,
-                            Name = "Snow Tubing",
-                            Slug = "snow-tubing",
+                            Name = "Тюбинг",
+                            Slug = "тюбинг",
                             TagGroupId = new Guid("22222222-2222-2222-2222-222222222222"),
                             UsageCount = 0
                         },
                         new
                         {
                             Id = new Guid("22222222-2222-2222-2222-ffffffffffff"),
-                            Description = "Hiking with snowshoes",
+                            Description = "Походы на снегоступах",
                             IsActive = true,
-                            Name = "Winter Hiking",
-                            Slug = "winter-hiking",
+                            Name = "Зимний поход",
+                            Slug = "зимний-поход",
                             TagGroupId = new Guid("22222222-2222-2222-2222-222222222222"),
                             UsageCount = 0
                         },
                         new
                         {
                             Id = new Guid("33333333-3333-3333-3333-aaaaaaaaaaaa"),
-                            Description = "Day hiking on trails",
+                            Description = "Дневные походы по тропам",
                             IsActive = true,
-                            Name = "Hike",
-                            Slug = "hike",
+                            Name = "Поход",
+                            Slug = "поход",
                             TagGroupId = new Guid("33333333-3333-3333-3333-333333333333"),
                             UsageCount = 0
                         },
                         new
                         {
                             Id = new Guid("33333333-3333-3333-3333-bbbbbbbbbbbb"),
-                            Description = "Multi-day cycling adventures",
+                            Description = "Многодневные велосипедные путешествия",
                             IsActive = true,
-                            Name = "Bike Touring",
-                            Slug = "bike-touring",
+                            Name = "Велотур",
+                            Slug = "велотур",
                             TagGroupId = new Guid("33333333-3333-3333-3333-333333333333"),
                             UsageCount = 0
                         },
                         new
                         {
                             Id = new Guid("33333333-3333-3333-3333-cccccccccccc"),
-                            Description = "Outdoor meals in nature",
+                            Description = "Трапезы на природе",
                             IsActive = true,
-                            Name = "Picnic",
-                            Slug = "picnic",
+                            Name = "Пикник",
+                            Slug = "пикник",
                             TagGroupId = new Guid("33333333-3333-3333-3333-333333333333"),
                             UsageCount = 0
                         },
                         new
                         {
                             Id = new Guid("33333333-3333-3333-3333-dddddddddddd"),
-                            Description = "Overnight stays in nature",
+                            Description = "Ночёвки на природе",
                             IsActive = true,
-                            Name = "Camping",
-                            Slug = "camping",
+                            Name = "Кемпинг",
+                            Slug = "кемпинг",
                             TagGroupId = new Guid("33333333-3333-3333-3333-333333333333"),
                             UsageCount = 0
                         },
                         new
                         {
                             Id = new Guid("33333333-3333-3333-3333-eeeeeeeeeeee"),
-                            Description = "Running on nature trails",
+                            Description = "Бег по природным тропам",
                             IsActive = true,
-                            Name = "Trail Running",
-                            Slug = "trail-running",
+                            Name = "Трейлраннинг",
+                            Slug = "трейлраннинг",
                             TagGroupId = new Guid("33333333-3333-3333-3333-333333333333"),
                             UsageCount = 0
                         },
                         new
                         {
                             Id = new Guid("44444444-4444-4444-4444-aaaaaaaaaaaa"),
-                            Description = "Lightweight portable rafting",
+                            Description = "Сплав на лёгких надувных лодках",
                             IsActive = true,
-                            Name = "Packrafting",
-                            Slug = "packrafting",
+                            Name = "Пакрафтинг",
+                            Slug = "пакрафтинг",
                             TagGroupId = new Guid("44444444-4444-4444-4444-444444444444"),
                             UsageCount = 0
                         },
                         new
                         {
                             Id = new Guid("44444444-4444-4444-4444-bbbbbbbbbbbb"),
-                            Description = "Stand-Up Paddleboarding",
+                            Description = "Катание на доске с веслом стоя",
                             IsActive = true,
-                            Name = "SUP",
-                            Slug = "sup",
+                            Name = "САП-сёрфинг",
+                            Slug = "сап-сёрфинг",
                             TagGroupId = new Guid("44444444-4444-4444-4444-444444444444"),
                             UsageCount = 0
                         },
                         new
                         {
                             Id = new Guid("44444444-4444-4444-4444-cccccccccccc"),
-                            Description = "Kayaking on rivers and lakes",
+                            Description = "Сплав на каяках по рекам и озёрам",
                             IsActive = true,
-                            Name = "Kayaking",
-                            Slug = "kayaking",
+                            Name = "Каякинг",
+                            Slug = "каякинг",
                             TagGroupId = new Guid("44444444-4444-4444-4444-444444444444"),
                             UsageCount = 0
                         },
                         new
                         {
                             Id = new Guid("44444444-4444-4444-4444-dddddddddddd"),
-                            Description = "Canoe trips on calm waters",
+                            Description = "Путешествия на каноэ по спокойной воде",
                             IsActive = true,
-                            Name = "Canoeing",
-                            Slug = "canoeing",
+                            Name = "Каноэ",
+                            Slug = "каноэ",
                             TagGroupId = new Guid("44444444-4444-4444-4444-444444444444"),
                             UsageCount = 0
                         },
                         new
                         {
                             Id = new Guid("44444444-4444-4444-4444-eeeeeeeeeeee"),
-                            Description = "White water rafting",
+                            Description = "Сплав по бурной воде",
                             IsActive = true,
-                            Name = "Rafting",
-                            Slug = "rafting",
+                            Name = "Рафтинг",
+                            Slug = "рафтинг",
                             TagGroupId = new Guid("44444444-4444-4444-4444-444444444444"),
                             UsageCount = 0
                         },
                         new
                         {
                             Id = new Guid("44444444-4444-4444-4444-ffffffffffff"),
-                            Description = "Swimming in lakes and seas",
+                            Description = "Плавание в озёрах и морях",
                             IsActive = true,
-                            Name = "Open Water Swimming",
-                            Slug = "open-water-swimming",
+                            Name = "Плавание на открытой воде",
+                            Slug = "плавание-на-открытой-воде",
                             TagGroupId = new Guid("44444444-4444-4444-4444-444444444444"),
                             UsageCount = 0
                         },
                         new
                         {
                             Id = new Guid("55555555-5555-5555-5555-aaaaaaaaaaaa"),
-                            Description = "Live music and concerts festivals",
+                            Description = "Фестивали живой музыки и концертов",
                             IsActive = true,
-                            Name = "Music Festival",
-                            Slug = "music-festival",
+                            Name = "Музыкальный фестиваль",
+                            Slug = "музыкальный-фестиваль",
                             TagGroupId = new Guid("55555555-5555-5555-5555-555555555555"),
                             UsageCount = 0
                         },
                         new
                         {
                             Id = new Guid("55555555-5555-5555-5555-bbbbbbbbbbbb"),
-                            Description = "Culinary and gastronomy events",
+                            Description = "Кулинарные мероприятия",
                             IsActive = true,
-                            Name = "Food Festival",
-                            Slug = "food-festival",
+                            Name = "Гастрофестиваль",
+                            Slug = "гастрофестиваль",
                             TagGroupId = new Guid("55555555-5555-5555-5555-555555555555"),
                             UsageCount = 0
                         },
                         new
                         {
                             Id = new Guid("55555555-5555-5555-5555-cccccccccccc"),
-                            Description = "Traditional and cultural celebrations",
+                            Description = "Традиционные праздники",
                             IsActive = true,
-                            Name = "Cultural Festival",
-                            Slug = "cultural-festival",
+                            Name = "Культурный фестиваль",
+                            Slug = "культурный-фестиваль",
                             TagGroupId = new Guid("55555555-5555-5555-5555-555555555555"),
                             UsageCount = 0
                         },
                         new
                         {
                             Id = new Guid("55555555-5555-5555-5555-dddddddddddd"),
-                            Description = "Local city festivals and fairs",
+                            Description = "Местные ярмарки и гуляния",
                             IsActive = true,
-                            Name = "City Celebration",
-                            Slug = "city-celebration",
+                            Name = "Городской праздник",
+                            Slug = "городской-праздник",
                             TagGroupId = new Guid("55555555-5555-5555-5555-555555555555"),
                             UsageCount = 0
                         },
                         new
                         {
                             Id = new Guid("55555555-5555-5555-5555-eeeeeeeeeeee"),
-                            Description = "Craft beer and brewery events",
+                            Description = "Дегустации крафтового пива",
                             IsActive = true,
-                            Name = "Beer Festival",
-                            Slug = "beer-festival",
+                            Name = "Пивной фестиваль",
+                            Slug = "пивной-фестиваль",
                             TagGroupId = new Guid("55555555-5555-5555-5555-555555555555"),
                             UsageCount = 0
                         },
                         new
                         {
                             Id = new Guid("66666666-6666-6666-6666-aaaaaaaaaaaa"),
-                            Description = "Sightseeing in cities",
+                            Description = "Осмотр достопримечательностей",
                             IsActive = true,
-                            Name = "City Trip",
-                            Slug = "city-trip",
+                            Name = "Городская поездка",
+                            Slug = "городская-поездка",
                             TagGroupId = new Guid("66666666-6666-6666-6666-666666666666"),
                             UsageCount = 0
                         },
                         new
                         {
                             Id = new Guid("66666666-6666-6666-6666-bbbbbbbbbbbb"),
-                            Description = "Gastronomy and local food tours",
+                            Description = "Кулинарные и винные туры",
                             IsActive = true,
-                            Name = "Food Tourism",
-                            Slug = "food-tourism",
+                            Name = "Гастротур",
+                            Slug = "гастротур",
                             TagGroupId = new Guid("66666666-6666-6666-6666-666666666666"),
                             UsageCount = 0
                         },
                         new
                         {
                             Id = new Guid("66666666-6666-6666-6666-cccccccccccc"),
-                            Description = "Traveling by car",
+                            Description = "Путешествия на машине",
                             IsActive = true,
-                            Name = "Road Trip",
-                            Slug = "road-trip",
+                            Name = "Автопутешествие",
+                            Slug = "автопутешествие",
                             TagGroupId = new Guid("66666666-6666-6666-6666-666666666666"),
                             UsageCount = 0
                         },
                         new
                         {
                             Id = new Guid("66666666-6666-6666-6666-dddddddddddd"),
-                            Description = "Museums and architecture tours",
+                            Description = "Экскурсии по музеям и архитектуре",
                             IsActive = true,
-                            Name = "Cultural Tour",
-                            Slug = "cultural-tour",
+                            Name = "Культурный тур",
+                            Slug = "культурный-тур",
                             TagGroupId = new Guid("66666666-6666-6666-6666-666666666666"),
                             UsageCount = 0
                         },
                         new
                         {
                             Id = new Guid("66666666-6666-6666-6666-eeeeeeeeeeee"),
-                            Description = "Short trips out of town",
+                            Description = "Короткие поездки за город",
                             IsActive = true,
-                            Name = "Weekend Getaway",
-                            Slug = "weekend-getaway",
+                            Name = "Уикенд за городом",
+                            Slug = "уикенд-за-городом",
                             TagGroupId = new Guid("66666666-6666-6666-6666-666666666666"),
                             UsageCount = 0
                         },
                         new
                         {
                             Id = new Guid("77777777-7777-7777-7777-aaaaaaaaaaaa"),
-                            Description = "Movies and film screenings",
+                            Description = "Фильмы и кинопоказы",
                             IsActive = true,
-                            Name = "Cinema",
-                            Slug = "cinema",
+                            Name = "Кино",
+                            Slug = "кино",
                             TagGroupId = new Guid("77777777-7777-7777-7777-777777777777"),
                             UsageCount = 0
                         },
                         new
                         {
                             Id = new Guid("77777777-7777-7777-7777-bbbbbbbbbbbb"),
-                            Description = "Plays and theatrical performances",
+                            Description = "Спектакли и театральные постановки",
                             IsActive = true,
-                            Name = "Theater",
-                            Slug = "theater",
+                            Name = "Театр",
+                            Slug = "театр",
                             TagGroupId = new Guid("77777777-7777-7777-7777-777777777777"),
                             UsageCount = 0
                         },
                         new
                         {
                             Id = new Guid("77777777-7777-7777-7777-cccccccccccc"),
-                            Description = "Live music performances",
+                            Description = "Концерты живой музыки",
                             IsActive = true,
-                            Name = "Concert",
-                            Slug = "concert",
+                            Name = "Концерт",
+                            Slug = "концерт",
                             TagGroupId = new Guid("77777777-7777-7777-7777-777777777777"),
                             UsageCount = 0
                         },
                         new
                         {
                             Id = new Guid("77777777-7777-7777-7777-dddddddddddd"),
-                            Description = "Rock and metal gigs",
+                            Description = "Рок и метал концерты",
                             IsActive = true,
-                            Name = "Rock Show",
-                            Slug = "rock-show",
+                            Name = "Рок-концерт",
+                            Slug = "рок-концерт",
                             TagGroupId = new Guid("77777777-7777-7777-7777-777777777777"),
                             UsageCount = 0
                         },
                         new
                         {
                             Id = new Guid("77777777-7777-7777-7777-eeeeeeeeeeee"),
-                            Description = "Gallery and art shows",
+                            Description = "Художественные галереи и выставки",
                             IsActive = true,
-                            Name = "Art Exhibition",
-                            Slug = "art-exhibition",
+                            Name = "Выставка искусств",
+                            Slug = "выставка-искусств",
                             TagGroupId = new Guid("77777777-7777-7777-7777-777777777777"),
                             UsageCount = 0
                         },
                         new
                         {
                             Id = new Guid("77777777-7777-7777-7777-ffffffffffff"),
-                            Description = "Stand-up comedy performances",
+                            Description = "Юмористические выступления",
                             IsActive = true,
-                            Name = "Comedy Show",
-                            Slug = "comedy-show",
+                            Name = "Стендап",
+                            Slug = "стендап",
                             TagGroupId = new Guid("77777777-7777-7777-7777-777777777777"),
                             UsageCount = 0
                         },
                         new
                         {
                             Id = new Guid("88888888-8888-8888-8888-aaaaaaaaaaaa"),
-                            Description = "Bar and pub meetups",
+                            Description = "Встречи в барах и пабах",
                             IsActive = true,
-                            Name = "Pub",
-                            Slug = "pub",
+                            Name = "Паб",
+                            Slug = "паб",
                             TagGroupId = new Guid("88888888-8888-8888-8888-888888888888"),
                             UsageCount = 0
                         },
                         new
                         {
                             Id = new Guid("88888888-8888-8888-8888-bbbbbbbbbbbb"),
-                            Description = "Outdoor cafes and terraces",
+                            Description = "Летние кафе и террасы",
                             IsActive = true,
-                            Name = "Patio",
-                            Slug = "patio",
+                            Name = "Веранда",
+                            Slug = "веранда",
                             TagGroupId = new Guid("88888888-8888-8888-8888-888888888888"),
                             UsageCount = 0
                         },
                         new
                         {
                             Id = new Guid("88888888-8888-8888-8888-cccccccccccc"),
-                            Description = "Casual coffee meetings",
+                            Description = "Неформальные встречи за кофе",
                             IsActive = true,
-                            Name = "Coffee Date",
-                            Slug = "coffee-date",
+                            Name = "Кофе-дейт",
+                            Slug = "кофе-дейт",
                             TagGroupId = new Guid("88888888-8888-8888-8888-888888888888"),
                             UsageCount = 0
                         },
                         new
                         {
                             Id = new Guid("88888888-8888-8888-8888-dddddddddddd"),
-                            Description = "Board game nights",
+                            Description = "Вечера настольных игр",
                             IsActive = true,
-                            Name = "Board Games",
-                            Slug = "board-games",
+                            Name = "Настольные игры",
+                            Slug = "настольные-игры",
                             TagGroupId = new Guid("88888888-8888-8888-8888-888888888888"),
                             UsageCount = 0
                         },
                         new
                         {
                             Id = new Guid("88888888-8888-8888-8888-eeeeeeeeeeee"),
-                            Description = "Relaxed park gatherings",
+                            Description = "Неспешные встречи в парке",
                             IsActive = true,
-                            Name = "Picnic in Park",
-                            Slug = "picnic-in-park",
+                            Name = "Пикник в парке",
+                            Slug = "пикник-в-парке",
+                            TagGroupId = new Guid("88888888-8888-8888-8888-888888888888"),
+                            UsageCount = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("88888888-8888-8888-8888-ffffffffffff"),
+                            Description = "Расслабленный летний отдых в гамаке на природе",
+                            IsActive = true,
+                            Name = "Отдых в гамаке",
+                            Slug = "отдых-в-гамаке",
                             TagGroupId = new Guid("88888888-8888-8888-8888-888888888888"),
                             UsageCount = 0
                         },
                         new
                         {
                             Id = new Guid("99999999-9999-9999-9999-aaaaaaaaaaaa"),
-                            Description = "Swim, bike, run races",
+                            Description = "Соревнования по плаванию, велоспорту и бегу",
                             IsActive = true,
-                            Name = "Triathlon",
-                            Slug = "triathlon",
+                            Name = "Триатлон",
+                            Slug = "триатлон",
                             TagGroupId = new Guid("99999999-9999-9999-9999-999999999999"),
                             UsageCount = 0
                         },
                         new
                         {
                             Id = new Guid("99999999-9999-9999-9999-bbbbbbbbbbbb"),
-                            Description = "Running marathons in other cities",
+                            Description = "Участие в марафонах в других городах",
                             IsActive = true,
-                            Name = "Marathon",
-                            Slug = "marathon",
+                            Name = "Марафон",
+                            Slug = "марафон",
                             TagGroupId = new Guid("99999999-9999-9999-9999-999999999999"),
                             UsageCount = 0
                         },
                         new
                         {
                             Id = new Guid("99999999-9999-9999-9999-cccccccccccc"),
-                            Description = "Tough mudder and obstacle courses",
+                            Description = "Забеги с препятствиями",
                             IsActive = true,
-                            Name = "Obstacle Race",
-                            Slug = "obstacle-race",
+                            Name = "Гонка с препятствиями",
+                            Slug = "гонка-с-препятствиями",
                             TagGroupId = new Guid("99999999-9999-9999-9999-999999999999"),
                             UsageCount = 0
                         },
                         new
                         {
                             Id = new Guid("99999999-9999-9999-9999-dddddddddddd"),
-                            Description = "Competitive bike racing",
+                            Description = "Соревновательные велозаезды",
                             IsActive = true,
-                            Name = "Cycling Race",
-                            Slug = "cycling-race",
+                            Name = "Велосипедная гонка",
+                            Slug = "велосипедная-гонка",
                             TagGroupId = new Guid("99999999-9999-9999-9999-999999999999"),
                             UsageCount = 0
                         },
                         new
                         {
                             Id = new Guid("99999999-9999-9999-9999-eeeeeeeeeeee"),
-                            Description = "Open water or pool races",
+                            Description = "Заплывы на открытой воде или в бассейне",
                             IsActive = true,
-                            Name = "Swimming Competition",
-                            Slug = "swimming-competition",
+                            Name = "Соревнования по плаванию",
+                            Slug = "соревнования-по-плаванию",
                             TagGroupId = new Guid("99999999-9999-9999-9999-999999999999"),
                             UsageCount = 0
                         },
                         new
                         {
                             Id = new Guid("99999999-9999-9999-9999-ffffffffffff"),
-                            Description = "Off-road running competitions",
+                            Description = "Соревнования по бегу по бездорожью",
                             IsActive = true,
-                            Name = "Trail Running Race",
-                            Slug = "trail-running-race",
+                            Name = "Трейловый забег",
+                            Slug = "трейловый-забег",
                             TagGroupId = new Guid("99999999-9999-9999-9999-999999999999"),
                             UsageCount = 0
                         });
@@ -820,87 +830,87 @@ namespace eMeetup.Modules.Events.Infrastructure.Database.Migrations
                         new
                         {
                             Id = new Guid("11111111-1111-1111-1111-111111111111"),
-                            Description = "Running, swimming, cycling and other sports activities",
+                            Description = "Бег, плавание, велоспорт и другие спортивные активности",
                             DisplayOrder = 1,
                             Icon = "🏃",
                             IsActive = true,
-                            Name = "Active Lifestyle"
+                            Name = "Активный образ жизни"
                         },
                         new
                         {
                             Id = new Guid("22222222-2222-2222-2222-222222222222"),
-                            Description = "Skiing, snowboarding, ice skating and snow tubing",
+                            Description = "Лыжи, сноуборд, коньки и тюбинг",
                             DisplayOrder = 2,
                             Icon = "❄️",
                             IsActive = true,
-                            Name = "Winter Activities"
+                            Name = "Зимние активности"
                         },
                         new
                         {
                             Id = new Guid("33333333-3333-3333-3333-333333333333"),
-                            Description = "Hiking, biking tours and picnics in nature",
+                            Description = "Походы, велотуры и пикники на природе",
                             DisplayOrder = 3,
                             Icon = "⛰️",
                             IsActive = true,
-                            Name = "Adventure & Outdoors"
+                            Name = "Приключения и активный отдых"
                         },
                         new
                         {
                             Id = new Guid("44444444-4444-4444-4444-444444444444"),
-                            Description = "Packrafting, SUP, kayaking and other water hikes",
+                            Description = "Пакрафтинг, САП, каякинг и другие водные походы",
                             DisplayOrder = 4,
                             Icon = "🚣",
                             IsActive = true,
-                            Name = "Water Adventures"
+                            Name = "Водные приключения"
                         },
                         new
                         {
                             Id = new Guid("55555555-5555-5555-5555-555555555555"),
-                            Description = "Music, food and cultural festivals celebrations",
+                            Description = "Музыкальные, гастрономические и культурные фестивали",
                             DisplayOrder = 5,
                             Icon = "🎪",
                             IsActive = true,
-                            Name = "Festivals & Events"
+                            Name = "Фестивали и мероприятия"
                         },
                         new
                         {
                             Id = new Guid("66666666-6666-6666-6666-666666666666"),
-                            Description = "City trips, sightseeing, food tours and road trips",
+                            Description = "Городские поездки, экскурсии, гастротуры и автопутешествия",
                             DisplayOrder = 6,
                             Icon = "✈️",
                             IsActive = true,
-                            Name = "Travel & Exploration"
+                            Name = "Путешествия"
                         },
                         new
                         {
                             Id = new Guid("77777777-7777-7777-7777-777777777777"),
-                            Description = "Cinema, theater, concerts and rock shows",
+                            Description = "Кино, театр, концерты и рок-шоу",
                             DisplayOrder = 7,
                             Icon = "🎭",
                             IsActive = true,
-                            Name = "Culture & Entertainment"
+                            Name = "Культура и развлечения"
                         },
                         new
                         {
                             Id = new Guid("88888888-8888-8888-8888-888888888888"),
-                            Description = "Pub meetups, terrace cafes and relaxing time",
+                            Description = "Встречи в пабах, летние веранды и приятное времяпрепровождение",
                             DisplayOrder = 8,
                             Icon = "😎",
                             IsActive = true,
-                            Name = "Chill & Hangout"
+                            Name = "Отдых и тусовки"
                         },
                         new
                         {
                             Id = new Guid("99999999-9999-9999-9999-999999999999"),
-                            Description = "Marathons, triathlons, competitions and races in other cities",
+                            Description = "Марафоны, триатлоны, соревнования и забеги в других городах",
                             DisplayOrder = 9,
                             Icon = "🏆",
                             IsActive = true,
-                            Name = "Sports Events"
+                            Name = "Спортивные события"
                         });
                 });
 
-            modelBuilder.Entity("eMeetup.Modules.Events.Domain.EventInterests.EventTag", b =>
+            modelBuilder.Entity("eMeetup.Modules.Events.Domain.EventTags.EventTag", b =>
                 {
                     b.HasOne("eMeetup.Modules.Events.Domain.Events.Event", "Event")
                         .WithMany("Tags")

@@ -1,5 +1,5 @@
 ﻿using eMeetup.Common.Domain;
-using eMeetup.Modules.Events.Domain.EventInterests;
+using eMeetup.Modules.Events.Domain.EventTags;
 
 namespace eMeetup.Modules.Events.Domain.Tags;
 

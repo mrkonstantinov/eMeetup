@@ -2,4 +2,4 @@
 
 namespace eMeetup.Modules.Users.Application.Users.GetUsersInterests;
 
-public sealed record GetUsersInterestsQuery() : IQuery<IReadOnlyCollection<UsersInterestResponse>>;
+public sealed record GetUsersInterestsQuery() : IQuery<IReadOnlyCollection<TagGroupResponse>>;

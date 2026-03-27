@@ -2,7 +2,7 @@
 using eMeetup.Common.Infrastructure.Inbox;
 using eMeetup.Common.Infrastructure.Outbox;
 using eMeetup.Modules.Events.Application.Abstractions.Data;
-using eMeetup.Modules.Events.Domain.EventInterests;
+using eMeetup.Modules.Events.Domain.EventTags;
 using eMeetup.Modules.Events.Domain.Events;
 using eMeetup.Modules.Events.Domain.Tags;
 using eMeetup.Modules.Events.Infrastructure.Events;

@@ -4,13 +4,13 @@ using eMeetup.Common.Application.Data;
 using eMeetup.Common.Application.Messaging;
 using eMeetup.Common.Domain;
 
-namespace eMeetup.Modules.Users.Application.Users.GetUsersInterests;
+namespace eMeetup.Modules.Events.Application.Events.GetTags;
 
-internal sealed class GetUsersInterestsQueryHandler(IDbConnectionFactory dbConnectionFactory)
-    : IQueryHandler<GetUsersInterestsQuery, IReadOnlyCollection<TagGroupResponse>>
+internal sealed class GetTagsQueryHandler(IDbConnectionFactory dbConnectionFactory)
+    : IQueryHandler<GetTagsQuery, IReadOnlyCollection<TagGroupResponse>>
 {
     public async Task<Result<IReadOnlyCollection<TagGroupResponse>>> Handle(
-        GetUsersInterestsQuery request,
+        GetTagsQuery request,
         CancellationToken cancellationToken)
     {
         await using DbConnection connection = await dbConnectionFactory.OpenConnectionAsync();
@@ -23,8 +23,8 @@ internal sealed class GetUsersInterestsQueryHandler(IDbConnectionFactory dbConne
                  t.name AS Name,
                  t.slug AS Slug,
                  t.usage_count AS UsageCount
-             FROM users.tags t
-             LEFT JOIN users.tag_groups tg ON t.tag_group_id = tg.id
+             FROM events.tags t
+             LEFT JOIN events.tag_groups tg ON t.tag_group_id = tg.id
              WHERE t.is_active = true
              """;
 
@@ -44,7 +44,7 @@ internal sealed class GetUsersInterestsQueryHandler(IDbConnectionFactory dbConne
             {
                 TagGroupName = g.Key,
                 TotalUsage = g.Sum(x => x.UsageCount),
-                Tags = g.Select(x => new UsersInterestResponse(
+                Tags = g.Select(x => new TagResponse(
                     Id: x.Id,
                     Name: x.Name,
                     Slug: x.Slug,

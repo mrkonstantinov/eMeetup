@@ -1,16 +1,17 @@
-﻿using System.Security.Claims;
+﻿using System.Diagnostics.Eventing.Reader;
+using System.Security.Claims;
 using eMeetup.Common.Application.Exceptions;
 
 namespace eMeetup.Common.Infrastructure.Authentication;
 
 public static class ClaimsPrincipalExtensions
 {
-    public static string GetUserId(this ClaimsPrincipal? principal)
+    public static Guid GetUserId(this ClaimsPrincipal? principal)
     {
         string? userId = principal?.FindFirst(CustomClaims.Sub)?.Value;
 
-        return (!string.IsNullOrEmpty(userId)) ?
-            userId :
+        return Guid.TryParse(userId, out Guid parsedUserId) ?
+            parsedUserId :
             throw new EmeetupException("User identifier is unavailable");
     }
 

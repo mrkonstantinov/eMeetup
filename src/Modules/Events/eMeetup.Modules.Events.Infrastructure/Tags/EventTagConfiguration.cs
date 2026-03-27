@@ -1,4 +1,4 @@
-﻿using eMeetup.Modules.Events.Domain.EventInterests;
+﻿using eMeetup.Modules.Events.Domain.EventTags;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

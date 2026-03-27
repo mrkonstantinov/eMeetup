@@ -1,0 +1,343 @@
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
+
+#nullable disable
+
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
+namespace eMeetup.Modules.Events.Infrastructure.Database.Migrations
+{
+    /// <inheritdoc />
+    public partial class InitialMigration : Migration
+    {
+        /// <inheritdoc />
+        protected override void Up(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.EnsureSchema(
+                name: "events");
+
+            migrationBuilder.CreateTable(
+                name: "events",
+                schema: "events",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "uuid", nullable: false),
+                    organizer_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    organizer_name = table.Column<string>(type: "text", nullable: false),
+                    title = table.Column<string>(type: "text", nullable: false),
+                    description = table.Column<string>(type: "text", nullable: true),
+                    url = table.Column<string>(type: "text", nullable: true),
+                    created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    is_archived = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_events", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "inbox_message_consumers",
+                schema: "events",
+                columns: table => new
+                {
+                    inbox_message_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    name = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_inbox_message_consumers", x => new { x.inbox_message_id, x.name });
+                });
+
+            migrationBuilder.CreateTable(
+                name: "inbox_messages",
+                schema: "events",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "uuid", nullable: false),
+                    type = table.Column<string>(type: "text", nullable: false),
+                    content = table.Column<string>(type: "jsonb", maxLength: 2000, nullable: false),
+                    occurred_on_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    processed_on_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    error = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_inbox_messages", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "outbox_message_consumers",
+                schema: "events",
+                columns: table => new
+                {
+                    outbox_message_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    name = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_outbox_message_consumers", x => new { x.outbox_message_id, x.name });
+                });
+
+            migrationBuilder.CreateTable(
+                name: "outbox_messages",
+                schema: "events",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "uuid", nullable: false),
+                    type = table.Column<string>(type: "text", nullable: false),
+                    content = table.Column<string>(type: "jsonb", maxLength: 2000, nullable: false),
+                    occurred_on_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    processed_on_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    error = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_outbox_messages", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "tag_groups",
+                schema: "events",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
+                    name = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
+                    description = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: true, defaultValue: ""),
+                    icon = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true, defaultValue: ""),
+                    display_order = table.Column<int>(type: "integer", nullable: false, defaultValue: 0),
+                    is_active = table.Column<bool>(type: "boolean", nullable: false, defaultValue: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_tag_groups", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "tags",
+                schema: "events",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
+                    name = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
+                    slug = table.Column<string>(type: "character varying(60)", maxLength: 60, nullable: false),
+                    description = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false, defaultValue: ""),
+                    usage_count = table.Column<int>(type: "integer", nullable: false, defaultValue: 0),
+                    is_active = table.Column<bool>(type: "boolean", nullable: false, defaultValue: true),
+                    tag_group_id = table.Column<Guid>(type: "uuid", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_tags", x => x.id);
+                    table.ForeignKey(
+                        name: "fk_tags_tag_group_tag_group_id",
+                        column: x => x.tag_group_id,
+                        principalSchema: "events",
+                        principalTable: "tag_groups",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.SetNull);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "event_tags",
+                schema: "events",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "uuid", nullable: false),
+                    event_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    tag_id = table.Column<Guid>(type: "uuid", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_event_tags", x => x.id);
+                    table.ForeignKey(
+                        name: "fk_event_tags_events_event_id",
+                        column: x => x.event_id,
+                        principalSchema: "events",
+                        principalTable: "events",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "fk_event_tags_tags_tag_id",
+                        column: x => x.tag_id,
+                        principalSchema: "events",
+                        principalTable: "tags",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.InsertData(
+                schema: "events",
+                table: "tag_groups",
+                columns: new[] { "id", "description", "display_order", "icon", "is_active", "name" },
+                values: new object[,]
+                {
+                    { new Guid("11111111-1111-1111-1111-111111111111"), "Бег, плавание, велоспорт и другие спортивные активности", 1, "🏃", true, "Активный образ жизни" },
+                    { new Guid("22222222-2222-2222-2222-222222222222"), "Лыжи, сноуборд, коньки и тюбинг", 2, "❄️", true, "Зимние активности" },
+                    { new Guid("33333333-3333-3333-3333-333333333333"), "Походы, велотуры и пикники на природе", 3, "⛰️", true, "Приключения и активный отдых" },
+                    { new Guid("44444444-4444-4444-4444-444444444444"), "Пакрафтинг, САП, каякинг и другие водные походы", 4, "🚣", true, "Водные приключения" },
+                    { new Guid("55555555-5555-5555-5555-555555555555"), "Музыкальные, гастрономические и культурные фестивали", 5, "🎪", true, "Фестивали и мероприятия" },
+                    { new Guid("66666666-6666-6666-6666-666666666666"), "Городские поездки, экскурсии, гастротуры и автопутешествия", 6, "✈️", true, "Путешествия" },
+                    { new Guid("77777777-7777-7777-7777-777777777777"), "Кино, театр, концерты и рок-шоу", 7, "🎭", true, "Культура и развлечения" },
+                    { new Guid("88888888-8888-8888-8888-888888888888"), "Встречи в пабах, летние веранды и приятное времяпрепровождение", 8, "😎", true, "Отдых и тусовки" },
+                    { new Guid("99999999-9999-9999-9999-999999999999"), "Марафоны, триатлоны, соревнования и забеги в других городах", 9, "🏆", true, "Спортивные события" }
+                });
+
+            migrationBuilder.InsertData(
+                schema: "events",
+                table: "tags",
+                columns: new[] { "id", "description", "is_active", "name", "slug", "tag_group_id" },
+                values: new object[,]
+                {
+                    { new Guid("11111111-1111-1111-1111-aaaaaaaaaaaa"), "Занятия бегом и пробежки", true, "Бег", "бег", new Guid("11111111-1111-1111-1111-111111111111") },
+                    { new Guid("11111111-1111-1111-1111-bbbbbbbbbbbb"), "Тренировки в бассейне", true, "Плавание", "плавание", new Guid("11111111-1111-1111-1111-111111111111") },
+                    { new Guid("11111111-1111-1111-1111-cccccccccccc"), "Поездки по городу и шоссе", true, "Велоспорт", "велоспорт", new Guid("11111111-1111-1111-1111-111111111111") },
+                    { new Guid("11111111-1111-1111-1111-dddddddddddd"), "Фитнес и силовые тренировки", true, "Тренажерный зал", "тренажерный-зал", new Guid("11111111-1111-1111-1111-111111111111") },
+                    { new Guid("11111111-1111-1111-1111-eeeeeeeeeeee"), "Занятия йогой и растяжка", true, "Йога", "йога", new Guid("11111111-1111-1111-1111-111111111111") },
+                    { new Guid("22222222-2222-2222-2222-aaaaaaaaaaaa"), "Катание на склонах", true, "Горные лыжи", "горные-лыжи", new Guid("22222222-2222-2222-2222-222222222222") },
+                    { new Guid("22222222-2222-2222-2222-bbbbbbbbbbbb"), "Скандинавская ходьба на лыжах по трассам", true, "Беговые лыжи", "беговые-лыжи", new Guid("22222222-2222-2222-2222-222222222222") },
+                    { new Guid("22222222-2222-2222-2222-cccccccccccc"), "Катание на склонах и в парках", true, "Сноуборд", "сноуборд", new Guid("22222222-2222-2222-2222-222222222222") },
+                    { new Guid("22222222-2222-2222-2222-dddddddddddd"), "Катание на ледовых катках", true, "Катание на коньках", "катание-на-коньках", new Guid("22222222-2222-2222-2222-222222222222") },
+                    { new Guid("22222222-2222-2222-2222-eeeeeeeeeeee"), "Катание на ватрушках с горок", true, "Тюбинг", "тюбинг", new Guid("22222222-2222-2222-2222-222222222222") },
+                    { new Guid("22222222-2222-2222-2222-ffffffffffff"), "Походы на снегоступах", true, "Зимний поход", "зимний-поход", new Guid("22222222-2222-2222-2222-222222222222") },
+                    { new Guid("33333333-3333-3333-3333-aaaaaaaaaaaa"), "Дневные походы по тропам", true, "Поход", "поход", new Guid("33333333-3333-3333-3333-333333333333") },
+                    { new Guid("33333333-3333-3333-3333-bbbbbbbbbbbb"), "Многодневные велосипедные путешествия", true, "Велотур", "велотур", new Guid("33333333-3333-3333-3333-333333333333") },
+                    { new Guid("33333333-3333-3333-3333-cccccccccccc"), "Трапезы на природе", true, "Пикник", "пикник", new Guid("33333333-3333-3333-3333-333333333333") },
+                    { new Guid("33333333-3333-3333-3333-dddddddddddd"), "Ночёвки на природе", true, "Кемпинг", "кемпинг", new Guid("33333333-3333-3333-3333-333333333333") },
+                    { new Guid("33333333-3333-3333-3333-eeeeeeeeeeee"), "Бег по природным тропам", true, "Трейлраннинг", "трейлраннинг", new Guid("33333333-3333-3333-3333-333333333333") },
+                    { new Guid("44444444-4444-4444-4444-aaaaaaaaaaaa"), "Сплав на лёгких надувных лодках", true, "Пакрафтинг", "пакрафтинг", new Guid("44444444-4444-4444-4444-444444444444") },
+                    { new Guid("44444444-4444-4444-4444-bbbbbbbbbbbb"), "Катание на доске с веслом стоя", true, "САП-сёрфинг", "сап-сёрфинг", new Guid("44444444-4444-4444-4444-444444444444") },
+                    { new Guid("44444444-4444-4444-4444-cccccccccccc"), "Сплав на каяках по рекам и озёрам", true, "Каякинг", "каякинг", new Guid("44444444-4444-4444-4444-444444444444") },
+                    { new Guid("44444444-4444-4444-4444-dddddddddddd"), "Путешествия на каноэ по спокойной воде", true, "Каноэ", "каноэ", new Guid("44444444-4444-4444-4444-444444444444") },
+                    { new Guid("44444444-4444-4444-4444-eeeeeeeeeeee"), "Сплав по бурной воде", true, "Рафтинг", "рафтинг", new Guid("44444444-4444-4444-4444-444444444444") },
+                    { new Guid("44444444-4444-4444-4444-ffffffffffff"), "Плавание в озёрах и морях", true, "Плавание на открытой воде", "плавание-на-открытой-воде", new Guid("44444444-4444-4444-4444-444444444444") },
+                    { new Guid("55555555-5555-5555-5555-aaaaaaaaaaaa"), "Фестивали живой музыки и концертов", true, "Музыкальный фестиваль", "музыкальный-фестиваль", new Guid("55555555-5555-5555-5555-555555555555") },
+                    { new Guid("55555555-5555-5555-5555-bbbbbbbbbbbb"), "Кулинарные мероприятия", true, "Гастрофестиваль", "гастрофестиваль", new Guid("55555555-5555-5555-5555-555555555555") },
+                    { new Guid("55555555-5555-5555-5555-cccccccccccc"), "Традиционные праздники", true, "Культурный фестиваль", "культурный-фестиваль", new Guid("55555555-5555-5555-5555-555555555555") },
+                    { new Guid("55555555-5555-5555-5555-dddddddddddd"), "Местные ярмарки и гуляния", true, "Городской праздник", "городской-праздник", new Guid("55555555-5555-5555-5555-555555555555") },
+                    { new Guid("55555555-5555-5555-5555-eeeeeeeeeeee"), "Дегустации крафтового пива", true, "Пивной фестиваль", "пивной-фестиваль", new Guid("55555555-5555-5555-5555-555555555555") },
+                    { new Guid("66666666-6666-6666-6666-aaaaaaaaaaaa"), "Осмотр достопримечательностей", true, "Городская поездка", "городская-поездка", new Guid("66666666-6666-6666-6666-666666666666") },
+                    { new Guid("66666666-6666-6666-6666-bbbbbbbbbbbb"), "Кулинарные и винные туры", true, "Гастротур", "гастротур", new Guid("66666666-6666-6666-6666-666666666666") },
+                    { new Guid("66666666-6666-6666-6666-cccccccccccc"), "Путешествия на машине", true, "Автопутешествие", "автопутешествие", new Guid("66666666-6666-6666-6666-666666666666") },
+                    { new Guid("66666666-6666-6666-6666-dddddddddddd"), "Экскурсии по музеям и архитектуре", true, "Культурный тур", "культурный-тур", new Guid("66666666-6666-6666-6666-666666666666") },
+                    { new Guid("66666666-6666-6666-6666-eeeeeeeeeeee"), "Короткие поездки за город", true, "Уикенд за городом", "уикенд-за-городом", new Guid("66666666-6666-6666-6666-666666666666") },
+                    { new Guid("77777777-7777-7777-7777-aaaaaaaaaaaa"), "Фильмы и кинопоказы", true, "Кино", "кино", new Guid("77777777-7777-7777-7777-777777777777") },
+                    { new Guid("77777777-7777-7777-7777-bbbbbbbbbbbb"), "Спектакли и театральные постановки", true, "Театр", "театр", new Guid("77777777-7777-7777-7777-777777777777") },
+                    { new Guid("77777777-7777-7777-7777-cccccccccccc"), "Концерты живой музыки", true, "Концерт", "концерт", new Guid("77777777-7777-7777-7777-777777777777") },
+                    { new Guid("77777777-7777-7777-7777-dddddddddddd"), "Рок и метал концерты", true, "Рок-концерт", "рок-концерт", new Guid("77777777-7777-7777-7777-777777777777") },
+                    { new Guid("77777777-7777-7777-7777-eeeeeeeeeeee"), "Художественные галереи и выставки", true, "Выставка искусств", "выставка-искусств", new Guid("77777777-7777-7777-7777-777777777777") },
+                    { new Guid("77777777-7777-7777-7777-ffffffffffff"), "Юмористические выступления", true, "Стендап", "стендап", new Guid("77777777-7777-7777-7777-777777777777") },
+                    { new Guid("88888888-8888-8888-8888-aaaaaaaaaaaa"), "Встречи в барах и пабах", true, "Паб", "паб", new Guid("88888888-8888-8888-8888-888888888888") },
+                    { new Guid("88888888-8888-8888-8888-bbbbbbbbbbbb"), "Летние кафе и террасы", true, "Веранда", "веранда", new Guid("88888888-8888-8888-8888-888888888888") },
+                    { new Guid("88888888-8888-8888-8888-cccccccccccc"), "Неформальные встречи за кофе", true, "Кофе-дейт", "кофе-дейт", new Guid("88888888-8888-8888-8888-888888888888") },
+                    { new Guid("88888888-8888-8888-8888-dddddddddddd"), "Вечера настольных игр", true, "Настольные игры", "настольные-игры", new Guid("88888888-8888-8888-8888-888888888888") },
+                    { new Guid("88888888-8888-8888-8888-eeeeeeeeeeee"), "Неспешные встречи в парке", true, "Пикник в парке", "пикник-в-парке", new Guid("88888888-8888-8888-8888-888888888888") },
+                    { new Guid("88888888-8888-8888-8888-ffffffffffff"), "Расслабленный летний отдых в гамаке на природе", true, "Отдых в гамаке", "отдых-в-гамаке", new Guid("88888888-8888-8888-8888-888888888888") },
+                    { new Guid("99999999-9999-9999-9999-aaaaaaaaaaaa"), "Соревнования по плаванию, велоспорту и бегу", true, "Триатлон", "триатлон", new Guid("99999999-9999-9999-9999-999999999999") },
+                    { new Guid("99999999-9999-9999-9999-bbbbbbbbbbbb"), "Участие в марафонах в других городах", true, "Марафон", "марафон", new Guid("99999999-9999-9999-9999-999999999999") },
+                    { new Guid("99999999-9999-9999-9999-cccccccccccc"), "Забеги с препятствиями", true, "Гонка с препятствиями", "гонка-с-препятствиями", new Guid("99999999-9999-9999-9999-999999999999") },
+                    { new Guid("99999999-9999-9999-9999-dddddddddddd"), "Соревновательные велозаезды", true, "Велосипедная гонка", "велосипедная-гонка", new Guid("99999999-9999-9999-9999-999999999999") },
+                    { new Guid("99999999-9999-9999-9999-eeeeeeeeeeee"), "Заплывы на открытой воде или в бассейне", true, "Соревнования по плаванию", "соревнования-по-плаванию", new Guid("99999999-9999-9999-9999-999999999999") },
+                    { new Guid("99999999-9999-9999-9999-ffffffffffff"), "Соревнования по бегу по бездорожью", true, "Трейловый забег", "трейловый-забег", new Guid("99999999-9999-9999-9999-999999999999") }
+                });
+
+            migrationBuilder.CreateIndex(
+                name: "ix_event_tags_event_id",
+                schema: "events",
+                table: "event_tags",
+                column: "event_id");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_event_tags_tag_id",
+                schema: "events",
+                table: "event_tags",
+                column: "tag_id");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_tag_groups_display_order",
+                schema: "events",
+                table: "tag_groups",
+                column: "display_order");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_tag_groups_is_active",
+                schema: "events",
+                table: "tag_groups",
+                column: "is_active");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_tag_groups_name",
+                schema: "events",
+                table: "tag_groups",
+                column: "name",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "ix_tags_is_active",
+                schema: "events",
+                table: "tags",
+                column: "is_active");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_tags_name",
+                schema: "events",
+                table: "tags",
+                column: "name",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "ix_tags_slug",
+                schema: "events",
+                table: "tags",
+                column: "slug",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "ix_tags_tag_group_id",
+                schema: "events",
+                table: "tags",
+                column: "tag_group_id");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_tags_usage_count",
+                schema: "events",
+                table: "tags",
+                column: "usage_count");
+        }
+
+        /// <inheritdoc />
+        protected override void Down(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.DropTable(
+                name: "event_tags",
+                schema: "events");
+
+            migrationBuilder.DropTable(
+                name: "inbox_message_consumers",
+                schema: "events");
+
+            migrationBuilder.DropTable(
+                name: "inbox_messages",
+                schema: "events");
+
+            migrationBuilder.DropTable(
+                name: "outbox_message_consumers",
+                schema: "events");
+
+            migrationBuilder.DropTable(
+                name: "outbox_messages",
+                schema: "events");
+
+            migrationBuilder.DropTable(
+                name: "events",
+                schema: "events");
+
+            migrationBuilder.DropTable(
+                name: "tags",
+                schema: "events");
+
+            migrationBuilder.DropTable(
+                name: "tag_groups",
+                schema: "events");
+        }
+    }
+}

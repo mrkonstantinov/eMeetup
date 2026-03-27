@@ -11,3 +11,17 @@ public sealed record UsersInterestResponse(
     string Name,
     string Slug,
     int UsageCount);
+
+public sealed record TagGroupResponse(
+    string TagGroupName,
+    IReadOnlyCollection<UsersInterestResponse> Tags);
+
+
+public sealed record TagWithGroupDto
+(
+    string TagGroupName,
+    Guid Id,
+    string Name,
+    string Slug,
+    int UsageCount
+);
