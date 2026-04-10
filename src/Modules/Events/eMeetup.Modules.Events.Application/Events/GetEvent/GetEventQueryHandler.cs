@@ -18,8 +18,8 @@ internal sealed class GetEventQueryHandler(IDbConnectionFactory dbConnectionFact
             $"""
              SELECT
                 e.id AS {nameof(EventResponse.Id)},
-                e.created_by_user_id AS {nameof(EventResponse.OrganizerId)},
-                e.created_by_user_name AS {nameof(EventResponse.OrganizerName)},
+                e.organizer_id AS {nameof(EventResponse.OrganizerId)},
+                e.organizer_name AS {nameof(EventResponse.OrganizerName)},
                 e.title AS {nameof(EventResponse.Title)},
                 e.description AS {nameof(EventResponse.Description)},
                 e.url AS {nameof(EventResponse.Url)},
@@ -33,7 +33,7 @@ internal sealed class GetEventQueryHandler(IDbConnectionFactory dbConnectionFact
              LEFT JOIN events.event_tags et ON e.id = et.event_id
              LEFT JOIN events.tags t ON et.tag_id = t.id
              WHERE e.id = @EventId
-             GROUP BY e.id, e.created_by_user_id, e.created_by_user_name, e.title, 
+             GROUP BY e.id, e.organizer_id, e.organizer_name, e.title, 
                       e.description, e.url, e.is_archived
              """;
 

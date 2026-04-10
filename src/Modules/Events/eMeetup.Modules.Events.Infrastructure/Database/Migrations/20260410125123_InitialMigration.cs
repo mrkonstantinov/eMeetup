@@ -113,6 +113,39 @@ namespace eMeetup.Modules.Events.Infrastructure.Database.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "event_sessions",
+                schema: "events",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "uuid", nullable: false),
+                    event_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    title = table.Column<string>(type: "text", nullable: false),
+                    description = table.Column<string>(type: "text", nullable: true),
+                    starts_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    ends_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    locality = table.Column<string>(type: "text", nullable: false),
+                    address = table.Column<string>(type: "text", nullable: false),
+                    latitude = table.Column<double>(type: "double precision", precision: 10, scale: 8, nullable: true),
+                    longitude = table.Column<double>(type: "double precision", precision: 11, scale: 8, nullable: true),
+                    status = table.Column<int>(type: "integer", nullable: false),
+                    created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    published_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    canceled_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_event_sessions", x => x.id);
+                    table.ForeignKey(
+                        name: "fk_event_session_event",
+                        column: x => x.event_id,
+                        principalSchema: "events",
+                        principalTable: "events",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "tags",
                 schema: "events",
                 columns: table => new
@@ -135,6 +168,37 @@ namespace eMeetup.Modules.Events.Infrastructure.Database.Migrations
                         principalTable: "tag_groups",
                         principalColumn: "id",
                         onDelete: ReferentialAction.SetNull);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "mate_types",
+                schema: "events",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "uuid", nullable: false),
+                    event_session_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    description = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
+                    allocated_slots = table.Column<int>(type: "integer", nullable: false),
+                    min_age = table.Column<int>(type: "integer", nullable: true),
+                    max_age = table.Column<int>(type: "integer", nullable: true),
+                    gender = table.Column<int>(type: "integer", nullable: true),
+                    preferred_gender = table.Column<int>(type: "integer", nullable: true),
+                    preferred_age_range = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: true),
+                    priority = table.Column<int>(type: "integer", nullable: false, defaultValue: 0),
+                    created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_mate_types", x => x.id);
+                    table.ForeignKey(
+                        name: "fk_mate_type_event_session",
+                        column: x => x.event_session_id,
+                        principalSchema: "events",
+                        principalTable: "event_sessions",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -241,6 +305,30 @@ namespace eMeetup.Modules.Events.Infrastructure.Database.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "ix_event_sessions_event_id",
+                schema: "events",
+                table: "event_sessions",
+                column: "event_id");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_event_sessions_event_status",
+                schema: "events",
+                table: "event_sessions",
+                columns: new[] { "event_id", "status" });
+
+            migrationBuilder.CreateIndex(
+                name: "ix_event_sessions_starts_at_utc",
+                schema: "events",
+                table: "event_sessions",
+                column: "starts_at_utc");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_event_sessions_status_start_date",
+                schema: "events",
+                table: "event_sessions",
+                columns: new[] { "status", "starts_at_utc" });
+
+            migrationBuilder.CreateIndex(
                 name: "ix_event_tags_event_id",
                 schema: "events",
                 table: "event_tags",
@@ -251,6 +339,24 @@ namespace eMeetup.Modules.Events.Infrastructure.Database.Migrations
                 schema: "events",
                 table: "event_tags",
                 column: "tag_id");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_mate_types_event_session_id",
+                schema: "events",
+                table: "mate_types",
+                column: "event_session_id");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_mate_types_gender",
+                schema: "events",
+                table: "mate_types",
+                column: "gender");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_mate_types_session_priority",
+                schema: "events",
+                table: "mate_types",
+                columns: new[] { "event_session_id", "priority" });
 
             migrationBuilder.CreateIndex(
                 name: "ix_tag_groups_display_order",
@@ -320,6 +426,10 @@ namespace eMeetup.Modules.Events.Infrastructure.Database.Migrations
                 schema: "events");
 
             migrationBuilder.DropTable(
+                name: "mate_types",
+                schema: "events");
+
+            migrationBuilder.DropTable(
                 name: "outbox_message_consumers",
                 schema: "events");
 
@@ -328,15 +438,19 @@ namespace eMeetup.Modules.Events.Infrastructure.Database.Migrations
                 schema: "events");
 
             migrationBuilder.DropTable(
-                name: "events",
-                schema: "events");
-
-            migrationBuilder.DropTable(
                 name: "tags",
                 schema: "events");
 
             migrationBuilder.DropTable(
+                name: "event_sessions",
+                schema: "events");
+
+            migrationBuilder.DropTable(
                 name: "tag_groups",
+                schema: "events");
+
+            migrationBuilder.DropTable(
+                name: "events",
                 schema: "events");
         }
     }

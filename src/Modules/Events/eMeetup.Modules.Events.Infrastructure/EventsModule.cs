@@ -6,11 +6,15 @@ using eMeetup.Common.Presentation.Endpoints;
 using eMeetup.Modules.Events.Application.Abstractions.Authentication;
 using eMeetup.Modules.Events.Application.Abstractions.Data;
 using eMeetup.Modules.Events.Domain.Events;
+using eMeetup.Modules.Events.Domain.EventSessions;
 using eMeetup.Modules.Events.Domain.Interfaces.Repositories;
+using eMeetup.Modules.Events.Domain.MateTypes;
 using eMeetup.Modules.Events.Infrastructure.Authentication;
 using eMeetup.Modules.Events.Infrastructure.Database;
 using eMeetup.Modules.Events.Infrastructure.Events;
+using eMeetup.Modules.Events.Infrastructure.EventSessions;
 using eMeetup.Modules.Events.Infrastructure.Inbox;
+using eMeetup.Modules.Events.Infrastructure.MateTypes;
 using eMeetup.Modules.Events.Infrastructure.Outbox;
 using eMeetup.Modules.Events.Infrastructure.Tags;
 using Microsoft.EntityFrameworkCore;
@@ -56,6 +60,9 @@ public static class EventsModule
         services.AddScoped<ITagRepository, TagRepository>();
         services.AddScoped<IEventRepository, EventRepository>();
         services.AddScoped<IEventTagsRepository, EventTagsRepository>();
+        services.AddScoped<IEventSessionRepository, EventSessionRepository>();
+        services.AddScoped<IMateTypeRepository, MateTypeRepository>();
+
 
         services.AddScoped<IOrganizerContext, OrganizerContext>();
 

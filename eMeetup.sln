@@ -59,6 +59,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eMeetup.Modules.Events.Inte
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eMeetup.Modules.Events.Presentation", "src\Modules\Events\eMeetup.Modules.Events.Presentation\eMeetup.Modules.Events.Presentation.csproj", "{A6805162-C0F5-47AE-88BA-B573EBD286D1}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Enrollments", "Enrollments", "{FB52AE78-80BB-4B72-A022-DC9AECF03BDA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -165,6 +167,7 @@ Global
 		{1D05AAD6-2697-4E01-BFDB-DFF9CB74741E} = {54DE55E1-55C2-4E62-8822-FB0089365C29}
 		{288B0C49-4AE1-4B21-8266-5B0B9FB9A722} = {54DE55E1-55C2-4E62-8822-FB0089365C29}
 		{A6805162-C0F5-47AE-88BA-B573EBD286D1} = {54DE55E1-55C2-4E62-8822-FB0089365C29}
+		{FB52AE78-80BB-4B72-A022-DC9AECF03BDA} = {5B82D04C-FFA1-4B09-8836-1A989F23C264}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {1425A9EE-DA7F-463D-9FDC-BDA1DD9761AD}

@@ -1,5 +1,6 @@
 ﻿using System.Data;
 using eMeetup.Common.Domain;
+using eMeetup.Modules.Events.Domain.EventSessions;
 using eMeetup.Modules.Events.Domain.EventTags;
 
 namespace eMeetup.Modules.Events.Domain.Events;
@@ -8,6 +9,7 @@ public sealed class Event : Entity
 {
     // Private fields
     private readonly List<EventTag> _tags = new();
+    private readonly List<EventSession> _sessions = new();
     private Event()
     {
     }
@@ -27,7 +29,7 @@ public sealed class Event : Entity
 
     // Navigation properties
     public ICollection<EventTag> Tags => _tags.AsReadOnly();
-
+    public ICollection<EventSession> Sessions => _sessions.AsReadOnly();
 
     public static Result<Event> Create(
         Guid organizerId,

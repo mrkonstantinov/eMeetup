@@ -129,6 +129,92 @@ namespace eMeetup.Modules.Events.Infrastructure.Database.Migrations
                     b.ToTable("outbox_message_consumers", "events");
                 });
 
+            modelBuilder.Entity("eMeetup.Modules.Events.Domain.EventSessions.EventSession", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("address");
+
+                    b.Property<DateTime?>("CanceledAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("canceled_at");
+
+                    b.Property<DateTime?>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text")
+                        .HasColumnName("description");
+
+                    b.Property<DateTime?>("EndsAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("ends_at_utc");
+
+                    b.Property<Guid>("EventId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("event_id");
+
+                    b.Property<double?>("Latitude")
+                        .HasPrecision(10, 8)
+                        .HasColumnType("double precision")
+                        .HasColumnName("latitude");
+
+                    b.Property<string>("Locality")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("locality");
+
+                    b.Property<double?>("Longitude")
+                        .HasPrecision(11, 8)
+                        .HasColumnType("double precision")
+                        .HasColumnName("longitude");
+
+                    b.Property<DateTime?>("PublishedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("published_at");
+
+                    b.Property<DateTime>("StartsAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("starts_at_utc");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer")
+                        .HasColumnName("status");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("title");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.HasKey("Id")
+                        .HasName("pk_event_sessions");
+
+                    b.HasIndex("EventId")
+                        .HasDatabaseName("ix_event_sessions_event_id");
+
+                    b.HasIndex("StartsAtUtc")
+                        .HasDatabaseName("ix_event_sessions_starts_at_utc");
+
+                    b.HasIndex("EventId", "Status")
+                        .HasDatabaseName("ix_event_sessions_event_status");
+
+                    b.HasIndex("Status", "StartsAtUtc")
+                        .HasDatabaseName("ix_event_sessions_status_start_date");
+
+                    b.ToTable("event_sessions", "events");
+                });
+
             modelBuilder.Entity("eMeetup.Modules.Events.Domain.EventTags.EventTag", b =>
                 {
                     b.Property<Guid>("Id")
@@ -197,6 +283,82 @@ namespace eMeetup.Modules.Events.Infrastructure.Database.Migrations
                         .HasName("pk_events");
 
                     b.ToTable("events", "events");
+                });
+
+            modelBuilder.Entity("eMeetup.Modules.Events.Domain.MateTypes.MateType", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<int>("AllocatedSlots")
+                        .HasColumnType("integer")
+                        .HasColumnName("allocated_slots");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("description");
+
+                    b.Property<Guid>("EventSessionId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("event_session_id");
+
+                    b.Property<int?>("Gender")
+                        .HasColumnType("integer")
+                        .HasColumnName("gender");
+
+                    b.Property<int?>("MaxAge")
+                        .HasColumnType("integer")
+                        .HasColumnName("max_age");
+
+                    b.Property<int?>("MinAge")
+                        .HasColumnType("integer")
+                        .HasColumnName("min_age");
+
+                    b.Property<string>("PreferredAgeRange")
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("preferred_age_range");
+
+                    b.Property<int?>("PreferredGender")
+                        .HasColumnType("integer")
+                        .HasColumnName("preferred_gender");
+
+                    b.Property<int>("Priority")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(0)
+                        .HasColumnName("priority");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("name");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.HasKey("Id")
+                        .HasName("pk_mate_types");
+
+                    b.HasIndex("EventSessionId")
+                        .HasDatabaseName("ix_mate_types_event_session_id");
+
+                    b.HasIndex("Gender")
+                        .HasDatabaseName("ix_mate_types_gender");
+
+                    b.HasIndex("EventSessionId", "Priority")
+                        .HasDatabaseName("ix_mate_types_session_priority");
+
+                    b.ToTable("mate_types", "events");
                 });
 
             modelBuilder.Entity("eMeetup.Modules.Events.Domain.Tags.Tag", b =>
@@ -907,6 +1069,18 @@ namespace eMeetup.Modules.Events.Infrastructure.Database.Migrations
                         });
                 });
 
+            modelBuilder.Entity("eMeetup.Modules.Events.Domain.EventSessions.EventSession", b =>
+                {
+                    b.HasOne("eMeetup.Modules.Events.Domain.Events.Event", "Event")
+                        .WithMany("Sessions")
+                        .HasForeignKey("EventId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_event_session_event");
+
+                    b.Navigation("Event");
+                });
+
             modelBuilder.Entity("eMeetup.Modules.Events.Domain.EventTags.EventTag", b =>
                 {
                     b.HasOne("eMeetup.Modules.Events.Domain.Events.Event", "Event")
@@ -928,6 +1102,16 @@ namespace eMeetup.Modules.Events.Infrastructure.Database.Migrations
                     b.Navigation("Tag");
                 });
 
+            modelBuilder.Entity("eMeetup.Modules.Events.Domain.MateTypes.MateType", b =>
+                {
+                    b.HasOne("eMeetup.Modules.Events.Domain.EventSessions.EventSession", null)
+                        .WithMany()
+                        .HasForeignKey("EventSessionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_mate_type_event_session");
+                });
+
             modelBuilder.Entity("eMeetup.Modules.Events.Domain.Tags.Tag", b =>
                 {
                     b.HasOne("eMeetup.Modules.Events.Domain.Tags.TagGroup", "TagGroup")
@@ -941,6 +1125,8 @@ namespace eMeetup.Modules.Events.Infrastructure.Database.Migrations
 
             modelBuilder.Entity("eMeetup.Modules.Events.Domain.Events.Event", b =>
                 {
+                    b.Navigation("Sessions");
+
                     b.Navigation("Tags");
                 });
 
