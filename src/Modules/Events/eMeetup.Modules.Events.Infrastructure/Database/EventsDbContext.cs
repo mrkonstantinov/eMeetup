@@ -34,8 +34,7 @@ public sealed class EventsDbContext(DbContextOptions<EventsDbContext> options) :
         modelBuilder.ApplyConfiguration(new OutboxMessageConsumerConfiguration());
         modelBuilder.ApplyConfiguration(new InboxMessageConfiguration());
         modelBuilder.ApplyConfiguration(new InboxMessageConsumerConfiguration());
-        modelBuilder.ApplyConfiguration(new EventConfiguration());
-
+        
         modelBuilder.ApplyConfiguration(new EventConfiguration());
         modelBuilder.ApplyConfiguration(new TagGroupConfiguration());
         modelBuilder.ApplyConfiguration(new TagConfiguration());

@@ -17,6 +17,8 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\eMeetup.ServiceDefaults\eMeetup.ServiceDefaults.csproj" />
+    <ProjectReference Include="..\..\src\Modules\Attendance\eMeetup.Modules.Attendance.Infrastructure\eMeetup.Modules.Attendance.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\src\Modules\Enrolls\eMeetup.Modules.Enrolls.Infrastructure\eMeetup.Modules.Enrolls.Infrastructure.csproj" />
     <ProjectReference Include="..\..\src\Modules\Events\eMeetup.Modules.Events.Domain\eMeetup.Modules.Events.Domain.csproj" />
     <ProjectReference Include="..\..\src\Modules\Events\eMeetup.Modules.Events.Infrastructure\eMeetup.Modules.Events.Infrastructure.csproj" />
     <ProjectReference Include="..\..\src\Modules\Users\eMeetup.Modules.Users.Domain\eMeetup.Modules.Users.Domain.csproj" />

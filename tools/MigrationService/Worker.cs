@@ -38,6 +38,14 @@ public class Worker(
             await eventsInitializer.EnsureDatabaseAsync(cancellationToken);
             await eventsInitializer.RunMigrationAsync(cancellationToken);
 
+            var enrollsInitializer = scope.ServiceProvider.GetRequiredService<EnrollsDbContextInitializer>();
+            await enrollsInitializer.EnsureDatabaseAsync(cancellationToken);
+            await enrollsInitializer.RunMigrationAsync(cancellationToken);
+
+            var attendanceInitializer = scope.ServiceProvider.GetRequiredService<AttendanceDbContextInitializer>();
+            await attendanceInitializer.EnsureDatabaseAsync(cancellationToken);
+            await attendanceInitializer.RunMigrationAsync(cancellationToken);
+
             sw.Stop();
             logger.LogInformation($"DB creation and seeding took {sw.Elapsed} ");
         }

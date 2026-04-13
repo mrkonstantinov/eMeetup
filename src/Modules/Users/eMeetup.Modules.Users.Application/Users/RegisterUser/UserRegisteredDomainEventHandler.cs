@@ -32,11 +32,12 @@ internal sealed class UserRegisteredDomainEventHandler(ISender sender, IEventBus
                 result.Value.Id,
                 result.Value.Email,
                 result.Value.UserName,
-                result.Value.Gender,
                 result.Value.DateOfBirth,
-                result.Value.Bio,
-                result.Value.Locality,
-                result.Value.Street),
+                (int)(result.Value.Gender)
+                //result.Value.Bio,
+                //result.Value.Locality,
+                //result.Value.Street
+                ),
             cancellationToken);
     }
 }

@@ -7,7 +7,7 @@ using eMeetup.Common.Infrastructure.Serialization;
 using MassTransit;
 using Newtonsoft.Json;
 
-namespace Evently.Modules.Events.Infrastructure.Inbox;
+namespace eMeetup.Modules.Events.Infrastructure.Inbox;
 
 internal sealed class IntegrationEventConsumer<TIntegrationEvent>(IDbConnectionFactory dbConnectionFactory)
     : IConsumer<TIntegrationEvent>

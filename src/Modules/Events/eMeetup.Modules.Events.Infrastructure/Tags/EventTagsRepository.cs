@@ -1,6 +1,4 @@
 ﻿
-using eMeetup.Common.Domain;
-using eMeetup.Common.Domain.Interfaces.Repositories;
 using eMeetup.Modules.Events.Domain.EventTags;
 using eMeetup.Modules.Events.Domain.Interfaces.Repositories;
 using eMeetup.Modules.Events.Domain.Tags;

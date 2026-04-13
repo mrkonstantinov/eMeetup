@@ -1,4 +1,6 @@
-﻿using eMeetup.Modules.Events.Infrastructure.Database;
+﻿using eMeetup.Modules.Attendance.Infrastructure.Database;
+using eMeetup.Modules.Enrolls.Infrastructure.Database;
+using eMeetup.Modules.Events.Infrastructure.Database;
 using eMeetup.Modules.Users.Infrastructure.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -22,7 +24,6 @@ IConfiguration configuration = builder.Configuration;
 string databaseConnectionString = configuration.GetConnectionString("meetupDb")!;
 
 builder.Services.AddScoped<UsersDbContextInitializer>();
-
 builder.Services.AddDbContext<UsersDbContext>(options =>
 {
     options.UseNpgsql(databaseConnectionString,
@@ -31,7 +32,6 @@ builder.Services.AddDbContext<UsersDbContext>(options =>
 });
 
 builder.Services.AddScoped<EventsDbContextInitializer>();
-
 builder.Services.AddDbContext<EventsDbContext>(options =>
 {
     options.UseNpgsql(databaseConnectionString,
@@ -39,6 +39,23 @@ builder.Services.AddDbContext<EventsDbContext>(options =>
         .UseSnakeCaseNamingConvention();
 });
 
+
+builder.Services.AddScoped<EnrollsDbContextInitializer>();
+builder.Services.AddDbContext<EnrollsDbContext>(options =>
+{
+    options.UseNpgsql(databaseConnectionString,
+        npgsqlOptions => { })
+        .UseSnakeCaseNamingConvention();
+});
+
+
+builder.Services.AddScoped<AttendanceDbContextInitializer>();
+builder.Services.AddDbContext<AttendanceDbContext>(options =>
+{
+    options.UseNpgsql(databaseConnectionString,
+        npgsqlOptions => { })
+        .UseSnakeCaseNamingConvention();
+});
 
 //builder.Services.AddScoped<TicketingDbContextInitializer>();
 //builder.AddNpgsqlDbContext<TicketingDbContext>("meetupDb");

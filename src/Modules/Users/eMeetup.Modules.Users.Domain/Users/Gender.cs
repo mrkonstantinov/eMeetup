@@ -1,10 +1,9 @@
-﻿namespace eMeetup.Modules.Users.Domain.Users
+﻿namespace eMeetup.Modules.Users.Domain.Users;
+
+public enum Gender
 {
-    public enum Gender
-    {
-        Male = 1,
-        Female = 2,
-        Other = 3,
-        PreferNotToSay = 4
-    }
+    Male = 1,
+    Female = 2,
+    Other = 3,
+    PreferNotToSay = 4
 }

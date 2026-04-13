@@ -1,0 +1,25 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Attendees\CheckInAttendee\CheckInAttendeeCommand.cs" />
+    <Compile Remove="Attendees\CheckInAttendee\CheckInAttendeeCommandCommandHandler.cs" />
+    <Compile Remove="Attendees\CheckInAttendee\CheckInAttendeeCommandValidator.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Common\eMeetup.Common.Application\eMeetup.Common.Application.csproj" />
+    <ProjectReference Include="..\eMeetup.Modules.Attendance.Domain\eMeetup.Modules.Attendance.Domain.csproj" />
+    <ProjectReference Include="..\eMeetup.Modules.Attendance.IntegrationEvents\eMeetup.Modules.Attendance.IntegrationEvents.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Attendees\CheckInAttendee\" />
+  </ItemGroup>
+
+</Project>

@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using eMeetup.Modules.Events.Domain.EventTags;
+﻿using eMeetup.Modules.Events.Domain.EventTags;
 
-namespace eMeetup.Common.Domain.Interfaces.Repositories;
+namespace eMeetup.Modules.Events.Domain.Interfaces.Repositories;
 
 public interface IEventTagsRepository
 {

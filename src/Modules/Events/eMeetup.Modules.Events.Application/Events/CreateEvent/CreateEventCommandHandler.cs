@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using eMeetup.Common.Application.Clock;
-using eMeetup.Common.Application.Messaging;
+﻿using eMeetup.Common.Application.Messaging;
 using eMeetup.Common.Domain;
-using eMeetup.Common.Domain.Interfaces.Repositories;
 using eMeetup.Modules.Events.Application.Abstractions.Data;
 using eMeetup.Modules.Events.Domain.Events;
+using eMeetup.Modules.Events.Domain.Interfaces.Repositories;
 using Microsoft.Extensions.Logging;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace eMeetup.Modules.Events.Application.Events.CreateEvent;
 

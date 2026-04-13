@@ -1,6 +1,5 @@
 ﻿using eMeetup.Common.Application.EventBus;
 using eMeetup.Common.Application.Messaging;
-using eMeetup.Common.Domain.Interfaces.Repositories;
 using eMeetup.Common.Infrastructure.Outbox;
 using eMeetup.Common.Presentation.Endpoints;
 using eMeetup.Modules.Events.Application.Abstractions.Authentication;
@@ -22,7 +21,6 @@ using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.Options;
 
 namespace eMeetup.Modules.Events.Infrastructure;
 
