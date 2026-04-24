@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using eMeetup.Api.Extensions;
 using eMeetup.Api.Middleware;
+using eMeetup.Api.OpenTelemetry;
 using eMeetup.Common.Application;
 using eMeetup.Common.Infrastructure;
 using eMeetup.Common.Presentation.Endpoints;
@@ -42,9 +43,10 @@ builder.Services.AddApplication([
     ]);
 
 builder.Services.AddInfrastructure(
+    DiagnosticsConfig.ServiceName,
     [
-        //TicketingModule.ConfigureConsumers,
-        //AttendanceModule.ConfigureConsumers
+        EnrollsModule.ConfigureConsumers,
+        AttendanceModule.ConfigureConsumers
     ],
     builder.Configuration.GetConnectionString("meetupDb")!,
     builder.Configuration.GetConnectionString("Cache")!);
@@ -67,6 +69,8 @@ if (app.Environment.IsDevelopment())
 
     //app.ApplyMigrations();
 }
+
+app.UseLogContextTraceLogging();
 
 app.UseSerilogRequestLogging();
 

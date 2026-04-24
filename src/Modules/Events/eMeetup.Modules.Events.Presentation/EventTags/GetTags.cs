@@ -2,13 +2,13 @@
 using eMeetup.Common.Domain;
 using eMeetup.Common.Presentation.Endpoints;
 using eMeetup.Common.Presentation.Results;
-using eMeetup.Modules.Events.Application.Events.GetTags;
+using eMeetup.Modules.Events.Application.EventTags.GetTags;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 
-namespace eMeetup.Modules.Events.Presentation.Events;
+namespace eMeetup.Modules.Events.Presentation.EventTags;
 
 internal sealed class GetTags : IEndpoint
 {
@@ -21,7 +21,7 @@ internal sealed class GetTags : IEndpoint
             return result.Match(Results.Ok, ApiResults.Problem);
         })
     .RequireAuthorization(Permissions.GetEvents)
-    .WithTags(Tags.Events);
+    .WithTags(Tags.EventTags);
     }
 
 }

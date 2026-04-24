@@ -1,7 +1,7 @@
 ﻿
 using eMeetup.Modules.Events.Domain.EventTags;
 using eMeetup.Modules.Events.Domain.Interfaces.Repositories;
-using eMeetup.Modules.Events.Domain.Tags;
+using eMeetup.Modules.Events.Domain.TagGroups;
 using eMeetup.Modules.Events.Infrastructure.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;

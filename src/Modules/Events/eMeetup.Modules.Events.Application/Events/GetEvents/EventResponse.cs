@@ -1,6 +1,4 @@
-﻿using eMeetup.Modules.Events.Domain.Tags;
-
-namespace eMeetup.Modules.Events.Application.Events.GetEvents;
+﻿namespace eMeetup.Modules.Events.Application.Events.GetEvents;
 
 public sealed record EventResponse(
     Guid Id, 

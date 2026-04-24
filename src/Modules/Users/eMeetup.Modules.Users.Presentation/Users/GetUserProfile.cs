@@ -18,7 +18,7 @@ internal sealed class GetUserProfile : IEndpoint
     {
         app.MapGet("users/profile", async (ClaimsPrincipal claims, ISender sender) =>
         {
-            Result<UserResponse> result = await sender.Send(new GetUserQuery(claims.GetUserId(), Guid.Parse(claims.GetIdentityId())));
+            Result<UserResponse> result = await sender.Send(new GetUserQuery(claims.GetUserId()));
 
             return result.Match(Results.Ok, ApiResults.Problem);
         })

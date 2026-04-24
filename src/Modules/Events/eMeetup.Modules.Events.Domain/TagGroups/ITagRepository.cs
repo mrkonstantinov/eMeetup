@@ -1,6 +1,4 @@
-﻿using eMeetup.Modules.Events.Domain.Tags;
-
-namespace eMeetup.Modules.Events.Domain.Interfaces.Repositories;
+﻿namespace eMeetup.Modules.Events.Domain.TagGroups;
 
 public interface ITagRepository
 {

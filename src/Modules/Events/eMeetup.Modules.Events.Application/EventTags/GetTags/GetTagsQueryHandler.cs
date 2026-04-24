@@ -3,8 +3,9 @@ using Dapper;
 using eMeetup.Common.Application.Data;
 using eMeetup.Common.Application.Messaging;
 using eMeetup.Common.Domain;
+using eMeetup.Modules.Events.Domain.TagGroups;
 
-namespace eMeetup.Modules.Events.Application.Events.GetTags;
+namespace eMeetup.Modules.Events.Application.EventTags.GetTags;
 
 internal sealed class GetTagsQueryHandler(IDbConnectionFactory dbConnectionFactory)
     : IQueryHandler<GetTagsQuery, IReadOnlyCollection<TagGroupResponse>>
@@ -17,8 +18,10 @@ internal sealed class GetTagsQueryHandler(IDbConnectionFactory dbConnectionFacto
 
         const string sql =
             $"""
-             SELECT 
+             SELECT
+                 tg.id AS TagGroupId,
                  tg.name AS TagGroupName,
+                 tg.picture_file_name AS PictureFileName,
                  t.id AS Id,
                  t.name AS Name,
                  t.slug AS Slug,
@@ -33,16 +36,20 @@ internal sealed class GetTagsQueryHandler(IDbConnectionFactory dbConnectionFacto
         var groupedResults = results
             .Select(x => new
             {
+                x.TagGroupId,
                 TagGroupName = string.IsNullOrEmpty(x.TagGroupName) ? "Uncategorized" : x.TagGroupName,
+                x.PictureFileName,
                 x.Id,
                 x.Name,
                 x.Slug,
                 x.UsageCount
             })
-            .GroupBy(x => x.TagGroupName)
+            .GroupBy(x => new { x.TagGroupId, x.TagGroupName, x.PictureFileName })
             .Select(g => new
             {
-                TagGroupName = g.Key,
+                g.Key.TagGroupId,
+                g.Key.TagGroupName,
+                g.Key.PictureFileName,
                 TotalUsage = g.Sum(x => x.UsageCount),
                 Tags = g.Select(x => new TagResponse(
                     Id: x.Id,
@@ -57,7 +64,9 @@ internal sealed class GetTagsQueryHandler(IDbConnectionFactory dbConnectionFacto
             .OrderByDescending(g => g.TotalUsage)  // Сначала по сумме DESC
             .ThenBy(g => g.TagGroupName, StringComparer.OrdinalIgnoreCase)  // Затем по алфавиту
             .Select(g => new TagGroupResponse(
+                TagGroupId: g.TagGroupId,
                 TagGroupName: g.TagGroupName,
+                PictureFileName: g.PictureFileName,
                 Tags: g.Tags
             ))
             .ToList()

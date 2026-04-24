@@ -34,7 +34,7 @@ internal sealed class CreateMateType : IEndpoint
             return result.Match(Results.Ok, ApiResults.Problem);
         })
         .RequireAuthorization(Permissions.ModifyEvents)
-        .WithTags(Tags.TicketTypes);
+        .WithTags(Tags.Events);
     }
 
     internal sealed class Request

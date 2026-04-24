@@ -1,6 +1,6 @@
 ﻿using eMeetup.Common.Domain;
 
-namespace eMeetup.Modules.Events.Domain.Tags;
+namespace eMeetup.Modules.Events.Domain.TagGroups;
 
 public static class TagErrors
 {

@@ -25,7 +25,7 @@ public static class Extensions
     public static TBuilder AddServiceDefaults<TBuilder>(this TBuilder builder) where TBuilder : IHostApplicationBuilder
     {
         // Get Seq configuration
-        var seqServerUrl = builder.Configuration["Seq:ServerUrl"] ?? "http://seq:5341";
+        var seqServerUrl = builder.Configuration["Seq:ServerUrl"] ?? "http://localhost:5341";
         var seqApiKey = builder.Configuration["Seq:ApiKey"];
 
         // Add Seq logging
@@ -38,7 +38,7 @@ public static class Extensions
             logging.AddFilter("Microsoft.AspNetCore", LogLevel.Warning);
         });
 
-        builder.ConfigureOpenTelemetry();
+        //builder.ConfigureOpenTelemetry();
 
         builder.AddDefaultHealthChecks();
 

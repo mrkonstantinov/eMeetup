@@ -1,6 +1,6 @@
 ﻿using eMeetup.Common.Domain;
 using eMeetup.Modules.Events.Domain.Events;
-using eMeetup.Modules.Events.Domain.Tags;
+using eMeetup.Modules.Events.Domain.TagGroups;
 
 namespace eMeetup.Modules.Events.Domain.EventTags
 {

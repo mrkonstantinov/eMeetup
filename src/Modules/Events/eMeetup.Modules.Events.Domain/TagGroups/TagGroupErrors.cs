@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using eMeetup.Common.Domain;
 
-namespace eMeetup.Modules.Events.Domain.Tags;
+namespace eMeetup.Modules.Events.Domain.TagGroups;
 
 public static class TagGroupErrors
 {
@@ -22,9 +22,12 @@ public static class TagGroupErrors
     public static Error IconTooLong() =>
         Error.Validation("TagGroup.IconTooLong", "Group icon cannot exceed 50 characters");
 
-    public static Error NotFound() =>
-        Error.NotFound("TagGroup.NotFound", "Tag group not found");
+    public static Error NotFound(int id) =>
+        Error.NotFound("TagGroup.NotFound", $"Tag group with ID {id} was not found");  
 
+    public static Error PictureNotFound(string fileName) =>
+        Error.NotFound("TagGroup.PictureNotFound", $"Picture file '{fileName}' was not found");
+    
     public static Error DuplicateName() =>
         Error.Conflict("TagGroup.DuplicateName", "A tag group with this name already exists");
 

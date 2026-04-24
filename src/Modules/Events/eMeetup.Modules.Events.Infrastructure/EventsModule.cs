@@ -8,6 +8,7 @@ using eMeetup.Modules.Events.Domain.Events;
 using eMeetup.Modules.Events.Domain.EventSessions;
 using eMeetup.Modules.Events.Domain.Interfaces.Repositories;
 using eMeetup.Modules.Events.Domain.MateTypes;
+using eMeetup.Modules.Events.Domain.TagGroups;
 using eMeetup.Modules.Events.Infrastructure.Authentication;
 using eMeetup.Modules.Events.Infrastructure.Database;
 using eMeetup.Modules.Events.Infrastructure.Events;
@@ -55,6 +56,7 @@ public static class EventsModule
 
         services.AddScoped<IUnitOfWork>(sp => sp.GetRequiredService<EventsDbContext>());
 
+        services.AddScoped<ITagGroupRepository, TagGroupRepository>();
         services.AddScoped<ITagRepository, TagRepository>();
         services.AddScoped<IEventRepository, EventRepository>();
         services.AddScoped<IEventTagsRepository, EventTagsRepository>();

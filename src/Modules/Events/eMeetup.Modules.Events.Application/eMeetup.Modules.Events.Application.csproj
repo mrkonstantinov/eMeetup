@@ -7,9 +7,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Include="Pics\*.webp" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\..\..\Common\eMeetup.Common.Application\eMeetup.Common.Application.csproj" />
     <ProjectReference Include="..\eMeetup.Modules.Events.Domain\eMeetup.Modules.Events.Domain.csproj" />
     <ProjectReference Include="..\eMeetup.Modules.Events.IntegrationEvents\eMeetup.Modules.Events.IntegrationEvents.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
 
 </Project>

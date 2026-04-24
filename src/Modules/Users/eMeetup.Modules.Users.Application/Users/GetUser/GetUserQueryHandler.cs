@@ -17,8 +17,6 @@ internal sealed class GetUserQueryHandler(IDbConnectionFactory dbConnectionFacto
     {
         await using var connection = await dbConnectionFactory.OpenConnectionAsync();
 
-        var t = identityProviderService.GetUserAsync(request.IdentityId).Result;
-
         // Use PostgreSQL JSON features for optimal data retrieval
         var user = await GetUserWithDetailsPostgresAsync(connection, request.UserId);
         if (user is null)

@@ -103,7 +103,7 @@ public sealed class User : Entity
             gender,
             identityId);
 
-        //user.Raise(new UserRegisteredDomainEvent(user.Id));
+        user.Raise(new UserRegisteredDomainEvent(user.Id));
 
         return Result.Success(user);
     }

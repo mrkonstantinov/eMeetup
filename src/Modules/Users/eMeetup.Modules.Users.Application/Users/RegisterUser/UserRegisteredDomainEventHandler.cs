@@ -16,9 +16,7 @@ internal sealed class UserRegisteredDomainEventHandler(ISender sender, IEventBus
         UserRegisteredDomainEvent domainEvent,
         CancellationToken cancellationToken = default)
     {
-        Result<UserResponse> result = await sender.Send(
-            new GetUserQuery(domainEvent.UserId, domainEvent.IdentityId),
-            cancellationToken);
+        Result<UserResponse> result = await sender.Send(new GetUserQuery(domainEvent.UserId), cancellationToken);
 
         if (result.IsFailure)
         {

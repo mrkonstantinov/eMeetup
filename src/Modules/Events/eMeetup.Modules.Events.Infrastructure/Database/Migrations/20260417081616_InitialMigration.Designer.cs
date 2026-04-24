@@ -12,7 +12,7 @@ using eMeetup.Modules.Events.Infrastructure.Database;
 namespace eMeetup.Modules.Events.Infrastructure.Database.Migrations
 {
     [DbContext(typeof(EventsDbContext))]
-    [Migration("20260410125123_InitialMigration")]
+    [Migration("20260417081616_InitialMigration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
@@ -364,7 +364,7 @@ namespace eMeetup.Modules.Events.Infrastructure.Database.Migrations
                     b.ToTable("mate_types", "events");
                 });
 
-            modelBuilder.Entity("eMeetup.Modules.Events.Domain.Tags.Tag", b =>
+            modelBuilder.Entity("eMeetup.Modules.Events.Domain.TagGroups.Tag", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -398,8 +398,8 @@ namespace eMeetup.Modules.Events.Infrastructure.Database.Migrations
                         .HasColumnType("character varying(60)")
                         .HasColumnName("slug");
 
-                    b.Property<Guid?>("TagGroupId")
-                        .HasColumnType("uuid")
+                    b.Property<int?>("TagGroupId")
+                        .HasColumnType("integer")
                         .HasColumnName("tag_group_id");
 
                     b.Property<int>("UsageCount")
@@ -438,7 +438,7 @@ namespace eMeetup.Modules.Events.Infrastructure.Database.Migrations
                             IsActive = true,
                             Name = "Бег",
                             Slug = "бег",
-                            TagGroupId = new Guid("11111111-1111-1111-1111-111111111111"),
+                            TagGroupId = 1,
                             UsageCount = 0
                         },
                         new
@@ -448,7 +448,7 @@ namespace eMeetup.Modules.Events.Infrastructure.Database.Migrations
                             IsActive = true,
                             Name = "Плавание",
                             Slug = "плавание",
-                            TagGroupId = new Guid("11111111-1111-1111-1111-111111111111"),
+                            TagGroupId = 1,
                             UsageCount = 0
                         },
                         new
@@ -458,7 +458,7 @@ namespace eMeetup.Modules.Events.Infrastructure.Database.Migrations
                             IsActive = true,
                             Name = "Велоспорт",
                             Slug = "велоспорт",
-                            TagGroupId = new Guid("11111111-1111-1111-1111-111111111111"),
+                            TagGroupId = 1,
                             UsageCount = 0
                         },
                         new
@@ -468,7 +468,7 @@ namespace eMeetup.Modules.Events.Infrastructure.Database.Migrations
                             IsActive = true,
                             Name = "Тренажерный зал",
                             Slug = "тренажерный-зал",
-                            TagGroupId = new Guid("11111111-1111-1111-1111-111111111111"),
+                            TagGroupId = 1,
                             UsageCount = 0
                         },
                         new
@@ -478,7 +478,7 @@ namespace eMeetup.Modules.Events.Infrastructure.Database.Migrations
                             IsActive = true,
                             Name = "Йога",
                             Slug = "йога",
-                            TagGroupId = new Guid("11111111-1111-1111-1111-111111111111"),
+                            TagGroupId = 1,
                             UsageCount = 0
                         },
                         new
@@ -488,7 +488,7 @@ namespace eMeetup.Modules.Events.Infrastructure.Database.Migrations
                             IsActive = true,
                             Name = "Горные лыжи",
                             Slug = "горные-лыжи",
-                            TagGroupId = new Guid("22222222-2222-2222-2222-222222222222"),
+                            TagGroupId = 2,
                             UsageCount = 0
                         },
                         new
@@ -498,7 +498,7 @@ namespace eMeetup.Modules.Events.Infrastructure.Database.Migrations
                             IsActive = true,
                             Name = "Беговые лыжи",
                             Slug = "беговые-лыжи",
-                            TagGroupId = new Guid("22222222-2222-2222-2222-222222222222"),
+                            TagGroupId = 2,
                             UsageCount = 0
                         },
                         new
@@ -508,7 +508,7 @@ namespace eMeetup.Modules.Events.Infrastructure.Database.Migrations
                             IsActive = true,
                             Name = "Сноуборд",
                             Slug = "сноуборд",
-                            TagGroupId = new Guid("22222222-2222-2222-2222-222222222222"),
+                            TagGroupId = 2,
                             UsageCount = 0
                         },
                         new
@@ -518,7 +518,7 @@ namespace eMeetup.Modules.Events.Infrastructure.Database.Migrations
                             IsActive = true,
                             Name = "Катание на коньках",
                             Slug = "катание-на-коньках",
-                            TagGroupId = new Guid("22222222-2222-2222-2222-222222222222"),
+                            TagGroupId = 2,
                             UsageCount = 0
                         },
                         new
@@ -528,7 +528,7 @@ namespace eMeetup.Modules.Events.Infrastructure.Database.Migrations
                             IsActive = true,
                             Name = "Тюбинг",
                             Slug = "тюбинг",
-                            TagGroupId = new Guid("22222222-2222-2222-2222-222222222222"),
+                            TagGroupId = 2,
                             UsageCount = 0
                         },
                         new
@@ -538,7 +538,7 @@ namespace eMeetup.Modules.Events.Infrastructure.Database.Migrations
                             IsActive = true,
                             Name = "Зимний поход",
                             Slug = "зимний-поход",
-                            TagGroupId = new Guid("22222222-2222-2222-2222-222222222222"),
+                            TagGroupId = 2,
                             UsageCount = 0
                         },
                         new
@@ -548,7 +548,7 @@ namespace eMeetup.Modules.Events.Infrastructure.Database.Migrations
                             IsActive = true,
                             Name = "Поход",
                             Slug = "поход",
-                            TagGroupId = new Guid("33333333-3333-3333-3333-333333333333"),
+                            TagGroupId = 3,
                             UsageCount = 0
                         },
                         new
@@ -558,7 +558,7 @@ namespace eMeetup.Modules.Events.Infrastructure.Database.Migrations
                             IsActive = true,
                             Name = "Велотур",
                             Slug = "велотур",
-                            TagGroupId = new Guid("33333333-3333-3333-3333-333333333333"),
+                            TagGroupId = 3,
                             UsageCount = 0
                         },
                         new
@@ -568,7 +568,7 @@ namespace eMeetup.Modules.Events.Infrastructure.Database.Migrations
                             IsActive = true,
                             Name = "Пикник",
                             Slug = "пикник",
-                            TagGroupId = new Guid("33333333-3333-3333-3333-333333333333"),
+                            TagGroupId = 3,
                             UsageCount = 0
                         },
                         new
@@ -578,7 +578,7 @@ namespace eMeetup.Modules.Events.Infrastructure.Database.Migrations
                             IsActive = true,
                             Name = "Кемпинг",
                             Slug = "кемпинг",
-                            TagGroupId = new Guid("33333333-3333-3333-3333-333333333333"),
+                            TagGroupId = 3,
                             UsageCount = 0
                         },
                         new
@@ -588,7 +588,7 @@ namespace eMeetup.Modules.Events.Infrastructure.Database.Migrations
                             IsActive = true,
                             Name = "Трейлраннинг",
                             Slug = "трейлраннинг",
-                            TagGroupId = new Guid("33333333-3333-3333-3333-333333333333"),
+                            TagGroupId = 3,
                             UsageCount = 0
                         },
                         new
@@ -598,7 +598,7 @@ namespace eMeetup.Modules.Events.Infrastructure.Database.Migrations
                             IsActive = true,
                             Name = "Пакрафтинг",
                             Slug = "пакрафтинг",
-                            TagGroupId = new Guid("44444444-4444-4444-4444-444444444444"),
+                            TagGroupId = 4,
                             UsageCount = 0
                         },
                         new
@@ -608,7 +608,7 @@ namespace eMeetup.Modules.Events.Infrastructure.Database.Migrations
                             IsActive = true,
                             Name = "САП-сёрфинг",
                             Slug = "сап-сёрфинг",
-                            TagGroupId = new Guid("44444444-4444-4444-4444-444444444444"),
+                            TagGroupId = 4,
                             UsageCount = 0
                         },
                         new
@@ -618,7 +618,7 @@ namespace eMeetup.Modules.Events.Infrastructure.Database.Migrations
                             IsActive = true,
                             Name = "Каякинг",
                             Slug = "каякинг",
-                            TagGroupId = new Guid("44444444-4444-4444-4444-444444444444"),
+                            TagGroupId = 4,
                             UsageCount = 0
                         },
                         new
@@ -628,7 +628,7 @@ namespace eMeetup.Modules.Events.Infrastructure.Database.Migrations
                             IsActive = true,
                             Name = "Каноэ",
                             Slug = "каноэ",
-                            TagGroupId = new Guid("44444444-4444-4444-4444-444444444444"),
+                            TagGroupId = 4,
                             UsageCount = 0
                         },
                         new
@@ -638,7 +638,7 @@ namespace eMeetup.Modules.Events.Infrastructure.Database.Migrations
                             IsActive = true,
                             Name = "Рафтинг",
                             Slug = "рафтинг",
-                            TagGroupId = new Guid("44444444-4444-4444-4444-444444444444"),
+                            TagGroupId = 4,
                             UsageCount = 0
                         },
                         new
@@ -648,7 +648,7 @@ namespace eMeetup.Modules.Events.Infrastructure.Database.Migrations
                             IsActive = true,
                             Name = "Плавание на открытой воде",
                             Slug = "плавание-на-открытой-воде",
-                            TagGroupId = new Guid("44444444-4444-4444-4444-444444444444"),
+                            TagGroupId = 4,
                             UsageCount = 0
                         },
                         new
@@ -658,7 +658,7 @@ namespace eMeetup.Modules.Events.Infrastructure.Database.Migrations
                             IsActive = true,
                             Name = "Музыкальный фестиваль",
                             Slug = "музыкальный-фестиваль",
-                            TagGroupId = new Guid("55555555-5555-5555-5555-555555555555"),
+                            TagGroupId = 5,
                             UsageCount = 0
                         },
                         new
@@ -668,7 +668,7 @@ namespace eMeetup.Modules.Events.Infrastructure.Database.Migrations
                             IsActive = true,
                             Name = "Гастрофестиваль",
                             Slug = "гастрофестиваль",
-                            TagGroupId = new Guid("55555555-5555-5555-5555-555555555555"),
+                            TagGroupId = 5,
                             UsageCount = 0
                         },
                         new
@@ -678,7 +678,7 @@ namespace eMeetup.Modules.Events.Infrastructure.Database.Migrations
                             IsActive = true,
                             Name = "Культурный фестиваль",
                             Slug = "культурный-фестиваль",
-                            TagGroupId = new Guid("55555555-5555-5555-5555-555555555555"),
+                            TagGroupId = 5,
                             UsageCount = 0
                         },
                         new
@@ -688,7 +688,7 @@ namespace eMeetup.Modules.Events.Infrastructure.Database.Migrations
                             IsActive = true,
                             Name = "Городской праздник",
                             Slug = "городской-праздник",
-                            TagGroupId = new Guid("55555555-5555-5555-5555-555555555555"),
+                            TagGroupId = 5,
                             UsageCount = 0
                         },
                         new
@@ -698,7 +698,7 @@ namespace eMeetup.Modules.Events.Infrastructure.Database.Migrations
                             IsActive = true,
                             Name = "Пивной фестиваль",
                             Slug = "пивной-фестиваль",
-                            TagGroupId = new Guid("55555555-5555-5555-5555-555555555555"),
+                            TagGroupId = 5,
                             UsageCount = 0
                         },
                         new
@@ -708,7 +708,7 @@ namespace eMeetup.Modules.Events.Infrastructure.Database.Migrations
                             IsActive = true,
                             Name = "Городская поездка",
                             Slug = "городская-поездка",
-                            TagGroupId = new Guid("66666666-6666-6666-6666-666666666666"),
+                            TagGroupId = 6,
                             UsageCount = 0
                         },
                         new
@@ -718,7 +718,7 @@ namespace eMeetup.Modules.Events.Infrastructure.Database.Migrations
                             IsActive = true,
                             Name = "Гастротур",
                             Slug = "гастротур",
-                            TagGroupId = new Guid("66666666-6666-6666-6666-666666666666"),
+                            TagGroupId = 6,
                             UsageCount = 0
                         },
                         new
@@ -728,7 +728,7 @@ namespace eMeetup.Modules.Events.Infrastructure.Database.Migrations
                             IsActive = true,
                             Name = "Автопутешествие",
                             Slug = "автопутешествие",
-                            TagGroupId = new Guid("66666666-6666-6666-6666-666666666666"),
+                            TagGroupId = 6,
                             UsageCount = 0
                         },
                         new
@@ -738,7 +738,7 @@ namespace eMeetup.Modules.Events.Infrastructure.Database.Migrations
                             IsActive = true,
                             Name = "Культурный тур",
                             Slug = "культурный-тур",
-                            TagGroupId = new Guid("66666666-6666-6666-6666-666666666666"),
+                            TagGroupId = 6,
                             UsageCount = 0
                         },
                         new
@@ -748,7 +748,7 @@ namespace eMeetup.Modules.Events.Infrastructure.Database.Migrations
                             IsActive = true,
                             Name = "Уикенд за городом",
                             Slug = "уикенд-за-городом",
-                            TagGroupId = new Guid("66666666-6666-6666-6666-666666666666"),
+                            TagGroupId = 6,
                             UsageCount = 0
                         },
                         new
@@ -758,7 +758,7 @@ namespace eMeetup.Modules.Events.Infrastructure.Database.Migrations
                             IsActive = true,
                             Name = "Кино",
                             Slug = "кино",
-                            TagGroupId = new Guid("77777777-7777-7777-7777-777777777777"),
+                            TagGroupId = 7,
                             UsageCount = 0
                         },
                         new
@@ -768,7 +768,7 @@ namespace eMeetup.Modules.Events.Infrastructure.Database.Migrations
                             IsActive = true,
                             Name = "Театр",
                             Slug = "театр",
-                            TagGroupId = new Guid("77777777-7777-7777-7777-777777777777"),
+                            TagGroupId = 7,
                             UsageCount = 0
                         },
                         new
@@ -778,7 +778,7 @@ namespace eMeetup.Modules.Events.Infrastructure.Database.Migrations
                             IsActive = true,
                             Name = "Концерт",
                             Slug = "концерт",
-                            TagGroupId = new Guid("77777777-7777-7777-7777-777777777777"),
+                            TagGroupId = 7,
                             UsageCount = 0
                         },
                         new
@@ -788,7 +788,7 @@ namespace eMeetup.Modules.Events.Infrastructure.Database.Migrations
                             IsActive = true,
                             Name = "Рок-концерт",
                             Slug = "рок-концерт",
-                            TagGroupId = new Guid("77777777-7777-7777-7777-777777777777"),
+                            TagGroupId = 7,
                             UsageCount = 0
                         },
                         new
@@ -798,7 +798,7 @@ namespace eMeetup.Modules.Events.Infrastructure.Database.Migrations
                             IsActive = true,
                             Name = "Выставка искусств",
                             Slug = "выставка-искусств",
-                            TagGroupId = new Guid("77777777-7777-7777-7777-777777777777"),
+                            TagGroupId = 7,
                             UsageCount = 0
                         },
                         new
@@ -808,7 +808,7 @@ namespace eMeetup.Modules.Events.Infrastructure.Database.Migrations
                             IsActive = true,
                             Name = "Стендап",
                             Slug = "стендап",
-                            TagGroupId = new Guid("77777777-7777-7777-7777-777777777777"),
+                            TagGroupId = 7,
                             UsageCount = 0
                         },
                         new
@@ -818,7 +818,7 @@ namespace eMeetup.Modules.Events.Infrastructure.Database.Migrations
                             IsActive = true,
                             Name = "Паб",
                             Slug = "паб",
-                            TagGroupId = new Guid("88888888-8888-8888-8888-888888888888"),
+                            TagGroupId = 8,
                             UsageCount = 0
                         },
                         new
@@ -828,7 +828,7 @@ namespace eMeetup.Modules.Events.Infrastructure.Database.Migrations
                             IsActive = true,
                             Name = "Веранда",
                             Slug = "веранда",
-                            TagGroupId = new Guid("88888888-8888-8888-8888-888888888888"),
+                            TagGroupId = 8,
                             UsageCount = 0
                         },
                         new
@@ -838,7 +838,7 @@ namespace eMeetup.Modules.Events.Infrastructure.Database.Migrations
                             IsActive = true,
                             Name = "Кофе-дейт",
                             Slug = "кофе-дейт",
-                            TagGroupId = new Guid("88888888-8888-8888-8888-888888888888"),
+                            TagGroupId = 8,
                             UsageCount = 0
                         },
                         new
@@ -848,7 +848,7 @@ namespace eMeetup.Modules.Events.Infrastructure.Database.Migrations
                             IsActive = true,
                             Name = "Настольные игры",
                             Slug = "настольные-игры",
-                            TagGroupId = new Guid("88888888-8888-8888-8888-888888888888"),
+                            TagGroupId = 8,
                             UsageCount = 0
                         },
                         new
@@ -858,7 +858,7 @@ namespace eMeetup.Modules.Events.Infrastructure.Database.Migrations
                             IsActive = true,
                             Name = "Пикник в парке",
                             Slug = "пикник-в-парке",
-                            TagGroupId = new Guid("88888888-8888-8888-8888-888888888888"),
+                            TagGroupId = 8,
                             UsageCount = 0
                         },
                         new
@@ -868,7 +868,7 @@ namespace eMeetup.Modules.Events.Infrastructure.Database.Migrations
                             IsActive = true,
                             Name = "Отдых в гамаке",
                             Slug = "отдых-в-гамаке",
-                            TagGroupId = new Guid("88888888-8888-8888-8888-888888888888"),
+                            TagGroupId = 8,
                             UsageCount = 0
                         },
                         new
@@ -878,7 +878,7 @@ namespace eMeetup.Modules.Events.Infrastructure.Database.Migrations
                             IsActive = true,
                             Name = "Триатлон",
                             Slug = "триатлон",
-                            TagGroupId = new Guid("99999999-9999-9999-9999-999999999999"),
+                            TagGroupId = 9,
                             UsageCount = 0
                         },
                         new
@@ -888,7 +888,7 @@ namespace eMeetup.Modules.Events.Infrastructure.Database.Migrations
                             IsActive = true,
                             Name = "Марафон",
                             Slug = "марафон",
-                            TagGroupId = new Guid("99999999-9999-9999-9999-999999999999"),
+                            TagGroupId = 9,
                             UsageCount = 0
                         },
                         new
@@ -898,7 +898,7 @@ namespace eMeetup.Modules.Events.Infrastructure.Database.Migrations
                             IsActive = true,
                             Name = "Гонка с препятствиями",
                             Slug = "гонка-с-препятствиями",
-                            TagGroupId = new Guid("99999999-9999-9999-9999-999999999999"),
+                            TagGroupId = 9,
                             UsageCount = 0
                         },
                         new
@@ -908,7 +908,7 @@ namespace eMeetup.Modules.Events.Infrastructure.Database.Migrations
                             IsActive = true,
                             Name = "Велосипедная гонка",
                             Slug = "велосипедная-гонка",
-                            TagGroupId = new Guid("99999999-9999-9999-9999-999999999999"),
+                            TagGroupId = 9,
                             UsageCount = 0
                         },
                         new
@@ -918,7 +918,7 @@ namespace eMeetup.Modules.Events.Infrastructure.Database.Migrations
                             IsActive = true,
                             Name = "Соревнования по плаванию",
                             Slug = "соревнования-по-плаванию",
-                            TagGroupId = new Guid("99999999-9999-9999-9999-999999999999"),
+                            TagGroupId = 9,
                             UsageCount = 0
                         },
                         new
@@ -928,18 +928,19 @@ namespace eMeetup.Modules.Events.Infrastructure.Database.Migrations
                             IsActive = true,
                             Name = "Трейловый забег",
                             Slug = "трейловый-забег",
-                            TagGroupId = new Guid("99999999-9999-9999-9999-999999999999"),
+                            TagGroupId = 9,
                             UsageCount = 0
                         });
                 });
 
-            modelBuilder.Entity("eMeetup.Modules.Events.Domain.Tags.TagGroup", b =>
+            modelBuilder.Entity("eMeetup.Modules.Events.Domain.TagGroups.TagGroup", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("id")
-                        .HasDefaultValueSql("gen_random_uuid()");
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Description")
                         .ValueGeneratedOnAdd()
@@ -954,13 +955,6 @@ namespace eMeetup.Modules.Events.Infrastructure.Database.Migrations
                         .HasDefaultValue(0)
                         .HasColumnName("display_order");
 
-                    b.Property<string>("Icon")
-                        .ValueGeneratedOnAdd()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
-                        .HasDefaultValue("")
-                        .HasColumnName("icon");
-
                     b.Property<bool>("IsActive")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("boolean")
@@ -972,6 +966,13 @@ namespace eMeetup.Modules.Events.Infrastructure.Database.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)")
                         .HasColumnName("name");
+
+                    b.Property<string>("PictureFileName")
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasDefaultValue("")
+                        .HasColumnName("picture_file_name");
 
                     b.HasKey("Id")
                         .HasName("pk_tag_groups");
@@ -991,84 +992,84 @@ namespace eMeetup.Modules.Events.Infrastructure.Database.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("11111111-1111-1111-1111-111111111111"),
+                            Id = 1,
                             Description = "Бег, плавание, велоспорт и другие спортивные активности",
                             DisplayOrder = 1,
-                            Icon = "🏃",
                             IsActive = true,
-                            Name = "Активный образ жизни"
+                            Name = "Активный образ жизни",
+                            PictureFileName = "1.webp"
                         },
                         new
                         {
-                            Id = new Guid("22222222-2222-2222-2222-222222222222"),
+                            Id = 2,
                             Description = "Лыжи, сноуборд, коньки и тюбинг",
                             DisplayOrder = 2,
-                            Icon = "❄️",
                             IsActive = true,
-                            Name = "Зимние активности"
+                            Name = "Зимние активности",
+                            PictureFileName = "2.webp"
                         },
                         new
                         {
-                            Id = new Guid("33333333-3333-3333-3333-333333333333"),
+                            Id = 3,
                             Description = "Походы, велотуры и пикники на природе",
                             DisplayOrder = 3,
-                            Icon = "⛰️",
                             IsActive = true,
-                            Name = "Приключения и активный отдых"
+                            Name = "Приключения и активный отдых",
+                            PictureFileName = "3.webp"
                         },
                         new
                         {
-                            Id = new Guid("44444444-4444-4444-4444-444444444444"),
+                            Id = 4,
                             Description = "Пакрафтинг, САП, каякинг и другие водные походы",
                             DisplayOrder = 4,
-                            Icon = "🚣",
                             IsActive = true,
-                            Name = "Водные приключения"
+                            Name = "Водные приключения",
+                            PictureFileName = "4.webp"
                         },
                         new
                         {
-                            Id = new Guid("55555555-5555-5555-5555-555555555555"),
+                            Id = 5,
                             Description = "Музыкальные, гастрономические и культурные фестивали",
                             DisplayOrder = 5,
-                            Icon = "🎪",
                             IsActive = true,
-                            Name = "Фестивали и мероприятия"
+                            Name = "Фестивали и мероприятия",
+                            PictureFileName = "5.webp"
                         },
                         new
                         {
-                            Id = new Guid("66666666-6666-6666-6666-666666666666"),
+                            Id = 6,
                             Description = "Городские поездки, экскурсии, гастротуры и автопутешествия",
                             DisplayOrder = 6,
-                            Icon = "✈️",
                             IsActive = true,
-                            Name = "Путешествия"
+                            Name = "Путешествия",
+                            PictureFileName = "6.webp"
                         },
                         new
                         {
-                            Id = new Guid("77777777-7777-7777-7777-777777777777"),
+                            Id = 7,
                             Description = "Кино, театр, концерты и рок-шоу",
                             DisplayOrder = 7,
-                            Icon = "🎭",
                             IsActive = true,
-                            Name = "Культура и развлечения"
+                            Name = "Культура и развлечения",
+                            PictureFileName = "7.webp"
                         },
                         new
                         {
-                            Id = new Guid("88888888-8888-8888-8888-888888888888"),
+                            Id = 8,
                             Description = "Встречи в пабах, летние веранды и приятное времяпрепровождение",
                             DisplayOrder = 8,
-                            Icon = "😎",
                             IsActive = true,
-                            Name = "Отдых и тусовки"
+                            Name = "Отдых и тусовки",
+                            PictureFileName = "8.webp"
                         },
                         new
                         {
-                            Id = new Guid("99999999-9999-9999-9999-999999999999"),
+                            Id = 9,
                             Description = "Марафоны, триатлоны, соревнования и забеги в других городах",
                             DisplayOrder = 9,
-                            Icon = "🏆",
                             IsActive = true,
-                            Name = "Спортивные события"
+                            Name = "Спортивные события",
+                            PictureFileName = "9.webp"
                         });
                 });
 
@@ -1093,7 +1094,7 @@ namespace eMeetup.Modules.Events.Infrastructure.Database.Migrations
                         .IsRequired()
                         .HasConstraintName("fk_event_tags_events_event_id");
 
-                    b.HasOne("eMeetup.Modules.Events.Domain.Tags.Tag", "Tag")
+                    b.HasOne("eMeetup.Modules.Events.Domain.TagGroups.Tag", "Tag")
                         .WithMany("EventTags")
                         .HasForeignKey("TagId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1115,13 +1116,13 @@ namespace eMeetup.Modules.Events.Infrastructure.Database.Migrations
                         .HasConstraintName("fk_mate_type_event_session");
                 });
 
-            modelBuilder.Entity("eMeetup.Modules.Events.Domain.Tags.Tag", b =>
+            modelBuilder.Entity("eMeetup.Modules.Events.Domain.TagGroups.Tag", b =>
                 {
-                    b.HasOne("eMeetup.Modules.Events.Domain.Tags.TagGroup", "TagGroup")
+                    b.HasOne("eMeetup.Modules.Events.Domain.TagGroups.TagGroup", "TagGroup")
                         .WithMany("Tags")
                         .HasForeignKey("TagGroupId")
                         .OnDelete(DeleteBehavior.SetNull)
-                        .HasConstraintName("fk_tags_tag_group_tag_group_id");
+                        .HasConstraintName("fk_tags_tag_groups_tag_group_id");
 
                     b.Navigation("TagGroup");
                 });
@@ -1133,12 +1134,12 @@ namespace eMeetup.Modules.Events.Infrastructure.Database.Migrations
                     b.Navigation("Tags");
                 });
 
-            modelBuilder.Entity("eMeetup.Modules.Events.Domain.Tags.Tag", b =>
+            modelBuilder.Entity("eMeetup.Modules.Events.Domain.TagGroups.Tag", b =>
                 {
                     b.Navigation("EventTags");
                 });
 
-            modelBuilder.Entity("eMeetup.Modules.Events.Domain.Tags.TagGroup", b =>
+            modelBuilder.Entity("eMeetup.Modules.Events.Domain.TagGroups.TagGroup", b =>
                 {
                     b.Navigation("Tags");
                 });

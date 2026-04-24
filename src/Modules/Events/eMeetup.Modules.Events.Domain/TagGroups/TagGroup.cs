@@ -1,32 +1,31 @@
 ﻿using eMeetup.Common.Domain;
 
-namespace eMeetup.Modules.Events.Domain.Tags;
+namespace eMeetup.Modules.Events.Domain.TagGroups;
 
 public class TagGroup
 {
     public TagGroup() { }
 
-    public Guid Id { get; set; } = Guid.NewGuid();
+    public int Id { get; set; }
     public string Name { get; private set; }
     public string? Description { get; private set; }
-    public string? Icon { get; private set; }
+    public string? PictureFileName { get; private set; }
     public int DisplayOrder { get; private set; }
     public bool IsActive { get; private set; } = true;
 
     // Navigation property
     public virtual ICollection<Tag> Tags { get; set; } = new List<Tag>();
 
-    private TagGroup(string name, string? description = null, string? icon = null, int displayOrder = 0)
+    private TagGroup(string name, string? description = null, string? pictureFileName = null, int displayOrder = 0)
     {
-        Id = Guid.NewGuid();
         Name = name.Trim();
         Description = description?.Trim();
-        Icon = icon;
+        PictureFileName = pictureFileName;
         DisplayOrder = displayOrder;
         IsActive = true;
     }
 
-    public static Result<TagGroup> Create(string name, string? description = null, string? icon = null, int displayOrder = 0)
+    public static Result<TagGroup> Create(string name, string? description = null, string? pictureFileName = null, int displayOrder = 0)
     {
         if (string.IsNullOrWhiteSpace(name))
             return Result.Failure<TagGroup>(TagGroupErrors.InvalidName());
@@ -42,16 +41,17 @@ public class TagGroup
         if (description?.Length > 200)
             return Result.Failure<TagGroup>(TagGroupErrors.DescriptionTooLong());
 
-        if (icon?.Length > 50)
+        if (pictureFileName?.Length > 50)
             return Result.Failure<TagGroup>(TagGroupErrors.IconTooLong());
 
-        return Result.Success(new TagGroup(trimmedName, description, icon, displayOrder));
+        return Result.Success(new TagGroup(trimmedName, description, pictureFileName, displayOrder));
     }
 
     // For EF Core seeding only
-    public static Result<TagGroup> CreateForSeeding(Guid id, string name, string? description = null, string? icon = null, int displayOrder = 0)
+    public static Result<TagGroup> CreateForSeeding(int id, string name, string? description = null, string? pictureFileName = null, int displayOrder = 0)
     {
-        var result = Create(name, description, icon, displayOrder);
+        pictureFileName = $"{id}.webp";
+        var result = Create(name, description, pictureFileName, displayOrder);
         if (result.IsFailure)
             return result;
 
@@ -83,7 +83,7 @@ public class TagGroup
 
         Name = trimmedName;
         Description = description;
-        Icon = icon;
+        PictureFileName = icon;
 
         if (displayOrder.HasValue)
             DisplayOrder = displayOrder.Value;
@@ -132,4 +132,3 @@ public class TagGroup
         IsActive = true;
     }
 }
-

@@ -93,11 +93,8 @@ public static class UsersModule
         services.AddScoped<IUnitOfWork>(sp => sp.GetRequiredService<UsersDbContext>());
 
         services.Configure<OutboxOptions>(configuration.GetSection("Users:Outbox"));
-
         services.ConfigureOptions<ConfigureProcessOutboxJob>();
-
         services.Configure<InboxOptions>(configuration.GetSection("Users:Inbox"));
-
         services.ConfigureOptions<ConfigureProcessInboxJob>();
     }
 

@@ -6,7 +6,7 @@ using eMeetup.Modules.Events.Domain.Events;
 using eMeetup.Modules.Events.Domain.EventSessions;
 using eMeetup.Modules.Events.Domain.EventTags;
 using eMeetup.Modules.Events.Domain.MateTypes;
-using eMeetup.Modules.Events.Domain.Tags;
+using eMeetup.Modules.Events.Domain.TagGroups;
 using eMeetup.Modules.Events.Infrastructure.Events;
 using eMeetup.Modules.Events.Infrastructure.EventSessions;
 using eMeetup.Modules.Events.Infrastructure.MateTypes;
@@ -20,6 +20,7 @@ namespace eMeetup.Modules.Events.Infrastructure.Database;
 public sealed class EventsDbContext(DbContextOptions<EventsDbContext> options) : DbContext(options), IUnitOfWork
 {
     internal DbSet<Event> Events { get; set; }
+    internal DbSet<TagGroup> TagGroups { get; set; }
     internal DbSet<Tag> Tags { get; set; }
     internal DbSet<EventTag> EventTags { get; set; }
     internal DbSet<EventSession> EventSessions { get; set; }

@@ -1,4 +1,4 @@
-﻿using eMeetup.Modules.Events.Domain.Tags;
+﻿using eMeetup.Modules.Events.Domain.TagGroups;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -70,15 +70,15 @@ public class TagConfiguration : IEntityTypeConfiguration<Tag>
             .OnDelete(DeleteBehavior.SetNull);
 
         // Get group IDs
-        var activeLifestyleGroupId = Guid.Parse("11111111-1111-1111-1111-111111111111");
-        var winterActivitiesGroupId = Guid.Parse("22222222-2222-2222-2222-222222222222");
-        var adventureOutdoorsGroupId = Guid.Parse("33333333-3333-3333-3333-333333333333");
-        var waterAdventuresGroupId = Guid.Parse("44444444-4444-4444-4444-444444444444");
-        var festivalsEventsGroupId = Guid.Parse("55555555-5555-5555-5555-555555555555");
-        var travelExplorationGroupId = Guid.Parse("66666666-6666-6666-6666-666666666666");
-        var cultureEntertainmentGroupId = Guid.Parse("77777777-7777-7777-7777-777777777777");
-        var chillHangoutGroupId = Guid.Parse("88888888-8888-8888-8888-888888888888");
-        var sportsEventsGroupId = Guid.Parse("99999999-9999-9999-9999-999999999999");
+        var activeLifestyleGroupId = 1;
+        var winterActivitiesGroupId = 2;
+        var adventureOutdoorsGroupId = 3;
+        var waterAdventuresGroupId = 4;
+        var festivalsEventsGroupId = 5;
+        var travelExplorationGroupId = 6;
+        var cultureEntertainmentGroupId = 7;
+        var chillHangoutGroupId = 8;
+        var sportsEventsGroupId = 9;
 
         // Create tags using seeding factory method
         var tags = new List<Tag>

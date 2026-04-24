@@ -1,7 +1,7 @@
 ﻿using eMeetup.Common.Domain;
 using eMeetup.Modules.Events.Domain.EventTags;
 
-namespace eMeetup.Modules.Events.Domain.Tags;
+namespace eMeetup.Modules.Events.Domain.TagGroups;
 
 public class Tag
 {
@@ -18,7 +18,7 @@ public class Tag
     public virtual ICollection<EventTag>? EventTags { get; set; } = new List<EventTag>();
 
     // New group relationship
-    public Guid? TagGroupId { get; private set; }
+    public int? TagGroupId { get; private set; }
     public virtual TagGroup? TagGroup { get; private set; }
 
     // Private constructor
@@ -33,7 +33,7 @@ public class Tag
     }
 
     // Factory method
-    public static Result<Tag> Create(string name, string? description = null, Guid? tagGroupId = null)
+    public static Result<Tag> Create(string name, string? description = null, int? tagGroupId = null)
     {
         if (string.IsNullOrWhiteSpace(name))
             return Result.Failure<Tag>(TagErrors.InvalidName());
@@ -63,7 +63,7 @@ public class Tag
     }
 
     // For EF Core seeding only
-    public static Result<Tag> CreateForSeeding(Guid id, string name, string? description = null, Guid? tagGroupId = null)
+    public static Result<Tag> CreateForSeeding(Guid id, string name, string? description = null, int? tagGroupId = null)
     {
         var result = Create(name, description, tagGroupId);
         if (result.IsFailure)
@@ -77,7 +77,7 @@ public class Tag
     }
 
     // Business methods
-    public Result Update(string name, string? description = null, Guid? tagGroupId = null)
+    public Result Update(string name, string? description = null, int? tagGroupId = null)
     {
         // Validate the updated values
         if (string.IsNullOrWhiteSpace(name))
@@ -112,9 +112,9 @@ public class Tag
     }
 
     // New method to assign to a group
-    public Result AssignToGroup(Guid groupId)
+    public Result AssignToGroup(int? groupId)
     {
-        if (groupId == Guid.Empty)
+        if (groupId == null)
             return Result.Failure(TagErrors.InvalidGroupId());
 
         TagGroupId = groupId;
@@ -131,9 +131,9 @@ public class Tag
     }
 
     // New method to change group
-    public Result ChangeGroup(Guid newGroupId)
+    public Result ChangeGroup(int newGroupId)
     {
-        if (newGroupId == Guid.Empty)
+        if (newGroupId == 0)
             return Result.Failure(TagErrors.InvalidGroupId());
 
         if (TagGroupId == newGroupId)
