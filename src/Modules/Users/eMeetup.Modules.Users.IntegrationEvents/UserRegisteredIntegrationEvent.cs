@@ -1,5 +1,4 @@
 ﻿using eMeetup.Common.Application.EventBus;
-using eMeetup.Modules.Users.Domain.Users;
 
 namespace eMeetup.Modules.Users.IntegrationEvents;
 

@@ -81,7 +81,7 @@ public class EventSession : Entity
             CreatedAt = DateTime.UtcNow
         };
 
-        eventSession.Raise(new EventSessionCreatedDomainEvent(eventSession.Id, eventId));
+        eventSession.Raise(new SessionCreatedDomainEvent(eventSession.Id, eventId));
 
         return Result.Success(eventSession);
     }
@@ -126,7 +126,7 @@ public class EventSession : Entity
         Longitude = longitude;
         UpdatedAt = DateTime.UtcNow;
 
-        Raise(new EventSessionUpdatedDomainEvent(Id));
+        Raise(new SessionUpdatedDomainEvent(Id));
 
         return Result.Success();
     }
@@ -143,7 +143,7 @@ public class EventSession : Entity
         PublishedAt = DateTime.UtcNow;
         UpdatedAt = DateTime.UtcNow;
 
-        Raise(new EventSessionPublishedDomainEvent(Id));
+        Raise(new SessionPublishedDomainEvent(Id));
 
         return Result.Success();
     }
@@ -161,7 +161,7 @@ public class EventSession : Entity
         CanceledAt = DateTime.UtcNow;
         UpdatedAt = DateTime.UtcNow;
 
-        Raise(new EventSessionCanceledDomainEvent(Id, previousStatus));
+        Raise(new SessionCanceledDomainEvent(Id, previousStatus));
 
         return Result.Success();
     }
@@ -177,7 +177,7 @@ public class EventSession : Entity
         Status = EventSessionStatus.Completed;
         UpdatedAt = DateTime.UtcNow;
 
-        Raise(new EventSessionCompletedDomainEvent(Id));
+        Raise(new SessionCompletedDomainEvent(Id));
 
         return Result.Success();
     }

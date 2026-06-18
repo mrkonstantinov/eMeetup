@@ -12,7 +12,7 @@ internal sealed class EventConfiguration : IEntityTypeConfiguration<Event>
 
         builder.HasKey(u => u.Id);
 
-        builder.Property(t => t.OrganizerId)
+        builder.Property(t => t.CreatorId)
             .IsRequired();
 
         builder.Property(t => t.Title)

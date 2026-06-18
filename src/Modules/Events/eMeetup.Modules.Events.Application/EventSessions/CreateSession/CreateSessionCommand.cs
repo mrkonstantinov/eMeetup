@@ -7,7 +7,7 @@ using eMeetup.Modules.Events.Application.Events.CreateEvent;
 namespace eMeetup.Modules.Events.Application.EventSessions.CreateSession;
 
 public sealed record CreateSessionCommand(
-    Guid OrganizerId,
+    Guid CreatorId,
     Guid EventId,
     string Title,
     string Description,

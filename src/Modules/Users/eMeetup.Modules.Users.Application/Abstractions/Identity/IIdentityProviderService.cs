@@ -14,6 +14,6 @@ public interface IIdentityProviderService
         string? street,
         string? bio,
         string? interests,
-        string? uri,
+        string? profileImageUrl,
         CancellationToken cancellationToken = default);
 }

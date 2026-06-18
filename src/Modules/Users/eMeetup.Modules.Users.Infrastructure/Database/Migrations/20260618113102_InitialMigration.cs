@@ -131,7 +131,7 @@ namespace eMeetup.Modules.Users.Infrastructure.Database.Migrations
                     locality = table.Column<string>(type: "text", nullable: true),
                     street = table.Column<string>(type: "text", nullable: true),
                     bio = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
-                    uri = table.Column<string>(type: "text", nullable: true),
+                    profile_image_url = table.Column<string>(type: "text", nullable: true),
                     status = table.Column<int>(type: "integer", nullable: true),
                     created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),

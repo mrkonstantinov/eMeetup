@@ -19,7 +19,7 @@ internal sealed class IdentityProviderService(KeyCloakClient keyCloakClient, ILo
         "street",
         "bio",
         "interests",
-        "uri"
+        "profileImageUrl"
     };
 
     // POST /admin/realms/{realm}/users
@@ -58,7 +58,7 @@ internal sealed class IdentityProviderService(KeyCloakClient keyCloakClient, ILo
             user.UserName,
             new Dictionary<string, List<string>>
             {
-                { "uri", !string.IsNullOrEmpty(user.Uri) ? new List<string> { user.Uri } : new List<string>() },
+                { "profileImageUrl", !string.IsNullOrEmpty(user.ProfileImageUrl) ? new List<string> { user.ProfileImageUrl } : new List<string>() },
                 { "bio", !string.IsNullOrEmpty(user.Bio) ? new List<string> { user.Bio } : new List<string>() },
                 { "locality", !string.IsNullOrWhiteSpace(user.Locality) ? new List<string> { user.Locality! } : new List<string>() },
                 { "street", !string.IsNullOrWhiteSpace(user.Street) ? new List<string> { user.Street! } : new List<string>() },
@@ -147,7 +147,7 @@ internal sealed class IdentityProviderService(KeyCloakClient keyCloakClient, ILo
             Street: GetAttributeValue("street"),
             Bio: GetAttributeValue("bio"),
             Interests: GetAttributeValue("interests"),
-            Uri: GetAttributeValue("uri")
+            ProfileImageUrl: GetAttributeValue("profileImageUrl")
         );
     }
 
@@ -175,7 +175,7 @@ internal sealed class IdentityProviderService(KeyCloakClient keyCloakClient, ILo
         string? street,
         string? bio,
         string? interests,
-        string? uri,
+        string? profileImageUrl,
         CancellationToken cancellationToken = default)
     {
         try
@@ -201,7 +201,7 @@ internal sealed class IdentityProviderService(KeyCloakClient keyCloakClient, ILo
             UpdateAttributeIfNotNull(updatedAttributes, "locality", locality);
             UpdateAttributeIfNotNull(updatedAttributes, "street", street);
             UpdateAttributeIfNotNull(updatedAttributes, "interests", interests);
-            UpdateAttributeIfNotNull(updatedAttributes, "uri", uri);
+            UpdateAttributeIfNotNull(updatedAttributes, "profileImageUrl", profileImageUrl);
 
             // Create a minimal user representation for Keycloak update
             // Only include the attributes that can be updated

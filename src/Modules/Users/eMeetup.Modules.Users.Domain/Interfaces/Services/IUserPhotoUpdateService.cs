@@ -38,7 +38,7 @@ public class PhotoUpdateResult
     public List<string> DeletedPhotoUrls { get; set; } = new();
     public List<string> UploadedFileUrls { get; set; } = new();
     public UserPhoto? NewPrimaryPhoto { get; set; }
-    public string? NewPrimaryPhotoUrl { get; set; }
+    public string? ProfileImageUrl { get; set; }
 }
 
 public class PhotoValidationResult

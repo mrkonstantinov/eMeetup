@@ -17,7 +17,8 @@ internal sealed class UserProfileUpdatedIntegrationEventHandler(ISender sender)
         Result result = await sender.Send(
             new UpdateCustomerCommand(
                 integrationEvent.UserId,
-                integrationEvent.UserName),
+                integrationEvent.UserName,
+                integrationEvent.OccurredOnUtc),
             cancellationToken);
 
         if (result.IsFailure)

@@ -3,8 +3,8 @@
 namespace eMeetup.Modules.Events.Application.MateTypes.GetMateTypes;
 
 public sealed record MateTypeResponse(
-    Guid OrganizerId,
-    Guid EventSessionId,
+    Guid CreatorId,
+    Guid SessionId,
     string Title,
     string? Description,
     int AllocatedSlots,

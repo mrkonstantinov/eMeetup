@@ -22,7 +22,7 @@ public sealed class User : Entity
     public string? Locality { get; private set; }
     public string? Street { get; private set; }
     public string? Bio { get; private set; }
-    public string? Uri { get; private set; }
+    public string? ProfileImageUrl { get; private set; }
     public UserStatus? Status { get; private set; }
     public DateTime? CreatedAt { get; private set; }
     public DateTime? UpdatedAt { get; private set; }
@@ -200,9 +200,9 @@ public sealed class User : Entity
         return Result.Success();
     }
 
-    public Result UpdateProfilePictureUrl(string? profilePictureUrl)
+    public Result UpdateProfilePictureUrl(string? profileImageUrl)
     {
-        Uri = profilePictureUrl?.Trim();
+        ProfileImageUrl = profileImageUrl?.Trim();
         return Result.Success();
     }
 
@@ -218,9 +218,9 @@ public sealed class User : Entity
         return Result.Success();
     }
 
-    public Result UpdateUri(string? uri)
+    public Result UpdateProfileImageUrl(string? profileImageUrl)
     {
-        Uri = uri?.Trim();
+        ProfileImageUrl = profileImageUrl?.Trim();
         return Result.Success();
     }
 

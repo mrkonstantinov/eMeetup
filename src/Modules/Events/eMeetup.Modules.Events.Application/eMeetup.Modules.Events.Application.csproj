@@ -20,4 +20,11 @@
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="EventSessions\CancelSession\" />
+    <Folder Include="EventSessions\GetSession\" />
+    <Folder Include="EventSessions\SearchSession\" />
+    <Folder Include="EventSessions\RescheduleSession\" />
+  </ItemGroup>
+
 </Project>

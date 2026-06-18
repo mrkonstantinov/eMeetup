@@ -17,7 +17,7 @@ internal sealed class MateTypeConfiguration : IEntityTypeConfiguration<MateType>
             .HasColumnName("id")
             .IsRequired();
 
-        builder.Property(mt => mt.EventSessionId)
+        builder.Property(mt => mt.SessionId)
             .HasColumnName("event_session_id")
             .IsRequired();
 
@@ -72,15 +72,15 @@ internal sealed class MateTypeConfiguration : IEntityTypeConfiguration<MateType>
 
 
         builder.HasOne<EventSession>().WithMany()
-            .HasForeignKey(mt => mt.EventSessionId)
+            .HasForeignKey(mt => mt.SessionId)
             .OnDelete(DeleteBehavior.Cascade)
             .HasConstraintName("fk_mate_type_event_session");
 
         // Indexes
-        builder.HasIndex(mt => mt.EventSessionId)
+        builder.HasIndex(mt => mt.SessionId)
             .HasDatabaseName("ix_mate_types_event_session_id");
 
-        builder.HasIndex(mt => new { mt.EventSessionId, mt.Priority })
+        builder.HasIndex(mt => new { mt.SessionId, mt.Priority })
             .HasDatabaseName("ix_mate_types_session_priority");
 
         builder.HasIndex(mt => mt.Gender)
@@ -93,6 +93,6 @@ internal sealed class MateTypeConfiguration : IEntityTypeConfiguration<MateType>
 
 
 
-        builder.HasOne<EventSession>().WithMany().HasForeignKey(t => t.EventSessionId);
+        builder.HasOne<EventSession>().WithMany().HasForeignKey(t => t.SessionId);
     }
 }

@@ -23,8 +23,7 @@ internal sealed class CreateEventCommandHandler(
         //}
 
         Result<Event> result = Event.Create(
-            request.OrganizerId,
-            request.OrganizerName,
+            request.CreatorId,
             request.Title,
             request.Description,
             request.Url,

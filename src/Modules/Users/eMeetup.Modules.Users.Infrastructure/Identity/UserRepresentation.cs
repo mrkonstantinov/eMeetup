@@ -82,7 +82,7 @@ internal sealed record UserProfileRepresentation(
         AddAttributeIfNotEmpty(attributes, "gender", model.Gender.ToString());
         AddAttributeIfNotEmpty(attributes, "dateOfBirth", model.DateOfBirth.ToString(CultureInfo.InvariantCulture));
         AddAttributeIfNotEmpty(attributes, "bio", model.Bio);
-        AddAttributeIfNotEmpty(attributes, "uri", model.Uri);
+        AddAttributeIfNotEmpty(attributes, "profileImageUrl", model.ProfileImageUrl);
         AddAttributeIfNotEmpty(attributes, "locality", model.Locality);
         AddAttributeIfNotEmpty(attributes, "street", model.Street);
         AddAttributeIfNotEmpty(attributes, "interests", model.Interests);

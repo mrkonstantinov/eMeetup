@@ -2,7 +2,7 @@
 
 public sealed record SessionResponse(
     Guid Id,
-    Guid OrganizerId,
+    Guid CreatorId,
     Guid EventId,
     string Title,
     string Description,

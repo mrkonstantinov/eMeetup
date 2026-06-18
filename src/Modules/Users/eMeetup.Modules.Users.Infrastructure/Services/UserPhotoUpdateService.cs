@@ -584,7 +584,7 @@ public class UserPhotoUpdateService : IUserPhotoUpdateService
             if (primaryPhoto != null)
             {
                 result.NewPrimaryPhoto = primaryPhoto;
-                result.NewPrimaryPhotoUrl = primaryPhoto.Url;
+                result.ProfileImageUrl = primaryPhoto.Url;
 
                 _logger.LogDebug("Primary photo for user {UserId} is {PhotoId}",
                     userId, primaryPhoto.Id);

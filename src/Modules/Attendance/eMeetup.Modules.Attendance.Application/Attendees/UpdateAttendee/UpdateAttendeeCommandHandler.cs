@@ -17,7 +17,7 @@ internal sealed class UpdateAttendeeCommandHandler(IAttendeeRepository attendeeR
             return Result.Failure(AttendeeErrors.NotFound(request.AttendeeId));
         }
 
-        attendee.Update(request.UserName);
+        attendee.Update(request.UserName, request.SyncedAt);
 
         await unitOfWork.SaveChangesAsync(cancellationToken);
 

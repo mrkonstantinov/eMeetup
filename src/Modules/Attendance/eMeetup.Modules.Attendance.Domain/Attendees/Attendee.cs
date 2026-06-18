@@ -18,7 +18,9 @@ public sealed class Attendee : Entity
 
     public Gender Gender { get; private set; }
 
-    public static Attendee Create(Guid id, string email, string userName, DateTime dateOfBirth, Gender gender)
+    public DateTime SyncedAt { get; private set; }
+
+    public static Attendee Create(Guid id, string email, string userName, DateTime dateOfBirth, Gender gender, DateTime syncedAt)
     {
         return new Attendee
         {
@@ -26,13 +28,15 @@ public sealed class Attendee : Entity
             Email = email,
             UserName = userName,
             DateOfBirth = dateOfBirth,
-            Gender = gender
+            Gender = gender, 
+            SyncedAt = syncedAt
         };
     }
 
-    public void Update(string userName)
+    public void Update(string userName, DateTime syncedAt)
     {
         UserName = userName;
+        SyncedAt = syncedAt;
     }
 
     //public Result CheckIn(Ticket ticket)

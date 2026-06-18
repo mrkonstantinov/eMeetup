@@ -10,7 +10,7 @@ namespace eMeetup.Modules.Events.Application.EventSessions.CreateSession;
 
 internal sealed class CreateSessionCommandHandler(
     IDateTimeProvider dateTimeProvider,
-    IEventSessionRepository eventSessionRepository,
+    ISessionRepository eventSessionRepository,
     IUnitOfWork unitOfWork)
     : ICommandHandler<CreateSessionCommand, Guid>
 {

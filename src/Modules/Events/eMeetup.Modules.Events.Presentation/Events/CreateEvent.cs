@@ -16,11 +16,10 @@ internal sealed class CreateEvent : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapPost("events", async (Request request, IOrganizerContext organizerContext, ISender sender) =>
+        app.MapPost("events", async (Request request, IParticipantContext organizerContext, ISender sender) =>
         {            
             Result<Guid> result = await sender.Send(new CreateEventCommand(
-                organizerContext.OrganizerId,
-                organizerContext.OrganizerName,
+                organizerContext.ParticipantId,
                 request.Title,
                 request.Description,
                 request.Url,

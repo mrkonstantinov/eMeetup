@@ -18,7 +18,9 @@ public sealed class Customer : Entity
 
     public Gender Gender { get; private set; }
 
-    public static Customer Create(Guid id, string email, string userName, DateTime dateOfBirth, Gender gender)
+    public DateTime SyncedAt { get; private set; }
+
+    public static Customer Create(Guid id, string email, string userName, DateTime dateOfBirth, Gender gender, DateTime syncedAt)
     {
         return new Customer
         {
@@ -26,12 +28,14 @@ public sealed class Customer : Entity
             Email = email,
             UserName = userName,
             DateOfBirth = dateOfBirth,
-            Gender = gender
+            Gender = gender,
+            SyncedAt = syncedAt
         };
     }
 
-    public void Update(string userName)
+    public void Update(string userName, DateTime syncedAt)
     {
         UserName = userName;
+        SyncedAt = syncedAt;
     }
 }

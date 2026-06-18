@@ -17,7 +17,7 @@ internal sealed class UpdateCustomerCommandHandler(ICustomerRepository customerR
             return Result.Failure(CustomerErrors.NotFound(request.CustomerId));
         }
 
-        customer.Update(request.UserName);
+        customer.Update(request.UserName, request.SyncedAt);
 
         await unitOfWork.SaveChangesAsync(cancellationToken);
 

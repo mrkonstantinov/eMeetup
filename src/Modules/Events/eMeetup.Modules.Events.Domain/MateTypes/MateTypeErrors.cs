@@ -4,8 +4,8 @@ namespace eMeetup.Modules.Events.Domain.MateTypes;
 
 public static class MateTypeErrors
 {
-    public static readonly Error InvalidEventSessionId = Error.Problem(
-        "MateTypes.InvalidEventSessionId", "Event session ID is required");
+    public static readonly Error InvalidSessionId = Error.Problem(
+        "MateTypes.InvalidSessionId", "Event session ID is required");
 
     public static readonly Error InvalidTitle = Error.Problem(
         "MateTypes.InvalidName", "Mate type name is required");

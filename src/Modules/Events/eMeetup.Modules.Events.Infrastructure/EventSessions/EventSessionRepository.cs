@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace eMeetup.Modules.Events.Infrastructure.EventSessions;
 
-internal sealed class EventSessionRepository(EventsDbContext context) : IEventSessionRepository
+internal sealed class EventSessionRepository(EventsDbContext context) : ISessionRepository
 {
     public async Task<EventSession?> GetAsync(Guid id, CancellationToken cancellationToken = default)
     {

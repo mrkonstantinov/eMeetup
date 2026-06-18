@@ -46,7 +46,8 @@ builder.Services.AddInfrastructure(
     DiagnosticsConfig.ServiceName,
     [
         EnrollsModule.ConfigureConsumers,
-        AttendanceModule.ConfigureConsumers
+        AttendanceModule.ConfigureConsumers,
+        EventsModule.ConfigureConsumers
     ],
     builder.Configuration.GetConnectionString("meetupDb")!,
     builder.Configuration.GetConnectionString("Cache")!);

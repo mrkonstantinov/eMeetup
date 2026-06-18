@@ -2,4 +2,4 @@
 
 namespace eMeetup.Modules.Attendance.Application.Attendees.UpdateAttendee;
 
-public sealed record UpdateAttendeeCommand(Guid AttendeeId, string UserName) : ICommand;
+public sealed record UpdateAttendeeCommand(Guid AttendeeId, string UserName, DateTime SyncedAt) : ICommand;

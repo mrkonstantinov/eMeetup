@@ -2,8 +2,7 @@
 
 public sealed record EventResponse(
     Guid Id, 
-    Guid OrganizerId, 
-    string OrganizerName, 
+    Guid CreatorId, 
     string Title, 
     string? Description, 
     string? Url,  

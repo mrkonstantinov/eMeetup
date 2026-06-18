@@ -6,10 +6,12 @@ using eMeetup.Modules.Events.Domain.Events;
 using eMeetup.Modules.Events.Domain.EventSessions;
 using eMeetup.Modules.Events.Domain.EventTags;
 using eMeetup.Modules.Events.Domain.MateTypes;
+using eMeetup.Modules.Events.Domain.Participants;
 using eMeetup.Modules.Events.Domain.TagGroups;
 using eMeetup.Modules.Events.Infrastructure.Events;
 using eMeetup.Modules.Events.Infrastructure.EventSessions;
 using eMeetup.Modules.Events.Infrastructure.MateTypes;
+using eMeetup.Modules.Events.Infrastructure.Participants;
 using eMeetup.Modules.Events.Infrastructure.Tags;
 using Microsoft.EntityFrameworkCore;
 
@@ -25,7 +27,7 @@ public sealed class EventsDbContext(DbContextOptions<EventsDbContext> options) :
     internal DbSet<EventTag> EventTags { get; set; }
     internal DbSet<EventSession> EventSessions { get; set; }
     internal DbSet<MateType> MateTypes { get; set; }
-
+    internal DbSet<Participant> Participants { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -40,6 +42,7 @@ public sealed class EventsDbContext(DbContextOptions<EventsDbContext> options) :
         modelBuilder.ApplyConfiguration(new TagGroupConfiguration());
         modelBuilder.ApplyConfiguration(new TagConfiguration());
         modelBuilder.ApplyConfiguration(new EventSessionConfiguration());
-        modelBuilder.ApplyConfiguration(new MateTypeConfiguration());        
+        modelBuilder.ApplyConfiguration(new MateTypeConfiguration());
+        modelBuilder.ApplyConfiguration(new ParticipantConfiguration());
     }
 }

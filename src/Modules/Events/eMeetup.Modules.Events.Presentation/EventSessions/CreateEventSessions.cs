@@ -14,10 +14,10 @@ internal sealed class CreateEventSessions : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapPost("event-sessions", async (Request request, IOrganizerContext organizerContext, ISender sender) =>
+        app.MapPost("event-sessions", async (Request request, IParticipantContext organizerContext, ISender sender) =>
         {
             Result<Guid> result = await sender.Send(new CreateSessionCommand(
-                organizerContext.OrganizerId,
+                organizerContext.ParticipantId,
                 request.EventId,
                 request.Title,
                 request.Description,

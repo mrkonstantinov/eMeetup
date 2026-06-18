@@ -15,14 +15,15 @@ internal sealed class CreateMateType : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapPost("mate-types", async (Request request, IOrganizerContext organizerContext, ISender sender) =>
+        app.MapPost("mate-types", async (Request request, IParticipantContext organizerContext, ISender sender) =>
         {
             Result<Guid> result = await sender.Send(new CreateMateTypeCommand(
-                organizerContext.OrganizerId,
-                request.EventSessionId,
+                organizerContext.ParticipantId,
+                request.SessionId,
                 request.Title,
                 request.Description,
                 request.AllocatedSlots,
+                request.Budget,
                 request.MinAge,
                 request.MaxAge,
                 request.Gender,
@@ -39,10 +40,11 @@ internal sealed class CreateMateType : IEndpoint
 
     internal sealed class Request
     {
-        public Guid EventSessionId { get; init; }
+        public Guid SessionId { get; init; }
         public string Title { get; init; }
         public string? Description { get; init; }
         public int AllocatedSlots { get; init; }
+        public decimal? Budget { get; init; }
         public int? MinAge { get; init; }
         public int? MaxAge { get; init; }
         public Gender? Gender { get; init; }

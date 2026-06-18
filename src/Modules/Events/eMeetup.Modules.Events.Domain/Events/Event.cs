@@ -16,8 +16,7 @@ public sealed class Event : Entity
 
     public Guid Id { get; private set; }
     // User information - COMPLETE SNAPSHOT at creation time
-    public Guid OrganizerId { get; set; }
-    public string OrganizerName { get; set; }      // Snapshot!
+    public Guid CreatorId { get; set; }
 
     public string Title { get; private set; }
     public string? Description { get; private set; }
@@ -32,8 +31,7 @@ public sealed class Event : Entity
     public ICollection<EventSession> Sessions => _sessions.AsReadOnly();
 
     public static Result<Event> Create(
-        Guid organizerId,
-        string organizerName,
+        Guid creatorId,
         string title,
         string? description,
         string? url,        
@@ -47,8 +45,7 @@ public sealed class Event : Entity
         var @event = new Event
         {
             Id = Guid.NewGuid(),
-            OrganizerId = organizerId,
-            OrganizerName = organizerName,
+            CreatorId = creatorId,
             Title = title,
             Description = description,
             IsArchived = false,

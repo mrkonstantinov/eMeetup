@@ -13,9 +13,9 @@ internal sealed class GetEventsByUser : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapGet("events/user", async (IOrganizerContext organizerContext, ISender sender) =>
+        app.MapGet("events/user", async (IParticipantContext organizerContext, ISender sender) =>
         {
-            Result<IReadOnlyCollection<Application.Events.GetEvents.EventResponse>> result = await sender.Send(new Application.Events.GetEvents.GetEventQuery(organizerContext.OrganizerId));
+            Result<IReadOnlyCollection<Application.Events.GetEvents.EventResponse>> result = await sender.Send(new Application.Events.GetEvents.GetEventQuery(organizerContext.ParticipantId));
 
             return result.Match(Results.Ok, ApiResults.Problem);
         })

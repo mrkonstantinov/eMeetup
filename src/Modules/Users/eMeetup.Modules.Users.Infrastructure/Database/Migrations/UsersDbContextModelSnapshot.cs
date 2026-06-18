@@ -1101,6 +1101,10 @@ namespace eMeetup.Modules.Users.Infrastructure.Database.Migrations
                         .HasColumnType("text")
                         .HasColumnName("locality");
 
+                    b.Property<string>("ProfileImageUrl")
+                        .HasColumnType("text")
+                        .HasColumnName("profile_image_url");
+
                     b.Property<int?>("Status")
                         .HasColumnType("integer")
                         .HasColumnName("status");
@@ -1112,10 +1116,6 @@ namespace eMeetup.Modules.Users.Infrastructure.Database.Migrations
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at");
-
-                    b.Property<string>("Uri")
-                        .HasColumnType("text")
-                        .HasColumnName("uri");
 
                     b.Property<string>("UserName")
                         .IsRequired()

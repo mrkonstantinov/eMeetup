@@ -69,7 +69,7 @@ internal sealed class UpdateUserCommandHandler(
             if (updates.HasUpdates)
             {
                 var keycloakResult = await UpdateKeycloakWithRetryAsync(
-                    request.IdentityId, updates, user.Uri, cancellationToken);
+                    request.IdentityId, updates, user.ProfileImageUrl, cancellationToken);
 
                 if (keycloakResult.IsFailure)
                 {
@@ -156,7 +156,7 @@ internal sealed class UpdateUserCommandHandler(
     private async Task<Result> UpdateKeycloakWithRetryAsync(
         Guid identityId,
         UserUpdateSet updates,
-        string? uri,
+        string? profileImageUrl,
         CancellationToken cancellationToken)
     {
         const int maxRetries = 3;
@@ -172,7 +172,7 @@ internal sealed class UpdateUserCommandHandler(
                     street: updates.Street,
                     bio: updates.Bio,
                     interests: updates.Interests,
-                    uri: uri,
+                    profileImageUrl: profileImageUrl,
                     cancellationToken);
 
                 if (result.IsSuccess)

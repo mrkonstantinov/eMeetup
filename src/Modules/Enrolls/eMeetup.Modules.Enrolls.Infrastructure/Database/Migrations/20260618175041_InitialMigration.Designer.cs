@@ -12,7 +12,7 @@ using eMeetup.Modules.Enrolls.Infrastructure.Database;
 namespace eMeetup.Modules.Enrolls.Infrastructure.Database.Migrations
 {
     [DbContext(typeof(EnrollsDbContext))]
-    [Migration("20260413071548_InitialMigration")]
+    [Migration("20260618175041_InitialMigration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
@@ -152,6 +152,10 @@ namespace eMeetup.Modules.Enrolls.Infrastructure.Database.Migrations
                     b.Property<int>("Gender")
                         .HasColumnType("integer")
                         .HasColumnName("gender");
+
+                    b.Property<DateTime>("SyncedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("synced_at");
 
                     b.Property<string>("UserName")
                         .IsRequired()

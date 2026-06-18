@@ -11,9 +11,9 @@ internal sealed class MateTypeRepository(EventsDbContext context) : IMateTypeRep
         return await context.MateTypes.SingleOrDefaultAsync(t => t.Id == id, cancellationToken);
     }
 
-    public async Task<bool> ExistsAsync(Guid eventSessionId, CancellationToken cancellationToken = default)
+    public async Task<bool> ExistsAsync(Guid sessionId, CancellationToken cancellationToken = default)
     {
-        return await context.MateTypes.AnyAsync(t => t.EventSessionId == eventSessionId, cancellationToken);
+        return await context.MateTypes.AnyAsync(t => t.SessionId == sessionId, cancellationToken);
     }
 
     public void Insert(MateType mateType)

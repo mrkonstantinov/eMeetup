@@ -7,8 +7,7 @@ using eMeetup.Modules.Events.Domain.Events;
 namespace eMeetup.Modules.Events.Application.Events.CreateEvent;
 
 public sealed record CreateEventCommand(
-    Guid OrganizerId,
-    string OrganizerName,
+    Guid CreatorId,
     string Title,
     string? Description,
     string? Url,

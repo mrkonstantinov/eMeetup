@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace eMeetup.Modules.Attendance.Infrastructure.Database.Migrations
+namespace eMeetup.Modules.Enrolls.Infrastructure.Database.Migrations
 {
     /// <inheritdoc />
     public partial class InitialMigration : Migration
@@ -12,27 +12,28 @@ namespace eMeetup.Modules.Attendance.Infrastructure.Database.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.EnsureSchema(
-                name: "attendance");
+                name: "enrolls");
 
             migrationBuilder.CreateTable(
-                name: "attendees",
-                schema: "attendance",
+                name: "customers",
+                schema: "enrolls",
                 columns: table => new
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
                     email = table.Column<string>(type: "character varying(300)", maxLength: 300, nullable: false),
                     user_name = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
                     date_of_birth = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    gender = table.Column<int>(type: "integer", nullable: false)
+                    gender = table.Column<int>(type: "integer", nullable: false),
+                    synced_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pk_attendees", x => x.id);
+                    table.PrimaryKey("pk_customers", x => x.id);
                 });
 
             migrationBuilder.CreateTable(
                 name: "inbox_message_consumers",
-                schema: "attendance",
+                schema: "enrolls",
                 columns: table => new
                 {
                     inbox_message_id = table.Column<Guid>(type: "uuid", nullable: false),
@@ -45,7 +46,7 @@ namespace eMeetup.Modules.Attendance.Infrastructure.Database.Migrations
 
             migrationBuilder.CreateTable(
                 name: "inbox_messages",
-                schema: "attendance",
+                schema: "enrolls",
                 columns: table => new
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
@@ -62,7 +63,7 @@ namespace eMeetup.Modules.Attendance.Infrastructure.Database.Migrations
 
             migrationBuilder.CreateTable(
                 name: "outbox_message_consumers",
-                schema: "attendance",
+                schema: "enrolls",
                 columns: table => new
                 {
                     outbox_message_id = table.Column<Guid>(type: "uuid", nullable: false),
@@ -75,7 +76,7 @@ namespace eMeetup.Modules.Attendance.Infrastructure.Database.Migrations
 
             migrationBuilder.CreateTable(
                 name: "outbox_messages",
-                schema: "attendance",
+                schema: "enrolls",
                 columns: table => new
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
@@ -95,24 +96,24 @@ namespace eMeetup.Modules.Attendance.Infrastructure.Database.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "attendees",
-                schema: "attendance");
+                name: "customers",
+                schema: "enrolls");
 
             migrationBuilder.DropTable(
                 name: "inbox_message_consumers",
-                schema: "attendance");
+                schema: "enrolls");
 
             migrationBuilder.DropTable(
                 name: "inbox_messages",
-                schema: "attendance");
+                schema: "enrolls");
 
             migrationBuilder.DropTable(
                 name: "outbox_message_consumers",
-                schema: "attendance");
+                schema: "enrolls");
 
             migrationBuilder.DropTable(
                 name: "outbox_messages",
-                schema: "attendance");
+                schema: "enrolls");
         }
     }
 }

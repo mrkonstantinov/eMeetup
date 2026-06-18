@@ -8,6 +8,7 @@ using eMeetup.Modules.Events.Domain.Events;
 using eMeetup.Modules.Events.Domain.EventSessions;
 using eMeetup.Modules.Events.Domain.Interfaces.Repositories;
 using eMeetup.Modules.Events.Domain.MateTypes;
+using eMeetup.Modules.Events.Domain.Participants;
 using eMeetup.Modules.Events.Domain.TagGroups;
 using eMeetup.Modules.Events.Infrastructure.Authentication;
 using eMeetup.Modules.Events.Infrastructure.Database;
@@ -16,7 +17,10 @@ using eMeetup.Modules.Events.Infrastructure.EventSessions;
 using eMeetup.Modules.Events.Infrastructure.Inbox;
 using eMeetup.Modules.Events.Infrastructure.MateTypes;
 using eMeetup.Modules.Events.Infrastructure.Outbox;
+using eMeetup.Modules.Events.Infrastructure.Participants;
 using eMeetup.Modules.Events.Infrastructure.Tags;
+using eMeetup.Modules.Users.IntegrationEvents;
+using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.Extensions.Configuration;
@@ -42,6 +46,12 @@ public static class EventsModule
         return services;
     }
 
+    public static void ConfigureConsumers(IRegistrationConfigurator registrationConfigurator)
+    {
+        registrationConfigurator.AddConsumer<IntegrationEventConsumer<UserRegisteredIntegrationEvent>>();
+        registrationConfigurator.AddConsumer<IntegrationEventConsumer<UserProfileUpdatedIntegrationEvent>>();
+    }
+
     private static void AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
         string databaseConnectionString = configuration.GetConnectionString("meetupDb")!;
@@ -56,15 +66,16 @@ public static class EventsModule
 
         services.AddScoped<IUnitOfWork>(sp => sp.GetRequiredService<EventsDbContext>());
 
+        services.AddScoped<IParticipantRepository, ParticipantRepository>();
         services.AddScoped<ITagGroupRepository, TagGroupRepository>();
         services.AddScoped<ITagRepository, TagRepository>();
         services.AddScoped<IEventRepository, EventRepository>();
         services.AddScoped<IEventTagsRepository, EventTagsRepository>();
-        services.AddScoped<IEventSessionRepository, EventSessionRepository>();
+        services.AddScoped<ISessionRepository, EventSessionRepository>();
         services.AddScoped<IMateTypeRepository, MateTypeRepository>();
 
 
-        services.AddScoped<IOrganizerContext, OrganizerContext>();
+        services.AddScoped<IParticipantContext, ParticipantContext>();
 
         services.Configure<OutboxOptions>(configuration.GetSection("Events:Outbox"));
 

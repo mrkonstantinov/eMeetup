@@ -10,7 +10,7 @@ internal sealed class CreateAttendeeCommandHandler(IAttendeeRepository attendeeR
 {
     public async Task<Result> Handle(CreateAttendeeCommand request, CancellationToken cancellationToken)
     {
-        var attendee = Attendee.Create(request.AttendeeId, request.Email, request.UserName, request.DateOfBirth, request.Gender);
+        var attendee = Attendee.Create(request.AttendeeId, request.Email, request.UserName, request.DateOfBirth, request.Gender, request.SyncedAt);
 
         attendeeRepository.Insert(attendee);
 

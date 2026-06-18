@@ -9,10 +9,11 @@ public sealed class MateType : Entity
     private MateType() { }
 
     public Guid Id { get; private set; }
-    public Guid EventSessionId { get; private set; }
+    public Guid SessionId { get; private set; }
     public string Title { get; private set; } = null!;
     public string? Description { get; private set; }
     public int AllocatedSlots { get; private set; }
+    public decimal? Budget { get; private set; }
     public int? MinAge { get; private set; }
     public int? MaxAge { get; private set; }
     public Gender? Gender { get; private set; }
@@ -30,10 +31,11 @@ public sealed class MateType : Entity
 
     // Factory method
     public static Result<MateType> Create(
-        Guid eventSessionId,
+        Guid sessionId,
         string title,
         string? description,
         int allocatedSlots,
+        decimal? budget,
         int? minAge,
         int? maxAge,
         Gender? gender,        
@@ -42,8 +44,8 @@ public sealed class MateType : Entity
         int priority = 0)
     {
         // Validation
-        if (eventSessionId == Guid.Empty)
-            return Result.Failure<MateType>(MateTypeErrors.InvalidEventSessionId);
+        if (sessionId == Guid.Empty)
+            return Result.Failure<MateType>(MateTypeErrors.InvalidSessionId);
 
         if (string.IsNullOrWhiteSpace(title))
             return Result.Failure<MateType>(MateTypeErrors.InvalidTitle);
@@ -61,10 +63,11 @@ public sealed class MateType : Entity
         var mateType = new MateType
         {
             Id = Guid.NewGuid(),
-            EventSessionId = eventSessionId,
+            SessionId = sessionId,
             Title = title.Trim(),
             Description = description?.Trim(),
             AllocatedSlots = allocatedSlots,
+            Budget = budget,
             MinAge = minAge,
             MaxAge = maxAge,
             Gender = gender,
@@ -82,6 +85,7 @@ public sealed class MateType : Entity
         string name,
         string? description,
         int allocatedSlots,
+        decimal? budget,
         int? minAge,
         int? maxAge,
         Gender? gender,
@@ -106,6 +110,7 @@ public sealed class MateType : Entity
         Title = name.Trim();
         Description = description?.Trim();
         AllocatedSlots = allocatedSlots;
+        Budget = budget;
         MinAge = minAge;
         MaxAge = maxAge;
         Gender = gender;

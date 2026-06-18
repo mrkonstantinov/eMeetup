@@ -62,7 +62,7 @@ internal sealed class UploadUserPhotosCommandHandler(
                     user.Id, string.Join("; ", photoUpdateResult.Errors));
                 return Result.Failure(UserErrors.PhotoUpdateFailed(string.Join("; ", photoUpdateResult.Errors)));
             }
-            user.UpdateProfilePictureUrl(photoUpdateResult.NewPrimaryPhotoUrl);
+            user.UpdateProfilePictureUrl(photoUpdateResult.ProfileImageUrl);
 
 
             // 5. Save changes to database
@@ -79,7 +79,7 @@ internal sealed class UploadUserPhotosCommandHandler(
                 var keycloakResult = await UpdateKeycloakWithRetryAsync(
                     identityId: request.IdentityId,
                     user: user,
-                    uri: photoUpdateResult.NewPrimaryPhotoUrl,
+                    profileImageUrl: photoUpdateResult.ProfileImageUrl,
                     originalUri: currentPrimaryPhotoUrl,
                     cancellationToken: cancellationToken);
 
@@ -121,14 +121,14 @@ internal sealed class UploadUserPhotosCommandHandler(
         // Update Keycloak if:
         // 1. A new primary photo was set
         // 2. The primary photo URL changed
-        return photoUpdateResult.NewPrimaryPhotoUrl != null &&
-               photoUpdateResult.NewPrimaryPhotoUrl != currentPrimaryPhotoUrl;
+        return photoUpdateResult.ProfileImageUrl != null &&
+               photoUpdateResult.ProfileImageUrl != currentPrimaryPhotoUrl;
     }
 
     private async Task<Result> UpdateKeycloakWithRetryAsync(
         Guid identityId,
         User user,
-        string? uri,
+        string? profileImageUrl,
         string? originalUri,
         CancellationToken cancellationToken)
     {
@@ -136,7 +136,7 @@ internal sealed class UploadUserPhotosCommandHandler(
         int retryCount = 0;
 
         logger.LogDebug("Updating Keycloak for {IdentityId} with profile picture: {ProfilePictureUrl}",
-            identityId, uri);
+            identityId, profileImageUrl);
 
         while (retryCount < maxRetries)
         {
@@ -148,7 +148,7 @@ internal sealed class UploadUserPhotosCommandHandler(
                     street: user.Street,
                     bio: user.Bio,
                     interests: user.Interests.ToString(),
-                    uri: uri,
+                    profileImageUrl: profileImageUrl,
                     cancellationToken: cancellationToken);
 
                 if (result.IsSuccess)
@@ -368,7 +368,7 @@ internal sealed class UploadUserPhotosCommandHandler(
                 street: user.Street,
                 bio: user.Bio,
                 interests: user.Interests.ToString(),
-                uri: originalUri,
+                profileImageUrl: originalUri,
                 cancellationToken: cancellationToken);
 
             if (rollbackResult.IsSuccess)

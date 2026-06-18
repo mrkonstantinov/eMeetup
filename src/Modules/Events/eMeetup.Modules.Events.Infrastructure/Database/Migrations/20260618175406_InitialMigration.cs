@@ -23,8 +23,7 @@ namespace eMeetup.Modules.Events.Infrastructure.Database.Migrations
                 columns: table => new
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
-                    organizer_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    organizer_name = table.Column<string>(type: "text", nullable: false),
+                    creator_id = table.Column<Guid>(type: "uuid", nullable: false),
                     title = table.Column<string>(type: "text", nullable: false),
                     description = table.Column<string>(type: "text", nullable: true),
                     url = table.Column<string>(type: "text", nullable: true),
@@ -94,6 +93,23 @@ namespace eMeetup.Modules.Events.Infrastructure.Database.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("pk_outbox_messages", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "participants",
+                schema: "events",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "uuid", nullable: false),
+                    email = table.Column<string>(type: "character varying(300)", maxLength: 300, nullable: false),
+                    user_name = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
+                    date_of_birth = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    gender = table.Column<int>(type: "integer", nullable: false),
+                    synced_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_participants", x => x.id);
                 });
 
             migrationBuilder.CreateTable(
@@ -182,6 +198,7 @@ namespace eMeetup.Modules.Events.Infrastructure.Database.Migrations
                     name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     description = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
                     allocated_slots = table.Column<int>(type: "integer", nullable: false),
+                    budget = table.Column<decimal>(type: "numeric", nullable: true),
                     min_age = table.Column<int>(type: "integer", nullable: true),
                     max_age = table.Column<int>(type: "integer", nullable: true),
                     gender = table.Column<int>(type: "integer", nullable: true),
@@ -437,6 +454,10 @@ namespace eMeetup.Modules.Events.Infrastructure.Database.Migrations
 
             migrationBuilder.DropTable(
                 name: "outbox_messages",
+                schema: "events");
+
+            migrationBuilder.DropTable(
+                name: "participants",
                 schema: "events");
 
             migrationBuilder.DropTable(

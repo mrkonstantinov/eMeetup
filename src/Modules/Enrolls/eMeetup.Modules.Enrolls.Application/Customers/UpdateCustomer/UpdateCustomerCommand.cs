@@ -2,4 +2,4 @@
 
 namespace eMeetup.Modules.Enrolls.Application.Customers.UpdateCustomer;
 
-public sealed record UpdateCustomerCommand(Guid CustomerId, string UserName) : ICommand;
+public sealed record UpdateCustomerCommand(Guid CustomerId, string UserName, DateTime SyncedAt) : ICommand;

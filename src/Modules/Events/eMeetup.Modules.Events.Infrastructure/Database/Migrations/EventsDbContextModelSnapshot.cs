@@ -253,6 +253,10 @@ namespace eMeetup.Modules.Events.Infrastructure.Database.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at");
 
+                    b.Property<Guid>("CreatorId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("creator_id");
+
                     b.Property<string>("Description")
                         .HasColumnType("text")
                         .HasColumnName("description");
@@ -260,15 +264,6 @@ namespace eMeetup.Modules.Events.Infrastructure.Database.Migrations
                     b.Property<bool>("IsArchived")
                         .HasColumnType("boolean")
                         .HasColumnName("is_archived");
-
-                    b.Property<Guid>("OrganizerId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("organizer_id");
-
-                    b.Property<string>("OrganizerName")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("organizer_name");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -296,6 +291,10 @@ namespace eMeetup.Modules.Events.Infrastructure.Database.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("allocated_slots");
 
+                    b.Property<decimal?>("Budget")
+                        .HasColumnType("numeric")
+                        .HasColumnName("budget");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at");
@@ -304,10 +303,6 @@ namespace eMeetup.Modules.Events.Infrastructure.Database.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("character varying(500)")
                         .HasColumnName("description");
-
-                    b.Property<Guid>("EventSessionId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("event_session_id");
 
                     b.Property<int?>("Gender")
                         .HasColumnType("integer")
@@ -336,6 +331,10 @@ namespace eMeetup.Modules.Events.Infrastructure.Database.Migrations
                         .HasDefaultValue(0)
                         .HasColumnName("priority");
 
+                    b.Property<Guid>("SessionId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("event_session_id");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -349,16 +348,53 @@ namespace eMeetup.Modules.Events.Infrastructure.Database.Migrations
                     b.HasKey("Id")
                         .HasName("pk_mate_types");
 
-                    b.HasIndex("EventSessionId")
-                        .HasDatabaseName("ix_mate_types_event_session_id");
-
                     b.HasIndex("Gender")
                         .HasDatabaseName("ix_mate_types_gender");
 
-                    b.HasIndex("EventSessionId", "Priority")
+                    b.HasIndex("SessionId")
+                        .HasDatabaseName("ix_mate_types_event_session_id");
+
+                    b.HasIndex("SessionId", "Priority")
                         .HasDatabaseName("ix_mate_types_session_priority");
 
                     b.ToTable("mate_types", "events");
+                });
+
+            modelBuilder.Entity("eMeetup.Modules.Events.Domain.Participants.Participant", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateTime>("DateOfBirth")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("date_of_birth");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)")
+                        .HasColumnName("email");
+
+                    b.Property<int>("Gender")
+                        .HasColumnType("integer")
+                        .HasColumnName("gender");
+
+                    b.Property<DateTime>("SyncedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("synced_at");
+
+                    b.Property<string>("UserName")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("user_name");
+
+                    b.HasKey("Id")
+                        .HasName("pk_participants");
+
+                    b.ToTable("participants", "events");
                 });
 
             modelBuilder.Entity("eMeetup.Modules.Events.Domain.TagGroups.Tag", b =>
@@ -1107,7 +1143,7 @@ namespace eMeetup.Modules.Events.Infrastructure.Database.Migrations
                 {
                     b.HasOne("eMeetup.Modules.Events.Domain.EventSessions.EventSession", null)
                         .WithMany()
-                        .HasForeignKey("EventSessionId")
+                        .HasForeignKey("SessionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_mate_type_event_session");

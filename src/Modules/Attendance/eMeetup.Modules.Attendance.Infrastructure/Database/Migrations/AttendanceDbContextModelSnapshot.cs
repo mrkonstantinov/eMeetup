@@ -150,6 +150,10 @@ namespace eMeetup.Modules.Attendance.Infrastructure.Database.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("gender");
 
+                    b.Property<DateTime>("SyncedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("synced_at");
+
                     b.Property<string>("UserName")
                         .IsRequired()
                         .HasMaxLength(200)

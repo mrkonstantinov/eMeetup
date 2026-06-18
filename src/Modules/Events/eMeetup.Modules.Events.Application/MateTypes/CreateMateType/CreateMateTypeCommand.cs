@@ -1,20 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using eMeetup.Common.Application.Clock;
-using eMeetup.Common.Application.Messaging;
-using eMeetup.Modules.Events.Application.EventSessions.CreateSession;
+﻿using eMeetup.Common.Application.Messaging;
 using eMeetup.Modules.Events.Domain.Events;
-using eMeetup.Modules.Events.Domain.EventSessions;
 
 namespace eMeetup.Modules.Events.Application.MateTypes.CreateMateType;
 
 public sealed record CreateMateTypeCommand(
-    Guid OrganizerId,
-    Guid EventSessionId,
+    Guid CreatorId,
+    Guid SessionId,
     string Title,
     string? Description,
     int AllocatedSlots,
+    decimal? Budget,
     int? MinAge,
     int? MaxAge,
     Gender? Gender,

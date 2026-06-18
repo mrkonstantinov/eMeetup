@@ -7,7 +7,7 @@ internal sealed class CreateMateTypeCommandValidator : AbstractValidator<CreateM
     public CreateMateTypeCommandValidator()
     {
         // Basic required fields
-        RuleFor(c => c.EventSessionId)
+        RuleFor(c => c.SessionId)
             .NotEmpty()
             .WithMessage("Event session ID is required")
             .NotEqual(Guid.Empty)

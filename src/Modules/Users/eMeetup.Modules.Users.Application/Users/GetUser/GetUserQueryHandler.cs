@@ -37,7 +37,7 @@ internal sealed class GetUserQueryHandler(IDbConnectionFactory dbConnectionFacto
             u.date_of_birth AS DateOfBirth,
             u.gender AS Gender,
             u.bio AS Bio,
-            u.uri AS Uri,
+            u.profile_image_url AS ProfileImageUrl,
             u.locality AS Locality,
             u.street AS street,
             u.created_at AS CreatedAt,

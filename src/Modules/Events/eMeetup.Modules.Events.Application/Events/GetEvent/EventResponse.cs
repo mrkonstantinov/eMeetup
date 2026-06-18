@@ -1,4 +1,4 @@
 ﻿namespace eMeetup.Modules.Events.Application.Events.GetEvent;
 
-public sealed record EventResponse(Guid Id, Guid OrganizerId, string OrganizerName, string Title, string? Description, string? Url,  bool IsArchived,
+public sealed record EventResponse(Guid Id, Guid CreatorId, string Title, string? Description, string? Url,  bool IsArchived,
     string Tags);

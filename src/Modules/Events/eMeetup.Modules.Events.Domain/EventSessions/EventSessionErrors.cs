@@ -7,6 +7,9 @@ namespace eMeetup.Modules.Events.Domain.EventSessions;
 
 public static class EventSessionErrors
 {
+    public static Error NotFound(Guid sessionId) =>
+        Error.NotFound("EventSession.NotFound", $"The session with the identifier {sessionId} was not found");
+
     public static readonly Error InvalidEventId = Error.Problem(
         "Events.InvalidEventId", "Event ID is required");
 

@@ -21,7 +21,8 @@ internal sealed class UserRegisteredIntegrationEventHandler(ISender sender)
                 integrationEvent.Email,
                 integrationEvent.UserName,
                 integrationEvent.DateOfBirth,
-                (Gender)(integrationEvent.Gender)),
+                (Gender)(integrationEvent.Gender),
+                integrationEvent.OccurredOnUtc),
             cancellationToken);
 
         if (result.IsFailure)

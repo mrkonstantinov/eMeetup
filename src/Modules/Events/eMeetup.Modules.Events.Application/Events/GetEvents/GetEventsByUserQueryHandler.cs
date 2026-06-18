@@ -17,8 +17,7 @@ internal sealed class GetEventsByUserQueryHandler(IDbConnectionFactory dbConnect
             $"""
              SELECT
                 e.id AS {nameof(EventResponse.Id)},
-                e.organizer_id AS {nameof(EventResponse.OrganizerId)},
-                e.organizer_name AS {nameof(EventResponse.OrganizerName)},
+                e.creator_id AS {nameof(EventResponse.CreatorId)},
                 e.title AS {nameof(EventResponse.Title)},
                 e.description AS {nameof(EventResponse.Description)},
                 e.url AS {nameof(EventResponse.Url)},

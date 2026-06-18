@@ -16,7 +16,7 @@ public sealed class UserResponse
 
     // Коллекции
     public List<UserPhotoResponse> Photos { get; set; } = new();
-    public string? Uri { get; init; }
+    public string? ProfileImageUrl { get; init; }
     public DateTime CreatedAt { get; init; }
     public DateTime? UpdatedAt { get; init; }
 

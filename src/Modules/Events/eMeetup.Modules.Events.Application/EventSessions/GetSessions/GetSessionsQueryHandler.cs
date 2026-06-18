@@ -19,7 +19,7 @@ internal sealed class GetSessionsQueryHandler(IDbConnectionFactory dbConnectionF
             $"""
              SELECT
                 events.event_sessions.id AS {nameof(SessionResponse.Id)},
-                events.events.organizer_id AS {nameof(SessionResponse.OrganizerId)},
+                events.events.creator_id AS {nameof(SessionResponse.CreatorId)},
                 event_id AS {nameof(SessionResponse.EventId)},
                 events.event_sessions.title AS {nameof(SessionResponse.Title)},
                 events.event_sessions.description AS {nameof(SessionResponse.Description)},                 
