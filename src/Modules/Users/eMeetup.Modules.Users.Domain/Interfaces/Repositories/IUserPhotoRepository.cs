@@ -1,5 +1,5 @@
 ﻿using System.Data;
-using eMeetup.Modules.Users.Domain.Users;
+using eMeetup.Modules.Users.Domain.Photos;
 
 namespace eMeetup.Modules.Users.Domain.Interfaces.Repositories;
 

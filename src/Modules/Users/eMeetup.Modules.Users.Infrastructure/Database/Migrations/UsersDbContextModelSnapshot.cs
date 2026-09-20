@@ -18,7 +18,7 @@ namespace eMeetup.Modules.Users.Infrastructure.Database.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasDefaultSchema("users")
-                .HasAnnotation("ProductVersion", "10.0.0-rc.1.25451.107")
+                .HasAnnotation("ProductVersion", "10.0.12")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -234,762 +234,127 @@ namespace eMeetup.Modules.Users.Infrastructure.Database.Migrations
                     b.ToTable("outbox_message_consumers", "users");
                 });
 
-            modelBuilder.Entity("eMeetup.Modules.Users.Domain.Tags.Tag", b =>
+            modelBuilder.Entity("eMeetup.Modules.Users.Domain.Tags.TagGroup", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
-                        .HasColumnName("id")
-                        .HasDefaultValueSql("gen_random_uuid()");
+                        .HasColumnName("id");
+
+                    b.Property<string>("Color")
+                        .HasColumnType("text")
+                        .HasColumnName("color");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<DateTime?>("DeactivatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("deactivated_at");
 
                     b.Property<string>("Description")
-                        .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasMaxLength(200)
-                        .HasColumnType("character varying(200)")
-                        .HasDefaultValue("")
+                        .HasColumnType("text")
                         .HasColumnName("description");
 
+                    b.Property<int>("DisplayOrder")
+                        .HasColumnType("integer")
+                        .HasColumnName("display_order");
+
+                    b.Property<string>("Icon")
+                        .HasColumnType("text")
+                        .HasColumnName("icon");
+
                     b.Property<bool>("IsActive")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("boolean")
-                        .HasDefaultValue(true)
+                        .HasColumnName("is_active");
+
+                    b.Property<bool>("IsSystem")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_system");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("name");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.HasKey("Id")
+                        .HasName("pk_tag_group");
+
+                    b.ToTable("tag_group", "users");
+                });
+
+            modelBuilder.Entity("eMeetup.Modules.Users.Domain.Tags.UserTag", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<string>("Color")
+                        .HasColumnType("text")
+                        .HasColumnName("color");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text")
+                        .HasColumnName("description");
+
+                    b.Property<int>("DisplayOrder")
+                        .HasColumnType("integer")
+                        .HasColumnName("display_order");
+
+                    b.Property<string>("Icon")
+                        .HasColumnType("text")
+                        .HasColumnName("icon");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean")
                         .HasColumnName("is_active");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
+                        .HasColumnType("text")
                         .HasColumnName("name");
 
                     b.Property<string>("Slug")
                         .IsRequired()
-                        .HasMaxLength(60)
-                        .HasColumnType("character varying(60)")
+                        .HasColumnType("text")
                         .HasColumnName("slug");
 
                     b.Property<Guid?>("TagGroupId")
                         .HasColumnType("uuid")
                         .HasColumnName("tag_group_id");
 
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
                     b.Property<int>("UsageCount")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
-                        .HasDefaultValue(0)
                         .HasColumnName("usage_count");
 
-                    b.HasKey("Id")
-                        .HasName("pk_tags");
-
-                    b.HasIndex("IsActive")
-                        .HasDatabaseName("ix_tags_is_active");
-
-                    b.HasIndex("Name")
-                        .IsUnique()
-                        .HasDatabaseName("ix_tags_name");
-
-                    b.HasIndex("Slug")
-                        .IsUnique()
-                        .HasDatabaseName("ix_tags_slug");
-
-                    b.HasIndex("TagGroupId")
-                        .HasDatabaseName("ix_tags_tag_group_id");
-
-                    b.HasIndex("UsageCount")
-                        .HasDatabaseName("ix_tags_usage_count");
-
-                    b.ToTable("tags", "users");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("11111111-1111-1111-1111-aaaaaaaaaaaa"),
-                            Description = "Занятия бегом и пробежки",
-                            IsActive = true,
-                            Name = "Бег",
-                            Slug = "бег",
-                            TagGroupId = new Guid("11111111-1111-1111-1111-111111111111"),
-                            UsageCount = 0
-                        },
-                        new
-                        {
-                            Id = new Guid("11111111-1111-1111-1111-bbbbbbbbbbbb"),
-                            Description = "Тренировки в бассейне",
-                            IsActive = true,
-                            Name = "Плавание",
-                            Slug = "плавание",
-                            TagGroupId = new Guid("11111111-1111-1111-1111-111111111111"),
-                            UsageCount = 0
-                        },
-                        new
-                        {
-                            Id = new Guid("11111111-1111-1111-1111-cccccccccccc"),
-                            Description = "Поездки по городу и шоссе",
-                            IsActive = true,
-                            Name = "Велоспорт",
-                            Slug = "велоспорт",
-                            TagGroupId = new Guid("11111111-1111-1111-1111-111111111111"),
-                            UsageCount = 0
-                        },
-                        new
-                        {
-                            Id = new Guid("11111111-1111-1111-1111-dddddddddddd"),
-                            Description = "Фитнес и силовые тренировки",
-                            IsActive = true,
-                            Name = "Тренажерный зал",
-                            Slug = "тренажерный-зал",
-                            TagGroupId = new Guid("11111111-1111-1111-1111-111111111111"),
-                            UsageCount = 0
-                        },
-                        new
-                        {
-                            Id = new Guid("11111111-1111-1111-1111-eeeeeeeeeeee"),
-                            Description = "Занятия йогой и растяжка",
-                            IsActive = true,
-                            Name = "Йога",
-                            Slug = "йога",
-                            TagGroupId = new Guid("11111111-1111-1111-1111-111111111111"),
-                            UsageCount = 0
-                        },
-                        new
-                        {
-                            Id = new Guid("22222222-2222-2222-2222-aaaaaaaaaaaa"),
-                            Description = "Катание на склонах",
-                            IsActive = true,
-                            Name = "Горные лыжи",
-                            Slug = "горные-лыжи",
-                            TagGroupId = new Guid("22222222-2222-2222-2222-222222222222"),
-                            UsageCount = 0
-                        },
-                        new
-                        {
-                            Id = new Guid("22222222-2222-2222-2222-bbbbbbbbbbbb"),
-                            Description = "Скандинавская ходьба на лыжах по трассам",
-                            IsActive = true,
-                            Name = "Беговые лыжи",
-                            Slug = "беговые-лыжи",
-                            TagGroupId = new Guid("22222222-2222-2222-2222-222222222222"),
-                            UsageCount = 0
-                        },
-                        new
-                        {
-                            Id = new Guid("22222222-2222-2222-2222-cccccccccccc"),
-                            Description = "Катание на склонах и в парках",
-                            IsActive = true,
-                            Name = "Сноуборд",
-                            Slug = "сноуборд",
-                            TagGroupId = new Guid("22222222-2222-2222-2222-222222222222"),
-                            UsageCount = 0
-                        },
-                        new
-                        {
-                            Id = new Guid("22222222-2222-2222-2222-dddddddddddd"),
-                            Description = "Катание на ледовых катках",
-                            IsActive = true,
-                            Name = "Катание на коньках",
-                            Slug = "катание-на-коньках",
-                            TagGroupId = new Guid("22222222-2222-2222-2222-222222222222"),
-                            UsageCount = 0
-                        },
-                        new
-                        {
-                            Id = new Guid("22222222-2222-2222-2222-eeeeeeeeeeee"),
-                            Description = "Катание на ватрушках с горок",
-                            IsActive = true,
-                            Name = "Тюбинг",
-                            Slug = "тюбинг",
-                            TagGroupId = new Guid("22222222-2222-2222-2222-222222222222"),
-                            UsageCount = 0
-                        },
-                        new
-                        {
-                            Id = new Guid("22222222-2222-2222-2222-ffffffffffff"),
-                            Description = "Походы на снегоступах",
-                            IsActive = true,
-                            Name = "Зимний поход",
-                            Slug = "зимний-поход",
-                            TagGroupId = new Guid("22222222-2222-2222-2222-222222222222"),
-                            UsageCount = 0
-                        },
-                        new
-                        {
-                            Id = new Guid("33333333-3333-3333-3333-aaaaaaaaaaaa"),
-                            Description = "Дневные походы по тропам",
-                            IsActive = true,
-                            Name = "Поход",
-                            Slug = "поход",
-                            TagGroupId = new Guid("33333333-3333-3333-3333-333333333333"),
-                            UsageCount = 0
-                        },
-                        new
-                        {
-                            Id = new Guid("33333333-3333-3333-3333-bbbbbbbbbbbb"),
-                            Description = "Многодневные велосипедные путешествия",
-                            IsActive = true,
-                            Name = "Велотур",
-                            Slug = "велотур",
-                            TagGroupId = new Guid("33333333-3333-3333-3333-333333333333"),
-                            UsageCount = 0
-                        },
-                        new
-                        {
-                            Id = new Guid("33333333-3333-3333-3333-cccccccccccc"),
-                            Description = "Трапезы на природе",
-                            IsActive = true,
-                            Name = "Пикник",
-                            Slug = "пикник",
-                            TagGroupId = new Guid("33333333-3333-3333-3333-333333333333"),
-                            UsageCount = 0
-                        },
-                        new
-                        {
-                            Id = new Guid("33333333-3333-3333-3333-dddddddddddd"),
-                            Description = "Ночёвки на природе",
-                            IsActive = true,
-                            Name = "Кемпинг",
-                            Slug = "кемпинг",
-                            TagGroupId = new Guid("33333333-3333-3333-3333-333333333333"),
-                            UsageCount = 0
-                        },
-                        new
-                        {
-                            Id = new Guid("33333333-3333-3333-3333-eeeeeeeeeeee"),
-                            Description = "Бег по природным тропам",
-                            IsActive = true,
-                            Name = "Трейлраннинг",
-                            Slug = "трейлраннинг",
-                            TagGroupId = new Guid("33333333-3333-3333-3333-333333333333"),
-                            UsageCount = 0
-                        },
-                        new
-                        {
-                            Id = new Guid("44444444-4444-4444-4444-aaaaaaaaaaaa"),
-                            Description = "Сплав на лёгких надувных лодках",
-                            IsActive = true,
-                            Name = "Пакрафтинг",
-                            Slug = "пакрафтинг",
-                            TagGroupId = new Guid("44444444-4444-4444-4444-444444444444"),
-                            UsageCount = 0
-                        },
-                        new
-                        {
-                            Id = new Guid("44444444-4444-4444-4444-bbbbbbbbbbbb"),
-                            Description = "Катание на доске с веслом стоя",
-                            IsActive = true,
-                            Name = "САП-сёрфинг",
-                            Slug = "сап-сёрфинг",
-                            TagGroupId = new Guid("44444444-4444-4444-4444-444444444444"),
-                            UsageCount = 0
-                        },
-                        new
-                        {
-                            Id = new Guid("44444444-4444-4444-4444-cccccccccccc"),
-                            Description = "Сплав на каяках по рекам и озёрам",
-                            IsActive = true,
-                            Name = "Каякинг",
-                            Slug = "каякинг",
-                            TagGroupId = new Guid("44444444-4444-4444-4444-444444444444"),
-                            UsageCount = 0
-                        },
-                        new
-                        {
-                            Id = new Guid("44444444-4444-4444-4444-dddddddddddd"),
-                            Description = "Путешествия на каноэ по спокойной воде",
-                            IsActive = true,
-                            Name = "Каноэ",
-                            Slug = "каноэ",
-                            TagGroupId = new Guid("44444444-4444-4444-4444-444444444444"),
-                            UsageCount = 0
-                        },
-                        new
-                        {
-                            Id = new Guid("44444444-4444-4444-4444-eeeeeeeeeeee"),
-                            Description = "Сплав по бурной воде",
-                            IsActive = true,
-                            Name = "Рафтинг",
-                            Slug = "рафтинг",
-                            TagGroupId = new Guid("44444444-4444-4444-4444-444444444444"),
-                            UsageCount = 0
-                        },
-                        new
-                        {
-                            Id = new Guid("44444444-4444-4444-4444-ffffffffffff"),
-                            Description = "Плавание в озёрах и морях",
-                            IsActive = true,
-                            Name = "Плавание на открытой воде",
-                            Slug = "плавание-на-открытой-воде",
-                            TagGroupId = new Guid("44444444-4444-4444-4444-444444444444"),
-                            UsageCount = 0
-                        },
-                        new
-                        {
-                            Id = new Guid("55555555-5555-5555-5555-aaaaaaaaaaaa"),
-                            Description = "Фестивали живой музыки и концертов",
-                            IsActive = true,
-                            Name = "Музыкальный фестиваль",
-                            Slug = "музыкальный-фестиваль",
-                            TagGroupId = new Guid("55555555-5555-5555-5555-555555555555"),
-                            UsageCount = 0
-                        },
-                        new
-                        {
-                            Id = new Guid("55555555-5555-5555-5555-bbbbbbbbbbbb"),
-                            Description = "Кулинарные мероприятия",
-                            IsActive = true,
-                            Name = "Гастрофестиваль",
-                            Slug = "гастрофестиваль",
-                            TagGroupId = new Guid("55555555-5555-5555-5555-555555555555"),
-                            UsageCount = 0
-                        },
-                        new
-                        {
-                            Id = new Guid("55555555-5555-5555-5555-cccccccccccc"),
-                            Description = "Традиционные праздники",
-                            IsActive = true,
-                            Name = "Культурный фестиваль",
-                            Slug = "культурный-фестиваль",
-                            TagGroupId = new Guid("55555555-5555-5555-5555-555555555555"),
-                            UsageCount = 0
-                        },
-                        new
-                        {
-                            Id = new Guid("55555555-5555-5555-5555-dddddddddddd"),
-                            Description = "Местные ярмарки и гуляния",
-                            IsActive = true,
-                            Name = "Городской праздник",
-                            Slug = "городской-праздник",
-                            TagGroupId = new Guid("55555555-5555-5555-5555-555555555555"),
-                            UsageCount = 0
-                        },
-                        new
-                        {
-                            Id = new Guid("55555555-5555-5555-5555-eeeeeeeeeeee"),
-                            Description = "Дегустации крафтового пива",
-                            IsActive = true,
-                            Name = "Пивной фестиваль",
-                            Slug = "пивной-фестиваль",
-                            TagGroupId = new Guid("55555555-5555-5555-5555-555555555555"),
-                            UsageCount = 0
-                        },
-                        new
-                        {
-                            Id = new Guid("66666666-6666-6666-6666-aaaaaaaaaaaa"),
-                            Description = "Осмотр достопримечательностей",
-                            IsActive = true,
-                            Name = "Городская поездка",
-                            Slug = "городская-поездка",
-                            TagGroupId = new Guid("66666666-6666-6666-6666-666666666666"),
-                            UsageCount = 0
-                        },
-                        new
-                        {
-                            Id = new Guid("66666666-6666-6666-6666-bbbbbbbbbbbb"),
-                            Description = "Кулинарные и винные туры",
-                            IsActive = true,
-                            Name = "Гастротур",
-                            Slug = "гастротур",
-                            TagGroupId = new Guid("66666666-6666-6666-6666-666666666666"),
-                            UsageCount = 0
-                        },
-                        new
-                        {
-                            Id = new Guid("66666666-6666-6666-6666-cccccccccccc"),
-                            Description = "Путешествия на машине",
-                            IsActive = true,
-                            Name = "Автопутешествие",
-                            Slug = "автопутешествие",
-                            TagGroupId = new Guid("66666666-6666-6666-6666-666666666666"),
-                            UsageCount = 0
-                        },
-                        new
-                        {
-                            Id = new Guid("66666666-6666-6666-6666-dddddddddddd"),
-                            Description = "Экскурсии по музеям и архитектуре",
-                            IsActive = true,
-                            Name = "Культурный тур",
-                            Slug = "культурный-тур",
-                            TagGroupId = new Guid("66666666-6666-6666-6666-666666666666"),
-                            UsageCount = 0
-                        },
-                        new
-                        {
-                            Id = new Guid("66666666-6666-6666-6666-eeeeeeeeeeee"),
-                            Description = "Короткие поездки за город",
-                            IsActive = true,
-                            Name = "Уикенд за городом",
-                            Slug = "уикенд-за-городом",
-                            TagGroupId = new Guid("66666666-6666-6666-6666-666666666666"),
-                            UsageCount = 0
-                        },
-                        new
-                        {
-                            Id = new Guid("77777777-7777-7777-7777-aaaaaaaaaaaa"),
-                            Description = "Фильмы и кинопоказы",
-                            IsActive = true,
-                            Name = "Кино",
-                            Slug = "кино",
-                            TagGroupId = new Guid("77777777-7777-7777-7777-777777777777"),
-                            UsageCount = 0
-                        },
-                        new
-                        {
-                            Id = new Guid("77777777-7777-7777-7777-bbbbbbbbbbbb"),
-                            Description = "Спектакли и театральные постановки",
-                            IsActive = true,
-                            Name = "Театр",
-                            Slug = "театр",
-                            TagGroupId = new Guid("77777777-7777-7777-7777-777777777777"),
-                            UsageCount = 0
-                        },
-                        new
-                        {
-                            Id = new Guid("77777777-7777-7777-7777-cccccccccccc"),
-                            Description = "Концерты живой музыки",
-                            IsActive = true,
-                            Name = "Концерт",
-                            Slug = "концерт",
-                            TagGroupId = new Guid("77777777-7777-7777-7777-777777777777"),
-                            UsageCount = 0
-                        },
-                        new
-                        {
-                            Id = new Guid("77777777-7777-7777-7777-dddddddddddd"),
-                            Description = "Рок и метал концерты",
-                            IsActive = true,
-                            Name = "Рок-концерт",
-                            Slug = "рок-концерт",
-                            TagGroupId = new Guid("77777777-7777-7777-7777-777777777777"),
-                            UsageCount = 0
-                        },
-                        new
-                        {
-                            Id = new Guid("77777777-7777-7777-7777-eeeeeeeeeeee"),
-                            Description = "Художественные галереи и выставки",
-                            IsActive = true,
-                            Name = "Выставка искусств",
-                            Slug = "выставка-искусств",
-                            TagGroupId = new Guid("77777777-7777-7777-7777-777777777777"),
-                            UsageCount = 0
-                        },
-                        new
-                        {
-                            Id = new Guid("77777777-7777-7777-7777-ffffffffffff"),
-                            Description = "Юмористические выступления",
-                            IsActive = true,
-                            Name = "Стендап",
-                            Slug = "стендап",
-                            TagGroupId = new Guid("77777777-7777-7777-7777-777777777777"),
-                            UsageCount = 0
-                        },
-                        new
-                        {
-                            Id = new Guid("88888888-8888-8888-8888-aaaaaaaaaaaa"),
-                            Description = "Встречи в барах и пабах",
-                            IsActive = true,
-                            Name = "Паб",
-                            Slug = "паб",
-                            TagGroupId = new Guid("88888888-8888-8888-8888-888888888888"),
-                            UsageCount = 0
-                        },
-                        new
-                        {
-                            Id = new Guid("88888888-8888-8888-8888-bbbbbbbbbbbb"),
-                            Description = "Летние кафе и террасы",
-                            IsActive = true,
-                            Name = "Веранда",
-                            Slug = "веранда",
-                            TagGroupId = new Guid("88888888-8888-8888-8888-888888888888"),
-                            UsageCount = 0
-                        },
-                        new
-                        {
-                            Id = new Guid("88888888-8888-8888-8888-cccccccccccc"),
-                            Description = "Неформальные встречи за кофе",
-                            IsActive = true,
-                            Name = "Кофе-дейт",
-                            Slug = "кофе-дейт",
-                            TagGroupId = new Guid("88888888-8888-8888-8888-888888888888"),
-                            UsageCount = 0
-                        },
-                        new
-                        {
-                            Id = new Guid("88888888-8888-8888-8888-dddddddddddd"),
-                            Description = "Вечера настольных игр",
-                            IsActive = true,
-                            Name = "Настольные игры",
-                            Slug = "настольные-игры",
-                            TagGroupId = new Guid("88888888-8888-8888-8888-888888888888"),
-                            UsageCount = 0
-                        },
-                        new
-                        {
-                            Id = new Guid("88888888-8888-8888-8888-eeeeeeeeeeee"),
-                            Description = "Неспешные встречи в парке",
-                            IsActive = true,
-                            Name = "Пикник в парке",
-                            Slug = "пикник-в-парке",
-                            TagGroupId = new Guid("88888888-8888-8888-8888-888888888888"),
-                            UsageCount = 0
-                        },
-                        new
-                        {
-                            Id = new Guid("88888888-8888-8888-8888-ffffffffffff"),
-                            Description = "Расслабленный летний отдых в гамаке на природе",
-                            IsActive = true,
-                            Name = "Отдых в гамаке",
-                            Slug = "отдых-в-гамаке",
-                            TagGroupId = new Guid("88888888-8888-8888-8888-888888888888"),
-                            UsageCount = 0
-                        },
-                        new
-                        {
-                            Id = new Guid("99999999-9999-9999-9999-aaaaaaaaaaaa"),
-                            Description = "Соревнования по плаванию, велоспорту и бегу",
-                            IsActive = true,
-                            Name = "Триатлон",
-                            Slug = "триатлон",
-                            TagGroupId = new Guid("99999999-9999-9999-9999-999999999999"),
-                            UsageCount = 0
-                        },
-                        new
-                        {
-                            Id = new Guid("99999999-9999-9999-9999-bbbbbbbbbbbb"),
-                            Description = "Участие в марафонах в других городах",
-                            IsActive = true,
-                            Name = "Марафон",
-                            Slug = "марафон",
-                            TagGroupId = new Guid("99999999-9999-9999-9999-999999999999"),
-                            UsageCount = 0
-                        },
-                        new
-                        {
-                            Id = new Guid("99999999-9999-9999-9999-cccccccccccc"),
-                            Description = "Забеги с препятствиями",
-                            IsActive = true,
-                            Name = "Гонка с препятствиями",
-                            Slug = "гонка-с-препятствиями",
-                            TagGroupId = new Guid("99999999-9999-9999-9999-999999999999"),
-                            UsageCount = 0
-                        },
-                        new
-                        {
-                            Id = new Guid("99999999-9999-9999-9999-dddddddddddd"),
-                            Description = "Соревновательные велозаезды",
-                            IsActive = true,
-                            Name = "Велосипедная гонка",
-                            Slug = "велосипедная-гонка",
-                            TagGroupId = new Guid("99999999-9999-9999-9999-999999999999"),
-                            UsageCount = 0
-                        },
-                        new
-                        {
-                            Id = new Guid("99999999-9999-9999-9999-eeeeeeeeeeee"),
-                            Description = "Заплывы на открытой воде или в бассейне",
-                            IsActive = true,
-                            Name = "Соревнования по плаванию",
-                            Slug = "соревнования-по-плаванию",
-                            TagGroupId = new Guid("99999999-9999-9999-9999-999999999999"),
-                            UsageCount = 0
-                        },
-                        new
-                        {
-                            Id = new Guid("99999999-9999-9999-9999-ffffffffffff"),
-                            Description = "Соревнования по бегу по бездорожью",
-                            IsActive = true,
-                            Name = "Трейловый забег",
-                            Slug = "трейловый-забег",
-                            TagGroupId = new Guid("99999999-9999-9999-9999-999999999999"),
-                            UsageCount = 0
-                        });
-                });
-
-            modelBuilder.Entity("eMeetup.Modules.Users.Domain.Tags.TagGroup", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("id")
-                        .HasDefaultValueSql("gen_random_uuid()");
-
-                    b.Property<string>("Description")
-                        .ValueGeneratedOnAdd()
-                        .HasMaxLength(200)
-                        .HasColumnType("character varying(200)")
-                        .HasDefaultValue("")
-                        .HasColumnName("description");
-
-                    b.Property<int>("DisplayOrder")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasDefaultValue(0)
-                        .HasColumnName("display_order");
-
-                    b.Property<string>("Icon")
-                        .ValueGeneratedOnAdd()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
-                        .HasDefaultValue("")
-                        .HasColumnName("icon");
-
-                    b.Property<bool>("IsActive")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("boolean")
-                        .HasDefaultValue(true)
-                        .HasColumnName("is_active");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
-                        .HasColumnName("name");
-
-                    b.HasKey("Id")
-                        .HasName("pk_tag_groups");
-
-                    b.HasIndex("DisplayOrder")
-                        .HasDatabaseName("ix_tag_groups_display_order");
-
-                    b.HasIndex("IsActive")
-                        .HasDatabaseName("ix_tag_groups_is_active");
-
-                    b.HasIndex("Name")
-                        .IsUnique()
-                        .HasDatabaseName("ix_tag_groups_name");
-
-                    b.ToTable("tag_groups", "users");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("11111111-1111-1111-1111-111111111111"),
-                            Description = "Бег, плавание, велоспорт и другие спортивные активности",
-                            DisplayOrder = 1,
-                            Icon = "🏃",
-                            IsActive = true,
-                            Name = "Активный образ жизни"
-                        },
-                        new
-                        {
-                            Id = new Guid("22222222-2222-2222-2222-222222222222"),
-                            Description = "Лыжи, сноуборд, коньки и тюбинг",
-                            DisplayOrder = 2,
-                            Icon = "❄️",
-                            IsActive = true,
-                            Name = "Зимние активности"
-                        },
-                        new
-                        {
-                            Id = new Guid("33333333-3333-3333-3333-333333333333"),
-                            Description = "Походы, велотуры и пикники на природе",
-                            DisplayOrder = 3,
-                            Icon = "⛰️",
-                            IsActive = true,
-                            Name = "Приключения и активный отдых"
-                        },
-                        new
-                        {
-                            Id = new Guid("44444444-4444-4444-4444-444444444444"),
-                            Description = "Пакрафтинг, САП, каякинг и другие водные походы",
-                            DisplayOrder = 4,
-                            Icon = "🚣",
-                            IsActive = true,
-                            Name = "Водные приключения"
-                        },
-                        new
-                        {
-                            Id = new Guid("55555555-5555-5555-5555-555555555555"),
-                            Description = "Музыкальные, гастрономические и культурные фестивали",
-                            DisplayOrder = 5,
-                            Icon = "🎪",
-                            IsActive = true,
-                            Name = "Фестивали и мероприятия"
-                        },
-                        new
-                        {
-                            Id = new Guid("66666666-6666-6666-6666-666666666666"),
-                            Description = "Городские поездки, экскурсии, гастротуры и автопутешествия",
-                            DisplayOrder = 6,
-                            Icon = "✈️",
-                            IsActive = true,
-                            Name = "Путешествия"
-                        },
-                        new
-                        {
-                            Id = new Guid("77777777-7777-7777-7777-777777777777"),
-                            Description = "Кино, театр, концерты и рок-шоу",
-                            DisplayOrder = 7,
-                            Icon = "🎭",
-                            IsActive = true,
-                            Name = "Культура и развлечения"
-                        },
-                        new
-                        {
-                            Id = new Guid("88888888-8888-8888-8888-888888888888"),
-                            Description = "Встречи в пабах, летние веранды и приятное времяпрепровождение",
-                            DisplayOrder = 8,
-                            Icon = "😎",
-                            IsActive = true,
-                            Name = "Отдых и тусовки"
-                        },
-                        new
-                        {
-                            Id = new Guid("99999999-9999-9999-9999-999999999999"),
-                            Description = "Марафоны, триатлоны, соревнования и забеги в других городах",
-                            DisplayOrder = 9,
-                            Icon = "🏆",
-                            IsActive = true,
-                            Name = "Спортивные события"
-                        });
-                });
-
-            modelBuilder.Entity("eMeetup.Modules.Users.Domain.UserInterests.UserInterest", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("id")
-                        .HasDefaultValueSql("gen_random_uuid()");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_at")
-                        .HasDefaultValueSql("NOW()");
-
-                    b.Property<Guid>("TagId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("tag_id");
-
-                    b.Property<Guid>("UserId")
+                    b.Property<Guid?>("UserId")
                         .HasColumnType("uuid")
                         .HasColumnName("user_id");
 
                     b.HasKey("Id")
-                        .HasName("pk_user_interests");
+                        .HasName("pk_user_tag");
 
-                    b.HasIndex("CreatedAt")
-                        .HasDatabaseName("ix_user_interests_created_at");
-
-                    NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex("CreatedAt"), "brin");
-
-                    b.HasIndex("TagId")
-                        .HasDatabaseName("ix_user_interests_tag_id");
-
-                    NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex("TagId"), "hash");
+                    b.HasIndex("TagGroupId")
+                        .HasDatabaseName("ix_user_tag_tag_group_id");
 
                     b.HasIndex("UserId")
-                        .HasDatabaseName("ix_user_interests_user_id");
+                        .HasDatabaseName("ix_user_tag_user_id");
 
-                    NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex("UserId"), "hash");
-
-                    b.HasIndex("UserId", "TagId")
-                        .IsUnique()
-                        .HasDatabaseName("ix_user_interests_user_tag_unique");
-
-                    b.ToTable("user_interests", "users", t =>
-                        {
-                            t.HasComment("Junction table for user interests and tags");
-                        });
+                    b.ToTable("user_tag", "users");
                 });
 
             modelBuilder.Entity("eMeetup.Modules.Users.Domain.Users.Permission", b =>
@@ -1063,68 +428,66 @@ namespace eMeetup.Modules.Users.Infrastructure.Database.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
-                        .HasColumnName("id");
+                        .HasColumnName("id")
+                        .HasDefaultValueSql("gen_random_uuid()");
 
-                    b.Property<string>("Bio")
-                        .HasMaxLength(500)
-                        .HasColumnType("character varying(500)")
-                        .HasColumnName("bio");
-
-                    b.Property<DateTime?>("CreatedAt")
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_at");
-
-                    b.Property<DateTime>("DateOfBirth")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("date_of_birth");
+                        .HasColumnName("created_at")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasMaxLength(300)
-                        .HasColumnType("character varying(300)")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
                         .HasColumnName("email");
 
-                    b.Property<int>("Gender")
-                        .HasColumnType("integer")
-                        .HasColumnName("gender");
-
-                    b.Property<string>("IdentityId")
-                        .IsRequired()
-                        .HasColumnType("text")
+                    b.Property<Guid>("IdentityId")
+                        .HasMaxLength(255)
+                        .HasColumnType("uuid")
                         .HasColumnName("identity_id");
 
-                    b.Property<DateTime?>("LastActive")
+                    b.Property<DateTime?>("LastActiveAt")
                         .HasColumnType("timestamp with time zone")
-                        .HasColumnName("last_active");
+                        .HasColumnName("last_active_at");
 
-                    b.Property<string>("Locality")
-                        .HasColumnType("text")
-                        .HasColumnName("locality");
+                    b.Property<DateTime?>("LastStatusChangeAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("last_status_change_at");
 
-                    b.Property<string>("ProfileImageUrl")
-                        .HasColumnType("text")
-                        .HasColumnName("profile_image_url");
+                    b.Property<bool>("ProfileCompleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false)
+                        .HasColumnName("profile_completed");
 
-                    b.Property<int?>("Status")
+                    b.Property<int>("Status")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
+                        .HasDefaultValue(2)
                         .HasColumnName("status");
 
-                    b.Property<string>("Street")
-                        .HasColumnType("text")
-                        .HasColumnName("street");
+                    b.Property<string>("StatusReason")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("status_reason");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at");
 
-                    b.Property<string>("UserName")
+                    b.Property<string>("Username")
                         .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("character varying(200)")
-                        .HasColumnName("user_name");
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("username");
 
                     b.HasKey("Id")
                         .HasName("pk_users");
+
+                    b.HasIndex("CreatedAt")
+                        .HasDatabaseName("ix_users_created_at");
 
                     b.HasIndex("Email")
                         .IsUnique()
@@ -1134,56 +497,125 @@ namespace eMeetup.Modules.Users.Infrastructure.Database.Migrations
                         .IsUnique()
                         .HasDatabaseName("ix_users_identity_id");
 
+                    b.HasIndex("LastActiveAt")
+                        .HasDatabaseName("ix_users_last_active_at");
+
+                    b.HasIndex("ProfileCompleted")
+                        .HasDatabaseName("ix_users_profile_completed");
+
+                    b.HasIndex("Status")
+                        .HasDatabaseName("ix_users_status");
+
+                    b.HasIndex("Username")
+                        .IsUnique()
+                        .HasDatabaseName("ix_users_username");
+
+                    b.HasIndex("Status", "ProfileCompleted")
+                        .HasDatabaseName("ix_users_status_profile_completed");
+
                     b.ToTable("users", "users");
                 });
 
-            modelBuilder.Entity("eMeetup.Modules.Users.Domain.Users.UserPhoto", b =>
+            modelBuilder.Entity("eMeetup.Modules.Users.Domain.Users.UserFavorite", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
-                        .HasColumnName("id");
+                        .HasColumnName("id")
+                        .HasDefaultValueSql("gen_random_uuid()");
 
-                    b.Property<int>("DisplayOrder")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasDefaultValue(0)
-                        .HasColumnName("display_order");
+                    b.Property<DateTime>("AddedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("added_at");
 
-                    b.Property<bool>("IsPrimary")
+                    b.Property<bool>("IsActive")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("boolean")
-                        .HasDefaultValue(false)
-                        .HasColumnName("is_primary");
+                        .HasDefaultValue(true)
+                        .HasColumnName("is_active");
 
-                    b.Property<DateTime>("UploadedAt")
+                    b.Property<DateTime?>("RemovedAt")
                         .HasColumnType("timestamp with time zone")
-                        .HasColumnName("uploaded_at");
+                        .HasColumnName("removed_at");
 
-                    b.Property<string>("Url")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("character varying(500)")
-                        .HasColumnName("url");
+                    b.Property<Guid>("TargetUserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("target_user_id");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid")
                         .HasColumnName("user_id");
 
                     b.HasKey("Id")
-                        .HasName("pk_user_photos");
+                        .HasName("pk_user_favorites");
 
-                    b.HasIndex("UserId")
-                        .HasDatabaseName("ix_user_photos_user_id");
+                    b.HasIndex("IsActive")
+                        .HasDatabaseName("ix_user_favorites_is_active");
 
-                    b.HasIndex("UserId", "DisplayOrder")
-                        .HasDatabaseName("ix_user_photos_user_id_display_order");
+                    b.HasIndex("TargetUserId")
+                        .HasDatabaseName("ix_user_favorites_target_user_id");
 
-                    b.HasIndex("UserId", "IsPrimary")
-                        .HasDatabaseName("ix_user_photos_user_id_is_primary")
-                        .HasFilter("is_primary = true");
+                    b.HasIndex("UserId", "TargetUserId")
+                        .IsUnique()
+                        .HasDatabaseName("ix_user_favorites_user_target_active")
+                        .HasFilter("\"is_active\" = true");
 
-                    b.ToTable("user_photos", "users");
+                    b.ToTable("user_favorites", "users");
+                });
+
+            modelBuilder.Entity("eMeetup.Modules.Users.Domain.Users.UserSubscription", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id")
+                        .HasDefaultValueSql("gen_random_uuid()");
+
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true)
+                        .HasColumnName("is_active");
+
+                    b.Property<DateTime?>("LastNotificationSentAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("last_notification_sent_at");
+
+                    b.Property<DateTime>("SubscribedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("subscribed_at");
+
+                    b.Property<Guid>("TargetUserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("target_user_id");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("integer")
+                        .HasColumnName("type");
+
+                    b.Property<DateTime?>("UnsubscribedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("unsubscribed_at");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_user_subscriptions");
+
+                    b.HasIndex("IsActive")
+                        .HasDatabaseName("ix_user_subscriptions_is_active");
+
+                    b.HasIndex("TargetUserId")
+                        .HasDatabaseName("ix_user_subscriptions_target_user_id");
+
+                    b.HasIndex("UserId", "TargetUserId", "Type")
+                        .IsUnique()
+                        .HasDatabaseName("ix_user_subscriptions_user_target_type_active")
+                        .HasFilter("\"is_active\" = true");
+
+                    b.ToTable("user_subscriptions", "users");
                 });
 
             modelBuilder.Entity("PermissionRole", b =>
@@ -1220,53 +652,279 @@ namespace eMeetup.Modules.Users.Infrastructure.Database.Migrations
                         .HasConstraintName("fk_user_roles_users_user_id");
                 });
 
-            modelBuilder.Entity("eMeetup.Modules.Users.Domain.Tags.Tag", b =>
+            modelBuilder.Entity("eMeetup.Modules.Users.Domain.Tags.UserTag", b =>
                 {
                     b.HasOne("eMeetup.Modules.Users.Domain.Tags.TagGroup", "TagGroup")
                         .WithMany("Tags")
                         .HasForeignKey("TagGroupId")
-                        .OnDelete(DeleteBehavior.SetNull)
-                        .HasConstraintName("fk_tags_tag_group_tag_group_id");
+                        .HasConstraintName("fk_user_tag_tag_group_tag_group_id");
+
+                    b.HasOne("eMeetup.Modules.Users.Domain.Users.User", null)
+                        .WithMany("UserTags")
+                        .HasForeignKey("UserId")
+                        .HasConstraintName("fk_user_tag_users_user_id");
 
                     b.Navigation("TagGroup");
                 });
 
-            modelBuilder.Entity("eMeetup.Modules.Users.Domain.UserInterests.UserInterest", b =>
+            modelBuilder.Entity("eMeetup.Modules.Users.Domain.Users.User", b =>
                 {
-                    b.HasOne("eMeetup.Modules.Users.Domain.Tags.Tag", "Tag")
-                        .WithMany("UserInterests")
-                        .HasForeignKey("TagId")
+                    b.OwnsOne("eMeetup.Modules.Users.Domain.Users.UserProfile", "Profile", b1 =>
+                        {
+                            b1.Property<Guid>("UserId")
+                                .ValueGeneratedOnAdd();
+
+                            b1.Property<string>("AvatarUrl")
+                                .HasMaxLength(500);
+
+                            b1.Property<string>("Bio")
+                                .HasMaxLength(500);
+
+                            b1.Property<string>("City")
+                                .HasMaxLength(100);
+
+                            b1.Property<string>("Country")
+                                .HasMaxLength(100);
+
+                            b1.Property<DateTime?>("DateOfBirth");
+
+                            b1.Property<string>("Gender")
+                                .HasMaxLength(20);
+
+                            b1.Property<string>("Instagram")
+                                .HasMaxLength(50);
+
+                            b1.Property<string>("Interests")
+                                .HasMaxLength(500);
+
+                            b1.Property<bool>("IsEmailVerified");
+
+                            b1.Property<bool>("IsPhoneVerified");
+
+                            b1.Property<bool>("IsPublic");
+
+                            b1.Property<string>("Languages")
+                                .HasMaxLength(100);
+
+                            b1.Property<DateTime?>("LastProfileUpdate");
+
+                            b1.Property<double?>("Latitude")
+                                .HasPrecision(10, 8);
+
+                            b1.Property<double?>("Longitude")
+                                .HasPrecision(11, 8);
+
+                            b1.Property<string>("Phone")
+                                .HasMaxLength(20);
+
+                            b1.Property<string>("Telegram")
+                                .HasMaxLength(50);
+
+                            b1.Property<string>("TimeZone")
+                                .HasMaxLength(50);
+
+                            b1.HasKey("UserId");
+
+                            b1.ToTable("users", "users");
+
+                            b1
+                                .ToJson("profile")
+                                .HasColumnType("jsonb");
+
+                            b1.WithOwner()
+                                .HasForeignKey("UserId")
+                                .HasConstraintName("fk_users_users_id");
+
+                            b1.OwnsOne("eMeetup.Modules.Users.Domain.Activities.ActivityPreferences", "ActivityPreferences", b2 =>
+                                {
+                                    b2.Property<Guid>("UserProfileUserId");
+
+                                    b2.Property<string>("ActivityLevels")
+                                        .IsRequired();
+
+                                    b2.Property<int?>("MaxDistanceKm");
+
+                                    b2.Property<int?>("MaxParticipants");
+
+                                    b2.Property<int?>("MinParticipants");
+
+                                    b2.Property<string>("PreferredActivities")
+                                        .IsRequired();
+
+                                    b2.Property<string>("PreferredDays")
+                                        .IsRequired();
+
+                                    b2.Property<int?>("PreferredTimeOfDay");
+
+                                    b2.HasKey("UserProfileUserId")
+                                        .HasName("pk_users");
+
+                                    b2.ToTable("users", "users");
+
+                                    b2.WithOwner()
+                                        .HasForeignKey("UserProfileUserId")
+                                        .HasConstraintName("fk_users_users_user_profile_user_id");
+                                });
+
+                            b1.OwnsOne("eMeetup.Modules.Users.Domain.Activities.AvailabilityStatus", "AvailabilityStatus", b2 =>
+                                {
+                                    b2.Property<Guid>("UserProfileUserId");
+
+                                    b2.Property<DateTime?>("AvailableFrom");
+
+                                    b2.Property<DateTime?>("AvailableUntil");
+
+                                    b2.Property<string>("StatusMessage")
+                                        .HasMaxLength(200);
+
+                                    b2.Property<int>("Type");
+
+                                    b2.HasKey("UserProfileUserId")
+                                        .HasName("pk_users");
+
+                                    b2.ToTable("users", "users");
+
+                                    b2.WithOwner()
+                                        .HasForeignKey("UserProfileUserId")
+                                        .HasConstraintName("fk_users_users_user_profile_user_id");
+                                });
+
+                            b1.Navigation("ActivityPreferences")
+                                .IsRequired();
+
+                            b1.Navigation("AvailabilityStatus")
+                                .IsRequired();
+                        });
+
+                    b.OwnsMany("eMeetup.Modules.Users.Domain.Photos.UserPhoto", "_photos", b1 =>
+                        {
+                            b1.Property<Guid>("user_id")
+                                .HasColumnType("uuid")
+                                .HasColumnName("user_id");
+
+                            b1.Property<Guid>("Id")
+                                .ValueGeneratedOnAdd()
+                                .HasColumnType("uuid")
+                                .HasColumnName("id")
+                                .HasDefaultValueSql("gen_random_uuid()");
+
+                            b1.Property<string>("ContentType")
+                                .HasMaxLength(100)
+                                .HasColumnType("character varying(100)")
+                                .HasColumnName("content_type");
+
+                            b1.Property<int>("DisplayOrder")
+                                .ValueGeneratedOnAdd()
+                                .HasColumnType("integer")
+                                .HasDefaultValue(0)
+                                .HasColumnName("display_order");
+
+                            b1.Property<string>("FileName")
+                                .HasMaxLength(200)
+                                .HasColumnType("character varying(200)")
+                                .HasColumnName("file_name");
+
+                            b1.Property<long?>("FileSize")
+                                .HasColumnType("bigint")
+                                .HasColumnName("file_size");
+
+                            b1.Property<bool>("IsPrimary")
+                                .ValueGeneratedOnAdd()
+                                .HasColumnType("boolean")
+                                .HasDefaultValue(false)
+                                .HasColumnName("is_primary");
+
+                            b1.Property<string>("ThumbnailUrl")
+                                .HasMaxLength(500)
+                                .HasColumnType("character varying(500)")
+                                .HasColumnName("thumbnail_url");
+
+                            b1.Property<DateTime>("UploadedAt")
+                                .ValueGeneratedOnAdd()
+                                .HasColumnType("timestamp with time zone")
+                                .HasColumnName("uploaded_at")
+                                .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                            b1.Property<string>("Url")
+                                .IsRequired()
+                                .HasMaxLength(500)
+                                .HasColumnType("character varying(500)")
+                                .HasColumnName("url");
+
+                            b1.Property<Guid>("UserId")
+                                .HasColumnType("uuid")
+                                .HasColumnName("user_id");
+
+                            b1.HasKey("user_id", "Id")
+                                .HasName("pk_user_photos");
+
+                            b1.HasIndex("DisplayOrder")
+                                .HasDatabaseName("ix_user_photos_display_order");
+
+                            b1.HasIndex("user_id")
+                                .HasDatabaseName("ix_user_photos_user_id");
+
+                            b1.HasIndex("user_id", "IsPrimary")
+                                .HasDatabaseName("ix_user_photos_user_id_is_primary")
+                                .HasFilter("\"is_primary\" = true");
+
+                            b1.ToTable("user_photos", "users", t =>
+                                {
+                                    t.Property("user_id")
+                                        .HasColumnName("user_id1");
+                                });
+
+                            b1.WithOwner()
+                                .HasForeignKey("user_id")
+                                .HasConstraintName("fk_user_photos_users_user_id");
+                        });
+
+                    b.Navigation("Profile")
+                        .IsRequired();
+
+                    b.Navigation("_photos");
+                });
+
+            modelBuilder.Entity("eMeetup.Modules.Users.Domain.Users.UserFavorite", b =>
+                {
+                    b.HasOne("eMeetup.Modules.Users.Domain.Users.User", "TargetUser")
+                        .WithMany("FavoritedBy")
+                        .HasForeignKey("TargetUserId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
-                        .HasConstraintName("fk_user_interests_tags_tag_id");
+                        .HasConstraintName("fk_user_favorites_users_target_user_id");
 
                     b.HasOne("eMeetup.Modules.Users.Domain.Users.User", "User")
-                        .WithMany("Interests")
+                        .WithMany("Favorites")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("fk_user_interests_users_user_id");
+                        .HasConstraintName("fk_user_favorites_users_user_id");
 
-                    b.Navigation("Tag");
+                    b.Navigation("TargetUser");
 
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("eMeetup.Modules.Users.Domain.Users.UserPhoto", b =>
+            modelBuilder.Entity("eMeetup.Modules.Users.Domain.Users.UserSubscription", b =>
                 {
+                    b.HasOne("eMeetup.Modules.Users.Domain.Users.User", "TargetUser")
+                        .WithMany("Subscribers")
+                        .HasForeignKey("TargetUserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_user_subscriptions_users_target_user_id");
+
                     b.HasOne("eMeetup.Modules.Users.Domain.Users.User", "User")
-                        .WithMany("Photos")
+                        .WithMany("Subscriptions")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("fk_user_photos_users_user_id");
+                        .HasConstraintName("fk_user_subscriptions_users_user_id");
+
+                    b.Navigation("TargetUser");
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("eMeetup.Modules.Users.Domain.Tags.Tag", b =>
-                {
-                    b.Navigation("UserInterests");
                 });
 
             modelBuilder.Entity("eMeetup.Modules.Users.Domain.Tags.TagGroup", b =>
@@ -1276,9 +934,15 @@ namespace eMeetup.Modules.Users.Infrastructure.Database.Migrations
 
             modelBuilder.Entity("eMeetup.Modules.Users.Domain.Users.User", b =>
                 {
-                    b.Navigation("Interests");
+                    b.Navigation("FavoritedBy");
 
-                    b.Navigation("Photos");
+                    b.Navigation("Favorites");
+
+                    b.Navigation("Subscribers");
+
+                    b.Navigation("Subscriptions");
+
+                    b.Navigation("UserTags");
                 });
 #pragma warning restore 612, 618
         }

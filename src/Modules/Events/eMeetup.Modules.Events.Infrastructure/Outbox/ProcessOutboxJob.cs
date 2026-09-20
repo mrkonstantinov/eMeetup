@@ -25,7 +25,7 @@ internal sealed class ProcessOutboxJob(
 {
     private const string ModuleName = "Events";
 
-    public async Task Execute(IJobExecutionContext context)
+    public async ValueTask Execute(IJobExecutionContext context, CancellationToken cancellationToken = default)
     {
         logger.LogInformation("{Module} - Beginning to process outbox messages", ModuleName);
 

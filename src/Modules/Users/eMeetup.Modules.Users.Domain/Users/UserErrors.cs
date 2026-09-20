@@ -5,161 +5,64 @@ namespace eMeetup.Modules.Users.Domain.Users;
 
 public static class UserErrors
 {
-    // User errors
+    // === ОБЩИЕ ОШИБКИ ===
+
     public static Error NotFound(string userId) =>
-        Error.NotFound("Users.NotFound", $"The user with the identifier {userId} was not found");
+        Error.NotFound("Users.NotFound", $"User with ID '{userId}' was not found");
 
-    public static Error NotFoundByIdentity(Guid IdentityId) =>
-        Error.NotFound("Users.NotFound", $"The user with the IdentityId {IdentityId} was not found");    
+    public static Error NotFoundByKeycloak(string keycloakId) =>
+        Error.NotFound("Users.NotFoundByKeycloak", $"User with Keycloak ID '{keycloakId}' was not found");
 
-    public static Error EmailAlreadyExists(string email) =>
-        Error.Conflict("Users.EmailAlreadyExists", $"The email address '{email}' is already registered");
+    public static Error NotFoundByEmail(string email) =>
+        Error.NotFound("Users.NotFoundByEmail", $"User with email '{email}' was not found");
+
+    public static Error NotFoundByUsername(string username) =>
+        Error.NotFound("Users.NotFoundByUsername", $"User with username '{username}' was not found");
+
+    public static Error AlreadyExists(string field, string value) =>
+        Error.Conflict("Users.AlreadyExists", $"User with {field} '{value}' already exists");
+
+    public static Error InvalidOperation(string message) =>
+        Error.Problem("Users.InvalidOperation", message);
+
+    public static Error UnauthorizedOperation(string userId) =>
+        Error.Unauthorized("Users.Unauthorized", $"User '{userId}' is not authorized to perform this operation");
+
+
+    public static Error EmailAlreadyRegistered(string email) =>
+        Error.Conflict("Users.EmailAlreadyRegistered", $"The email address '{email}' is already registered");
 
     public static Error UsernameAlreadyExists(string username) =>
         Error.Conflict("Users.UsernameAlreadyExists", $"The username '{username}' is already taken");
 
-    public static Error InvalidDateOfBirth =>
-        Error.Validation("Users.InvalidDateOfBirth", "You must be at least 18 years old to register");
-
-    public static Error InvalidEmail =>
-        Error.Validation("Users.InvalidEmail", "Email address is required");
-
-    public static Error InvalidPassword =>
-        Error.Validation("Users.InvalidPassword", "Password is required");
-
-    public static Error InvalidUsername =>
-        Error.Validation("Users.InvalidUsername", "Username is required");
-
-    public static Error InvalidIdentityId =>
-        Error.Validation("Users.InvalidIdentityId", "Identity ID is required");
-
-    public static Error PasswordTooShort =>
-        Error.Validation("Users.PasswordTooShort", "Password must be at least 6 characters long");
-
-    public static Error UsernameTooShort =>
-        Error.Validation("Users.UsernameTooShort", "Username must be at least 3 characters long");
-
-    public static Error InvalidGender =>
-        Error.Validation("Users.InvalidGender", "Invalid gender value");
-
-    public static Error RegistrationFailed =>
-        Error.Failure("Users.RegistrationFailed", "User registration failed. Please try again.");
-
-    public static Error DatabaseSaveFailed =>
-        Error.Failure("Users.DatabaseSaveFailed", "Failed to save user to database. Please try again.");
-
-    public static Error UpdateFailed =>
-        Error.Failure("Users.UpdateFailed", "Failed to update user to database. Please try again.");
-
-    public static Error DatabaseUpdateFailed => 
-        Error.Failure("User.DatabaseUpdateFailed", "Database update operation failed");
-
-    public static Error DatabaseConcurrencyConflict => 
-        Error.Conflict("User.DatabaseConcurrencyConflict", "Database concurrency conflict occurred");
-
-    public static Error InvalidStatusTransition =>
-        Error.Validation("Users.InvalidStatusTransition", "Invalid user status transition");
-
-    // Photo errors
-    public static Error PhotoNotFound(Guid photoId) =>
-        Error.NotFound("Users.PhotoNotFound", $"The photo with the identifier {photoId} was not found");
-
-    public static Error PhotoNotOwnedByUser =>
-        Error.Validation("Users.PhotoNotOwnedByUser", "The photo does not belong to this user");
-
-    public static Error TooManyPhotos(int maxPhotos) =>
-        Error.Validation("Users.TooManyPhotos", $"Maximum {maxPhotos} photos allowed per user");
-
-    public static Error EmptyPhoto =>
-        Error.Validation("Users.EmptyPhoto", "Photo file is empty");
-
-    public static Error PhotoTooLarge(long maxSizeInMB) =>
-        Error.Validation("Users.PhotoTooLarge", $"Photo size exceeds {maxSizeInMB}MB limit");
-
-    public static Error InvalidPhotoFormat =>
-        Error.Validation("Users.InvalidPhotoFormat", "Invalid photo format. Supported formats: JPEG, PNG, GIF, WEBP");
-
-    public static Error PhotoUploadFailed =>
-        Error.Failure("Users.PhotoUploadFailed", "Failed to upload one or more photos");
-
-    public static Error InvalidDisplayOrder =>
-        Error.Validation("Users.InvalidDisplayOrder", "Display order cannot be negative");
-
-    public static Error DuplicateDisplayOrder =>
-        Error.Validation("Users.DuplicateDisplayOrder", "Duplicate display order found");
-
-    public static Error PhotoUpdateFailed(string error = "Failed to update user photos") =>
-        Error.Failure("Users.PhotoUpdateFailed", "Failed to update user photos");
-
-    public static Error OperationCancelled =>
-        Error.Failure("User.OperationCancelled", "Photo upload operation was cancelled.");
-
-    // Photo upload specific errors
-    public static Error NoPhotosProvided => 
-        Error.Validation("User.NoPhotosProvided", "No photos were provided for upload");
-
-    public static Error TotalPhotoSizeExceeded => 
-        Error.Validation("User.TotalPhotoSizeExceeded", "Total size of all photos exceeds the limit of 50MB");
-
-    public static Error PhotoEmpty => 
-        Error.Validation("User.PhotoEmpty", "Photo file is empty");
-
-    public static Error InvalidPhotoMimeType => Error.Validation(
-        "User.InvalidPhotoMimeType",
-        "Invalid photo MIME type");
-
-    public static Error PhotoUploadRetryFailed => Error.Failure(
-        "User.PhotoUploadRetryFailed",
-        "Failed to upload photo after multiple retries");
-
-    public static Error AllPhotosUploadFailed => Error.Failure(
-        "User.AllPhotosUploadFailed",
-        "All photo uploads failed");
-
-    public static Error PhotoDomainValidationFailed => Error.Validation(
-        "User.PhotoDomainValidationFailed",
-        "Failed to add photo to user domain model");
-
-    public static Error PhotoCleanupFailed => Error.Failure(
-        "User.PhotoCleanupFailed",
-        "Failed to cleanup uploaded photos");
-
-    public static Error PhotoDeletionFailed => Error.Failure(
-        "User.PhotoDeletionFailed",
-        "Failed to delete photo");
-
-    public static Error DuplicateFileNames => 
-        Error.Failure("User.DuplicateFileNames", "Duplicate file names found");
-
-    // General errors
-    public static Error OperationFailed =>
-        Error.Failure("Users.OperationFailed", "The operation failed. Please try again.");
-
-    public static Error KeycloakSyncFailed => 
+    public static Error KeycloakSyncFailed =>
         Error.Failure("User.KeycloakSyncFailed", "Failed to synchronize user changes with Keycloak");
 
     public static Error KeycloakUserNotFound =>
         Error.NotFound("User.KeycloakUserNotFound", "User not found in Keycloak");
 
-    public static Error KeycloakUpdateFailed => 
+    public static Error KeycloakUpdateFailed =>
         Error.Failure("User.KeycloakUpdateFailed", "Failed to update user in Keycloak");
 
-    public static Error KeycloakConflict => 
+    public static Error KeycloakConflict =>
         Error.Conflict("User.KeycloakConflict", "Keycloak update conflict occurred");
 
-    public static Error KeycloakTimeout => 
+    public static Error KeycloakTimeout =>
         Error.Failure("User.KeycloakTimeout", "Keycloak request timed out");
-
-    public static Error AtomicUpdateFailed => 
-        Error.Failure("User.AtomicUpdateFailed", "Atomic update operation failed");
-
-
-    public static Error InvalidPhotos(string errors) =>
-        Error.Failure("User.InvalidPhotos", $"Invalid photos: {errors}");
 
     public static Error KeycloakAuthorizationFailed =>
         Error.Failure("User.KeycloakAuthorizationFailed", "Authorization failed for Keycloak update");
 
     public static Error KeycloakServiceUnavailable =>
         Error.Failure("User.KeycloakServiceUnavailable", "Keycloak service unavailable");
+
+    public static Error RegistrationFailed(string error) =>
+    Error.Failure("Users.RegistrationFailed", $"User registration failed. {error}.");
+
+    public static Error DatabaseSaveFailed =>
+        Error.Failure("Users.DatabaseSaveFailed", "Failed to save user to database. Please try again.");
+
+    public static Error UpdateFailed(string error) =>
+        Error.Failure("Users.UpdateFailed", $"Failed to update user to database. {error}.");
+
 }

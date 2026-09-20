@@ -4,6 +4,7 @@ using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
 using System.Threading;
+using eMeetup.Modules.Users.Application.Abstractions.Identity;
 using eMeetup.Modules.Users.Domain.Users;
 using Newtonsoft.Json;
 using JsonSerializer = System.Text.Json.JsonSerializer;
@@ -25,63 +26,63 @@ internal sealed class KeyCloakClient(HttpClient httpClient)
     }
 
     // Method to update user profile
-    public async Task UpdateUserAsync(Guid identityId, UserProfileRepresentation user, CancellationToken cancellationToken = default)
-    {
-        HttpResponseMessage response = null;
-        try
-        {
-            response = await httpClient.PutAsJsonAsync(
-                $"users/{identityId}",
-                user,
-                cancellationToken);
+    //public async Task UpdateUserAsync(Guid identityId, UserProfileRepresentation user, CancellationToken cancellationToken = default)
+    //{
+    //    HttpResponseMessage response = null;
+    //    try
+    //    {
+    //        response = await httpClient.PutAsJsonAsync(
+    //            $"users/{identityId}",
+    //            user,
+    //            cancellationToken);
 
-            if (response.IsSuccessStatusCode)
-            {
-                return;
-            }
+    //        if (response.IsSuccessStatusCode)
+    //        {
+    //            return;
+    //        }
 
-            // Read error response
-            var errorContent = await response.Content.ReadAsStringAsync(cancellationToken);
-            var statusCode = response.StatusCode;
+    //        // Read error response
+    //        var errorContent = await response.Content.ReadAsStringAsync(cancellationToken);
+    //        var statusCode = response.StatusCode;
 
-            // Try to parse Keycloak error if it's JSON
-            string errorMessage = "Unknown error";
-            try
-            {
-                var errorObject = JsonSerializer.Deserialize<JsonElement>(errorContent);
-                if (errorObject.TryGetProperty("errorMessage", out var errorMessageProp))
-                {
-                    errorMessage = errorMessageProp.GetString();
-                }
-            }
-            catch
-            {
-                // If not JSON, use raw content
-                errorMessage = errorContent;
-            }
+    //        // Try to parse Keycloak error if it's JSON
+    //        string errorMessage = "Unknown error";
+    //        try
+    //        {
+    //            var errorObject = JsonSerializer.Deserialize<JsonElement>(errorContent);
+    //            if (errorObject.TryGetProperty("errorMessage", out var errorMessageProp))
+    //            {
+    //                errorMessage = errorMessageProp.GetString();
+    //            }
+    //        }
+    //        catch
+    //        {
+    //            // If not JSON, use raw content
+    //            errorMessage = errorContent;
+    //        }
 
-            // Throw custom exception with all details
-            throw new KeycloakApiException(
-                $"Failed to update user {identityId}. Status: {statusCode}. Error: {errorMessage}")
-            {
-                StatusCode = statusCode,
-                ResponseContent = errorContent,
-                RequestUri = response.RequestMessage?.RequestUri
-            };
-        }
-        catch (HttpRequestException ex) when (ex.InnerException is TaskCanceledException)
-        {
-            throw new Exception("Request timed out", ex);
-        }
-        catch (HttpRequestException ex)
-        {
-            throw new Exception($"Network error occurred: {ex.Message}", ex);
-        }
-        finally
-        {
-            response?.Dispose();
-        }
-    }
+    //        // Throw custom exception with all details
+    //        throw new KeycloakApiException(
+    //            $"Failed to update user {identityId}. Status: {statusCode}. Error: {errorMessage}")
+    //        {
+    //            StatusCode = statusCode,
+    //            ResponseContent = errorContent,
+    //            RequestUri = response.RequestMessage?.RequestUri
+    //        };
+    //    }
+    //    catch (HttpRequestException ex) when (ex.InnerException is TaskCanceledException)
+    //    {
+    //        throw new Exception("Request timed out", ex);
+    //    }
+    //    catch (HttpRequestException ex)
+    //    {
+    //        throw new Exception($"Network error occurred: {ex.Message}", ex);
+    //    }
+    //    finally
+    //    {
+    //        response?.Dispose();
+    //    }
+    //}
 
     private static string ExtractIdentityIdFromLocationHeader(HttpResponseMessage httpResponseMessage)
     {
@@ -103,7 +104,7 @@ internal sealed class KeyCloakClient(HttpClient httpClient)
         return identityId;
     }
 
-    public async Task<UserProfileRepresentation> GetUserAsync(Guid identityId, CancellationToken cancellationToken = default)
+    public async Task<UserModel> GetUserAsync(Guid identityId, CancellationToken cancellationToken = default)
     {
         HttpResponseMessage httpResponseMessage = await httpClient.GetAsync(
             $"users/{identityId}",
@@ -111,18 +112,18 @@ internal sealed class KeyCloakClient(HttpClient httpClient)
 
         httpResponseMessage.EnsureSuccessStatusCode();
 
-        return await httpResponseMessage.Content.ReadFromJsonAsync<UserProfileRepresentation>(
+        return await httpResponseMessage.Content.ReadFromJsonAsync<UserModel>(
             cancellationToken: cancellationToken)
             ?? throw new InvalidOperationException("Failed to deserialize user response");
     }
 
     // Optional: Add method to get user by email or username
-    public async Task<UserProfileRepresentation?> GetUserByEmailAsync(string email, CancellationToken cancellationToken = default)
+    public async Task<UserModel?> GetUserByEmailAsync(string email, CancellationToken cancellationToken = default)
     {
         var response = await httpClient.GetAsync($"users?email={Uri.EscapeDataString(email)}", cancellationToken);
         response.EnsureSuccessStatusCode();
 
-        var users = await response.Content.ReadFromJsonAsync<List<UserProfileRepresentation>>(cancellationToken: cancellationToken);
+        var users = await response.Content.ReadFromJsonAsync<List<UserModel>>(cancellationToken: cancellationToken);
         return users?.FirstOrDefault();
     }
 }

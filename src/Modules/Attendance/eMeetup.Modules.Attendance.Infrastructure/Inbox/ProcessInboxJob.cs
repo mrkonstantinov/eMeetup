@@ -24,7 +24,7 @@ internal sealed class ProcessInboxJob(
 {
     private const string ModuleName = "Attendance";
 
-    public async Task Execute(IJobExecutionContext context)
+    public async ValueTask Execute(IJobExecutionContext context, CancellationToken cancellationToken = default)
     {
         logger.LogInformation("{Module} - Beginning to process inbox messages", ModuleName);
 

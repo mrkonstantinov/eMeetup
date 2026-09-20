@@ -38,9 +38,7 @@ internal sealed class RegisterUserCommandHandler(
                 new UserModel(
                     request.Email,
                     request.Password,
-                    request.Username,
-                    request.DateOfBirth,
-                    request.Gender),
+                    request.Username),
                 cancellationToken);
 
             if (identityResult.IsFailure)
@@ -52,19 +50,17 @@ internal sealed class RegisterUserCommandHandler(
 
             // Create user domain entity with basic information only
             logger.LogInformation("Creating user domain entity for {Email}", request.Email);
-            var userResult = User.Create(
-                request.Email,
-                request.Username,
-                request.DateOfBirth,
-                request.Gender,
-                identityResult.Value); // Only pass required fields
+            var userResult = User.CreateFromKeycloak(
+                keycloakId: identityResult.Value,
+                username: request.Username,
+                email: request.Email); // Only pass required fields
 
             if (userResult.IsFailure)
             {
                 logger.LogError("User domain entity creation failed for {Email}: {Error}",
                     request.Email, userResult.Error);
 
-                await TryCleanupIdentityUserAsync(identityResult.Value, request.Email);
+                //await TryCleanupIdentityUserAsync(identityResult.Value, request.Email);
                 return Result.Failure<Guid>(userResult.Error);
             }
 
@@ -79,7 +75,7 @@ internal sealed class RegisterUserCommandHandler(
             if (affectedRows == 0)
             {
                 logger.LogError("No rows were affected during database save for {Email}", request.Email);
-                await TryCleanupIdentityUserAsync(identityResult.Value, request.Email);
+                //await TryCleanupIdentityUserAsync(identityResult.Value, request.Email);
                 return Result.Failure<Guid>(UserErrors.DatabaseSaveFailed);
             }
 
@@ -92,7 +88,7 @@ internal sealed class RegisterUserCommandHandler(
         {
             logger.LogError(ex, "An unexpected error occurred during user registration for {Email}",
                 request.Email);
-            return Result.Failure<Guid>(UserErrors.RegistrationFailed);
+            return Result.Failure<Guid>(UserErrors.RegistrationFailed(ex.Message));
         }
     }
 
@@ -102,7 +98,7 @@ internal sealed class RegisterUserCommandHandler(
         if (existingByEmail != null)
         {
             logger.LogWarning("Registration attempt with existing email: {Email}", email);
-            return Result.Failure(UserErrors.EmailAlreadyExists(email));
+            return Result.Failure(UserErrors.EmailAlreadyRegistered(email));
         }
 
         var existingByUsername = await userRepository.GetByUsernameAsync(username, cancellationToken);

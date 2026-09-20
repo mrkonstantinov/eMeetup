@@ -4,11 +4,11 @@ using Quartz;
 namespace eMeetup.Modules.Events.Infrastructure.Outbox;
 
 internal sealed class ConfigureProcessOutboxJob(IOptions<OutboxOptions> outboxOptions)
-    : IConfigureOptions<QuartzOptions>
+    : IConfigureOptions<IQuartzBuilder>
 {
     private readonly OutboxOptions _outboxOptions = outboxOptions.Value;
 
-    public void Configure(QuartzOptions options)
+    public void Configure(IQuartzBuilder options)
     {
         string jobName = typeof(ProcessOutboxJob).FullName!;
 
@@ -18,6 +18,8 @@ internal sealed class ConfigureProcessOutboxJob(IOptions<OutboxOptions> outboxOp
                 configure
                     .ForJob(jobName)
                     .WithSimpleSchedule(schedule =>
-                        schedule.WithIntervalInSeconds(_outboxOptions.IntervalInSeconds).RepeatForever()));
+                        schedule
+                            .WithInterval(TimeSpan.FromSeconds(_outboxOptions.IntervalInSeconds))
+                            .RepeatForever()));
     }
 }

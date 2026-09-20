@@ -1,5 +1,5 @@
 ﻿using eMeetup.Common.Domain;
-using eMeetup.Modules.Users.Domain.Users;
+using eMeetup.Modules.Users.Domain.Photos;
 using Microsoft.AspNetCore.Http;
 
 namespace eMeetup.Modules.Users.Domain.Interfaces.Services;

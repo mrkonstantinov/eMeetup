@@ -6,9 +6,7 @@ namespace eMeetup.Modules.Users.Application.Abstractions.Identity;
 public sealed record UserModel(
     string Email, 
     string Password, 
-    string Username, 
-    DateTime DateOfBirth, 
-    Gender Gender);
+    string Username);
 
 
 public sealed record UpdateUserModel(

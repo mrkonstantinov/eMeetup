@@ -26,14 +26,14 @@ internal sealed class RegisterUserCommandValidator : AbstractValidator<RegisterU
             .MaximumLength(50).WithMessage("Username cannot exceed 50 characters")
             .Matches("^[a-zA-Z0-9_]+$").WithMessage("Username can only contain letters, numbers, and underscores");
 
-        RuleFor(x => x.DateOfBirth)
-            .NotEmpty().WithMessage("Date of birth is required")
-            .LessThan(DateTime.UtcNow.Date).WithMessage("Date of birth must be in the past")
-            .Must(BeAtLeast18YearsOld).WithMessage("You must be at least 18 years old to register");
+        //RuleFor(x => x.DateOfBirth)
+        //    .NotEmpty().WithMessage("Date of birth is required")
+        //    .LessThan(DateTime.UtcNow.Date).WithMessage("Date of birth must be in the past")
+        //    .Must(BeAtLeast18YearsOld).WithMessage("You must be at least 18 years old to register");
 
-        // Simplified gender validation since it's now an enum
-        RuleFor(x => x.Gender)
-            .IsInEnum().WithMessage("Invalid gender value");
+        //// Simplified gender validation since it's now an enum
+        //RuleFor(x => x.Gender)
+        //    .IsInEnum().WithMessage("Invalid gender value");
     }
 
     private static bool BeAtLeast18YearsOld(DateTime dateOfBirth)

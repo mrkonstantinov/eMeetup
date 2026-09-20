@@ -49,7 +49,7 @@ public static class TagHelper
         return string.Join(separator, tags.Where(s => !string.IsNullOrWhiteSpace(s)).Select(s => s.Trim()));
     }
 
-    public static string CombineTags(IEnumerable<Tag> tags, bool includeSpaces = true)
+    public static string CombineTags(IEnumerable<UserTag> tags, bool includeSpaces = true)
     {
         if (tags == null) return string.Empty;
         return CombineTags(tags.Select(t => t?.Name), includeSpaces);

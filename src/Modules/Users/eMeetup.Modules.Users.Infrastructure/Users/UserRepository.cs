@@ -14,9 +14,7 @@ internal sealed class UserRepository(UsersDbContext context, ILogger<UserReposit
     public async Task<User?> GetAsync(Guid id, CancellationToken cancellationToken = default)
     {
         return await _context.Users
-            .Include(u => u.Photos)
             .Include(u => u.Roles)
-            .Include(u => u.Interests)
             .FirstOrDefaultAsync(u => u.Id == id, cancellationToken);
     }
 
@@ -28,9 +26,7 @@ internal sealed class UserRepository(UsersDbContext context, ILogger<UserReposit
         var normalizedEmail = email.Trim().ToLowerInvariant();
 
         return await _context.Users
-            .Include(u => u.Photos)
             .Include(u => u.Roles)
-            .Include(u => u.Interests)
             .FirstOrDefaultAsync(u => u.Email == normalizedEmail, cancellationToken);
     }
 
@@ -42,10 +38,8 @@ internal sealed class UserRepository(UsersDbContext context, ILogger<UserReposit
         var normalizedUsername = username.Trim().ToLowerInvariant();
 
         return await _context.Users
-            .Include(u => u.Photos)
             .Include(u => u.Roles)
-            .Include(u => u.Interests)
-            .FirstOrDefaultAsync(u => u.UserName.ToLower() == normalizedUsername, cancellationToken);
+            .FirstOrDefaultAsync(u => u.Username.ToLower() == normalizedUsername, cancellationToken);
     }
 
     public async Task<User?> GetByIdWithPhotosAsync(Guid id, CancellationToken cancellationToken = default)
@@ -53,7 +47,7 @@ internal sealed class UserRepository(UsersDbContext context, ILogger<UserReposit
         try
         {
             return await _context.Users
-                .Include(u => u.Photos) // This is the key - eager load photos
+                //.Include(u => u.Photos) // This is the key - eager load photos
                 .AsSplitQuery() // Optional: Better performance for complex queries
                 .FirstOrDefaultAsync(u => u.Id == id, cancellationToken);
         }
@@ -97,7 +91,7 @@ internal sealed class UserRepository(UsersDbContext context, ILogger<UserReposit
 
         var normalizedUsername = username.Trim().ToLowerInvariant();
         return await _context.Users
-            .AnyAsync(u => u.UserName.ToLower() == normalizedUsername, cancellationToken);
+            .AnyAsync(u => u.Username.ToLower() == normalizedUsername, cancellationToken);
     }
 
     public async Task<User?> GetByIdentityIdAsync(Guid identityId, CancellationToken cancellationToken)
@@ -106,18 +100,15 @@ internal sealed class UserRepository(UsersDbContext context, ILogger<UserReposit
         var identityIdString = identityId.ToString();
 
         return await context.Users
-            .Include(u => u.Photos)
-            .SingleOrDefaultAsync(u => u.IdentityId == identityIdString, cancellationToken);
+            .SingleOrDefaultAsync(u => u.IdentityId == identityId, cancellationToken);
 
         try
         {
             return await _context.Users
-                .Include(u => u.Photos)
                 .Include(u => u.Roles)
-                .Include(u => u.Interests)
-                .ThenInclude(ui => ui.Tag)
+                //.ThenInclude(ui => ui.Tag)
                 //77.AsSplitQuery()
-                .FirstOrDefaultAsync(u => u.IdentityId == identityIdString, cancellationToken);
+                .FirstOrDefaultAsync(u => u.IdentityId == identityId, cancellationToken);
         }
         catch (Exception ex)
         {

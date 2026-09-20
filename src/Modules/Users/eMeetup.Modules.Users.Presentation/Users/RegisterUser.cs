@@ -20,12 +20,15 @@ internal sealed class RegisterUser : IEndpoint
             Result<Guid> result = await sender.Send(new RegisterUserCommand(
                 request.Email,
                 request.Password,
-                request.Username,
-                request.DateOfBirth,
-                request.Gender));
+                request.Username));
 
                 return result.Match(
-                    userId => Results.Ok(new { UserId = userId, Message = "User registered successfully" }),
+                    userId => Results.Ok(new 
+                    { 
+                        UserId = userId, 
+                        Message = "User registered successfully",
+                        RequiresProfileCompletion = true
+                    }),
                     error => ApiResults.Problem(error)
                 );
 
@@ -39,14 +42,8 @@ internal sealed class RegisterUser : IEndpoint
     internal sealed class Request
     {
         public string Email { get; init; }
-
         public string Password { get; init; }
-
         public string Username { get; init; }
-
-        public DateTime DateOfBirth { get; init; }
-
-        public Gender Gender { get; init; }
     }
 
     // Helper method for flexible date parsing

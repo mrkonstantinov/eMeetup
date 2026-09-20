@@ -15,7 +15,6 @@ using eMeetup.Modules.Users.Infrastructure.Outbox;
 using eMeetup.Modules.Users.Infrastructure.Photos;
 using eMeetup.Modules.Users.Infrastructure.Services;
 using eMeetup.Modules.Users.Infrastructure.Tags;
-using eMeetup.Modules.Users.Infrastructure.UserInterests;
 using eMeetup.Modules.Users.Infrastructure.Users;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Migrations;
@@ -83,11 +82,10 @@ public static class UsersModule
                 );
 
         services.AddScoped<IUserRepository, UserRepository>();
-        services.AddScoped<IUserPhotoRepository, UserPhotoRepository>();
+        //services.AddScoped<IUserPhotoRepository, UserPhotoRepository>();
         services.AddScoped<IFileStorageService, LocalFileStorageService>();
-        services.AddScoped<IUserPhotoUpdateService, UserPhotoUpdateService>();
-        services.AddScoped<ITagRepository, TagRepository>();
-        services.AddScoped<IUserInterestRepository, UserInterestRepository>();
+        //services.AddScoped<IUserPhotoUpdateService, UserPhotoUpdateService>();
+        //services.AddScoped<ITagRepository, TagRepository>();
 
        
         services.AddScoped<IUnitOfWork>(sp => sp.GetRequiredService<UsersDbContext>());

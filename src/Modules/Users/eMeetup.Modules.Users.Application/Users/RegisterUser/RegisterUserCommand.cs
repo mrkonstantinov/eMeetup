@@ -7,7 +7,5 @@ namespace eMeetup.Modules.Users.Application.Users.RegisterUser;
 public sealed record RegisterUserCommand(
     string Email, 
     string Password, 
-    string Username, 
-    DateTime DateOfBirth, 
-    Gender Gender
+    string Username
     ): ICommand<Guid>;

@@ -72,7 +72,7 @@ public class LocalFileStorageService : IFileStorageService
         catch (Exception ex)
         {
             _logger.LogError(ex, "Failed to upload file: {FileName}", file.FileName);
-            return Result.Failure<FileUploadResult>(UserErrors.UpdateFailed);;
+            return Result.Failure<FileUploadResult>(UserErrors.UpdateFailed(ex.Message));;
         }
     }
 

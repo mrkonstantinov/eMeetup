@@ -1,12 +1,11 @@
 ﻿using eMeetup.Common.Infrastructure.Inbox;
 using eMeetup.Common.Infrastructure.Outbox;
 using eMeetup.Modules.Users.Application.Abstractions.Data;
+using eMeetup.Modules.Users.Domain.Photos;
 using eMeetup.Modules.Users.Domain.Tags;
-using eMeetup.Modules.Users.Domain.UserInterests;
 using eMeetup.Modules.Users.Domain.Users;
 using eMeetup.Modules.Users.Infrastructure.Photos;
 using eMeetup.Modules.Users.Infrastructure.Tags;
-using eMeetup.Modules.Users.Infrastructure.UserInterests;
 using eMeetup.Modules.Users.Infrastructure.Users;
 using Microsoft.EntityFrameworkCore;
 
@@ -17,9 +16,8 @@ namespace eMeetup.Modules.Users.Infrastructure.Database;
 public sealed class UsersDbContext(DbContextOptions<UsersDbContext> options) : DbContext(options), IUnitOfWork
 {
     public DbSet<User> Users { get; set; }
-    public DbSet<Tag> Tags { get; set; }
-    public DbSet<UserPhoto> UserPhotos { get; set; }
-    public DbSet<UserInterest> UserInterests { get; set; }
+    //public DbSet<UserTag> Tags { get; set; }
+    //public DbSet<UserPhoto> UserPhotos { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -31,11 +29,16 @@ public sealed class UsersDbContext(DbContextOptions<UsersDbContext> options) : D
         modelBuilder.ApplyConfiguration(new InboxMessageConsumerConfiguration());
 
         modelBuilder.ApplyConfiguration(new UserConfiguration());
-        modelBuilder.ApplyConfiguration(new UserPhotoConfiguration());
-        modelBuilder.ApplyConfiguration(new UserInterestConfiguration());
+
+        modelBuilder.ApplyConfiguration(new UserFavoriteConfiguration());
+        modelBuilder.ApplyConfiguration(new UserSubscriptionConfiguration());
+        
+
+        //modelBuilder.ApplyConfiguration(new UserPhotoConfiguration());
+        //modelBuilder.ApplyConfiguration(new UserInterestConfiguration());
         modelBuilder.ApplyConfiguration(new RoleConfiguration());
         modelBuilder.ApplyConfiguration(new PermissionConfiguration());
-        modelBuilder.ApplyConfiguration(new TagGroupConfiguration());
-        modelBuilder.ApplyConfiguration(new TagConfiguration());      
+        //modelBuilder.ApplyConfiguration(new TagGroupConfiguration());
+        //modelBuilder.ApplyConfiguration(new TagConfiguration());      
     }
 }

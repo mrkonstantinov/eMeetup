@@ -13,329 +13,285 @@ using Microsoft.Extensions.Logging;
 
 namespace eMeetup.Modules.Users.Application.Users.UpdateUser;
 
-internal sealed class UpdateUserCommandHandler(
-    IUserRepository userRepository,
-    IUserInterestRepository userInterestRepository,
-    IIdentityProviderService identityProviderService,
-    IUnitOfWork unitOfWork,
-    ILogger<UpdateUserCommandHandler> logger)
-    : ICommandHandler<UpdateUserCommand>
-{
-    public async Task<Result> Handle(UpdateUserCommand request, CancellationToken cancellationToken)
-    {
-        using var loggerScope = logger.BeginScope("UserUpdate {IdentityId}", request.IdentityId);
+//internal sealed class UpdateUserCommandHandler(
+//    IUserRepository userRepository,
+//    IIdentityProviderService identityProviderService,
+//    IUnitOfWork unitOfWork,
+//    ILogger<UpdateUserCommandHandler> logger)
+//    : ICommandHandler<UpdateUserCommand>
+//{
+//    public async Task<Result> Handle(UpdateUserCommand request, CancellationToken cancellationToken)
+//    {
+//        using var loggerScope = logger.BeginScope("UserUpdate {IdentityId}", request.IdentityId);
 
-        try
-        {
-            logger.LogInformation("Starting user update for {IdentityId}", request.IdentityId);
+//        try
+//        {
+//            logger.LogInformation("Starting user update for {IdentityId}", request.IdentityId);
 
-            // 1. Get user
-            var user = await userRepository.GetByIdentityIdAsync(request.IdentityId, cancellationToken);
-            if (user == null)
-                return Result.Failure(UserErrors.NotFoundByIdentity(request.IdentityId));
+//            // 1. Get user
+//            var user = await userRepository.GetByIdentityIdAsync(request.IdentityId, cancellationToken);
+//            if (user == null)
+//                return Result.Failure(UserErrors.NotFoundByIdentity(request.IdentityId));
 
-            var updates = new UserUpdateSet(user);
+//            var updates = new UserUpdateSet(user);
 
-            // 2. Handle bio
-            if (request.Bio != user.Bio)
-            {
-                user.UpdateBio(request.Bio);
-                updates.Bio = request.Bio;
-                logger.LogInformation("Updated bio for user {UserId}", user.Id);
-            }
+//            // 2. Handle bio
+//            if (request.Bio != user.Bio)
+//            {
+//                user.UpdateBio(request.Bio);
+//                updates.Bio = request.Bio;
+//                logger.LogInformation("Updated bio for user {UserId}", user.Id);
+//            }
 
-            // 3. Handle location
-            if (request.Locality != user.Locality)
-            {
-                user.UpdateLocality(request.Locality);
-                updates.Locality = request.Locality;
-            }
+//            // 3. Handle location
+//            if (request.Locality != user.Locality)
+//            {
+//                user.UpdateLocality(request.Locality);
+//                updates.Locality = request.Locality;
+//            }
 
-            if (request.Street != user.Street)
-            {
-                user.UpdateStreet(request.Street);
-                updates.Street = request.Street;
-            }
+//            if (request.Street != user.Street)
+//            {
+//                user.UpdateStreet(request.Street);
+//                updates.Street = request.Street;
+//            }
 
-            // 4. Handle interests
-            var interestsResult = await HandleInterestsAsync(user, request, updates, cancellationToken);
-            if (interestsResult.IsFailure)
-                return interestsResult;
+//            // 4. Handle interests
 
-            // 5. Save changes
-            await unitOfWork.SaveChangesAsync(cancellationToken);
 
-            // 6. Update Keycloak if needed
-            if (updates.HasUpdates)
-            {
-                var keycloakResult = await UpdateKeycloakWithRetryAsync(
-                    request.IdentityId, updates, user.ProfileImageUrl, cancellationToken);
+//            // 5. Save changes
+//            await unitOfWork.SaveChangesAsync(cancellationToken);
 
-                if (keycloakResult.IsFailure)
-                {
-                    // Attempt to rollback changes
-                    await RollbackChangesAsync(request.IdentityId, updates, cancellationToken);
+//            // 6. Update Keycloak if needed
+//            if (updates.HasUpdates)
+//            {
+//                var keycloakResult = await UpdateKeycloakWithRetryAsync(
+//                    request.IdentityId, updates, user.ProfileImageUrl, cancellationToken);
 
-                    logger.LogError("Keycloak update failed: {Error}", keycloakResult.Error);
-                    return Result.Failure(keycloakResult.Error);
-                }
+//                if (keycloakResult.IsFailure)
+//                {
+//                    // Attempt to rollback changes
+//                    await RollbackChangesAsync(request.IdentityId, updates, cancellationToken);
 
-                logger.LogInformation("Keycloak update successful");
-            }
+//                    logger.LogError("Keycloak update failed: {Error}", keycloakResult.Error);
+//                    return Result.Failure(keycloakResult.Error);
+//                }
 
-            logger.LogInformation("User update completed for {IdentityId}", request.IdentityId);
-            return Result.Success();
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex, "User update failed for {IdentityId}", request.IdentityId);
-            return Result.Failure(UserErrors.UpdateFailed);
-        }
-    }
+//                logger.LogInformation("Keycloak update successful");
+//            }
 
-    private async Task<Result> HandleInterestsAsync(
-        User user,
-        UpdateUserCommand request,
-        UserUpdateSet updates,
-        CancellationToken cancellationToken)
-    {
-        // Get current interests
-        var currentInterests = await userInterestRepository.GetByUserIdAsync(user.Id, cancellationToken);
-        var currentInterestsSet = new HashSet<string>(
-            currentInterests.Select(ui => ui.Tag.Name.Trim()),
-            StringComparer.OrdinalIgnoreCase);
+//            logger.LogInformation("User update completed for {IdentityId}", request.IdentityId);
+//            return Result.Success();
+//        }
+//        catch (Exception ex)
+//        {
+//            logger.LogError(ex, "User update failed for {IdentityId}", request.IdentityId);
+//            return Result.Failure(UserErrors.UpdateFailed);
+//        }
+//    }
 
-        // Parse requested interests
-        var requestedInterestsSet = ParseInterestNames(request.Interests);
+//    private HashSet<string> ParseInterestNames(string? interests)
+//    {
+//        if (string.IsNullOrWhiteSpace(interests))
+//            return new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
-        // Check if interests changed (order doesn't matter)
-        if (!AreInterestSetsEqual(currentInterestsSet, requestedInterestsSet))
-        {
-            // Update user interests
-            var updatedInterests = await userInterestRepository.UpdateUserInterestsAsync(
-                user.Id,
-                request.Interests ?? string.Empty,
-                cancellationToken);
+//        return interests.Split(',', StringSplitOptions.RemoveEmptyEntries)
+//            .Select(i => i.Trim())
+//            .Where(i => !string.IsNullOrWhiteSpace(i))
+//            .ToHashSet(StringComparer.OrdinalIgnoreCase);
+//    }
 
-            // Create comma-separated string of tag names for Keycloak
-            updates.Interests = updatedInterests.Any()
-                ? string.Join(", ", updatedInterests.Select(ui => ui.Tag.Name))
-                : null;
+//    private bool AreInterestSetsEqual(HashSet<string>? set1, HashSet<string>? set2)
+//    {
+//        // If both are null or empty
+//        if ((set1 == null || set1.Count == 0) && (set2 == null || set2.Count == 0))
+//            return true;
 
-            logger.LogInformation("Updated interests for user {UserId}: {Interests}",
-                user.Id, updates.Interests ?? "none");
-        }
+//        // If one is null/empty and the other has items
+//        if (set1 == null || set2 == null)
+//            return false;
 
-        return Result.Success();
-    }
+//        return set1.Count == set2.Count && set1.SetEquals(set2);
+//    }
 
-    private HashSet<string> ParseInterestNames(string? interests)
-    {
-        if (string.IsNullOrWhiteSpace(interests))
-            return new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+//    private async Task<Result> UpdateKeycloakWithRetryAsync(
+//        Guid identityId,
+//        UserUpdateSet updates,
+//        string? profileImageUrl,
+//        CancellationToken cancellationToken)
+//    {
+//        const int maxRetries = 3;
+//        int retryCount = 0;
 
-        return interests.Split(',', StringSplitOptions.RemoveEmptyEntries)
-            .Select(i => i.Trim())
-            .Where(i => !string.IsNullOrWhiteSpace(i))
-            .ToHashSet(StringComparer.OrdinalIgnoreCase);
-    }
+//        while (retryCount < maxRetries)
+//        {
+//            try
+//            {
+//                var result = await identityProviderService.UpdateKeycloakUserAttributesAsync(
+//                    identityId: identityId,
+//                    locality: updates.Locality,
+//                    street: updates.Street,
+//                    bio: updates.Bio,
+//                    interests: updates.Interests,
+//                    profileImageUrl: profileImageUrl,
+//                    cancellationToken);
 
-    private bool AreInterestSetsEqual(HashSet<string>? set1, HashSet<string>? set2)
-    {
-        // If both are null or empty
-        if ((set1 == null || set1.Count == 0) && (set2 == null || set2.Count == 0))
-            return true;
+//                if (result.IsSuccess)
+//                {
+//                    return Result.Success();
+//                }
 
-        // If one is null/empty and the other has items
-        if (set1 == null || set2 == null)
-            return false;
+//                if (result.Error.Type == ErrorType.Conflict)
+//                {
+//                    retryCount++;
+//                    logger.LogWarning("Keycloak conflict (attempt {Retry}/{MaxRetries})",
+//                        retryCount, maxRetries);
 
-        return set1.Count == set2.Count && set1.SetEquals(set2);
-    }
+//                    if (retryCount == maxRetries)
+//                    {
+//                        return Result.Failure(UserErrors.KeycloakConflict);
+//                    }
 
-    private async Task<Result> UpdateKeycloakWithRetryAsync(
-        Guid identityId,
-        UserUpdateSet updates,
-        string? profileImageUrl,
-        CancellationToken cancellationToken)
-    {
-        const int maxRetries = 3;
-        int retryCount = 0;
+//                    await Task.Delay(TimeSpan.FromMilliseconds(100 * Math.Pow(2, retryCount)), cancellationToken);
+//                    continue;
+//                }
 
-        while (retryCount < maxRetries)
-        {
-            try
-            {
-                var result = await identityProviderService.UpdateKeycloakUserAttributesAsync(
-                    identityId: identityId,
-                    locality: updates.Locality,
-                    street: updates.Street,
-                    bio: updates.Bio,
-                    interests: updates.Interests,
-                    profileImageUrl: profileImageUrl,
-                    cancellationToken);
+//                return result;
+//            }
+//            catch (HttpRequestException ex) when (ex.StatusCode == HttpStatusCode.RequestTimeout)
+//            {
+//                retryCount++;
+//                logger.LogWarning(ex,
+//                    "Keycloak request timeout (attempt {Retry}/{MaxRetries})",
+//                    retryCount, maxRetries);
 
-                if (result.IsSuccess)
-                {
-                    return Result.Success();
-                }
+//                if (retryCount == maxRetries)
+//                {
+//                    return Result.Failure(UserErrors.KeycloakTimeout);
+//                }
 
-                if (result.Error.Type == ErrorType.Conflict)
-                {
-                    retryCount++;
-                    logger.LogWarning("Keycloak conflict (attempt {Retry}/{MaxRetries})",
-                        retryCount, maxRetries);
+//                await Task.Delay(TimeSpan.FromMilliseconds(100 * Math.Pow(2, retryCount)), cancellationToken);
+//            }
+//            catch (HttpRequestException ex) when (ex.StatusCode == HttpStatusCode.NotFound)
+//            {
+//                logger.LogError(ex, "User not found in Keycloak: {IdentityId}", identityId);
+//                return Result.Failure(UserErrors.KeycloakUserNotFound);
+//            }
+//            catch (Exception ex)
+//            {
+//                logger.LogError(ex, "Unexpected error updating Keycloak");
+//                return Result.Failure(UserErrors.KeycloakUpdateFailed);
+//            }
+//        }
 
-                    if (retryCount == maxRetries)
-                    {
-                        return Result.Failure(UserErrors.KeycloakConflict);
-                    }
+//        return Result.Failure(UserErrors.KeycloakUpdateFailed);
+//    }
 
-                    await Task.Delay(TimeSpan.FromMilliseconds(100 * Math.Pow(2, retryCount)), cancellationToken);
-                    continue;
-                }
+//    private async Task RollbackChangesAsync(
+//        Guid identityId,
+//        UserUpdateSet attemptedUpdates,
+//        CancellationToken cancellationToken)
+//    {
+//        try
+//        {
+//            logger.LogWarning("Attempting to rollback changes for {IdentityId}", identityId);
 
-                return result;
-            }
-            catch (HttpRequestException ex) when (ex.StatusCode == HttpStatusCode.RequestTimeout)
-            {
-                retryCount++;
-                logger.LogWarning(ex,
-                    "Keycloak request timeout (attempt {Retry}/{MaxRetries})",
-                    retryCount, maxRetries);
+//            var user = await userRepository.GetByIdentityIdAsync(identityId, cancellationToken);
+//            if (user == null) return;
 
-                if (retryCount == maxRetries)
-                {
-                    return Result.Failure(UserErrors.KeycloakTimeout);
-                }
+//            // Rollback bio
+//            if (attemptedUpdates.Bio != attemptedUpdates.OriginalBio)
+//            {
+//                user.UpdateBio(attemptedUpdates.OriginalBio);
+//                logger.LogInformation("Rolled back bio for user {UserId}", user.Id);
+//            }
 
-                await Task.Delay(TimeSpan.FromMilliseconds(100 * Math.Pow(2, retryCount)), cancellationToken);
-            }
-            catch (HttpRequestException ex) when (ex.StatusCode == HttpStatusCode.NotFound)
-            {
-                logger.LogError(ex, "User not found in Keycloak: {IdentityId}", identityId);
-                return Result.Failure(UserErrors.KeycloakUserNotFound);
-            }
-            catch (Exception ex)
-            {
-                logger.LogError(ex, "Unexpected error updating Keycloak");
-                return Result.Failure(UserErrors.KeycloakUpdateFailed);
-            }
-        }
+//            // Rollback locality
+//            if (attemptedUpdates.Locality != attemptedUpdates.OriginalLocality)
+//            {
+//                user.UpdateLocality(attemptedUpdates.OriginalLocality);
+//                logger.LogInformation("Rolled back locality for user {UserId}", user.Id);
+//            }
 
-        return Result.Failure(UserErrors.KeycloakUpdateFailed);
-    }
+//            // Rollback street
+//            if (attemptedUpdates.Street != attemptedUpdates.OriginalStreet)
+//            {
+//                user.UpdateStreet(attemptedUpdates.OriginalStreet);
+//                logger.LogInformation("Rolled back street for user {UserId}", user.Id);
+//            }
 
-    private async Task RollbackChangesAsync(
-        Guid identityId,
-        UserUpdateSet attemptedUpdates,
-        CancellationToken cancellationToken)
-    {
-        try
-        {
-            logger.LogWarning("Attempting to rollback changes for {IdentityId}", identityId);
+//            // Rollback interests
+//            if (attemptedUpdates.Interests != attemptedUpdates.OriginalInterests)
+//            {
+//                await userInterestRepository.UpdateUserInterestsAsync(
+//                    user.Id,
+//                    attemptedUpdates.OriginalInterests ?? string.Empty,
+//                    cancellationToken);
 
-            var user = await userRepository.GetByIdentityIdAsync(identityId, cancellationToken);
-            if (user == null) return;
+//                logger.LogInformation("Rolled back interests for user {UserId}", user.Id);
+//            }
 
-            // Rollback bio
-            if (attemptedUpdates.Bio != attemptedUpdates.OriginalBio)
-            {
-                user.UpdateBio(attemptedUpdates.OriginalBio);
-                logger.LogInformation("Rolled back bio for user {UserId}", user.Id);
-            }
+//            await unitOfWork.SaveChangesAsync(cancellationToken);
 
-            // Rollback locality
-            if (attemptedUpdates.Locality != attemptedUpdates.OriginalLocality)
-            {
-                user.UpdateLocality(attemptedUpdates.OriginalLocality);
-                logger.LogInformation("Rolled back locality for user {UserId}", user.Id);
-            }
+//            logger.LogWarning("""
+//                Rollback completed for {IdentityId}. 
+//                Attempted updates: {Updates}
+//                """,
+//                identityId,
+//                attemptedUpdates.UpdatedFieldsString);
+//        }
+//        catch (Exception ex)
+//        {
+//            logger.LogError(ex, "Failed to rollback changes for {IdentityId}", identityId);
+//        }
+//    }
 
-            // Rollback street
-            if (attemptedUpdates.Street != attemptedUpdates.OriginalStreet)
-            {
-                user.UpdateStreet(attemptedUpdates.OriginalStreet);
-                logger.LogInformation("Rolled back street for user {UserId}", user.Id);
-            }
+//    private class UserUpdateSet
+//    {
+//        // Current values
+//        public string? Bio { get; set; }
+//        public string? Locality { get; set; }
+//        public string? Street { get; set; }
+//        public string? Interests { get; set; }
 
-            // Rollback interests
-            if (attemptedUpdates.Interests != attemptedUpdates.OriginalInterests)
-            {
-                await userInterestRepository.UpdateUserInterestsAsync(
-                    user.Id,
-                    attemptedUpdates.OriginalInterests ?? string.Empty,
-                    cancellationToken);
+//        // Original values
+//        public string? OriginalBio { get; }
+//        public string? OriginalLocality { get; }
+//        public string? OriginalStreet { get; }
+//        public string? OriginalInterests { get; }
 
-                logger.LogInformation("Rolled back interests for user {UserId}", user.Id);
-            }
+//        public bool HasUpdates =>
+//            Bio != OriginalBio ||
+//            Locality != OriginalLocality ||
+//            Street != OriginalStreet ||
+//            Interests != OriginalInterests;
 
-            await unitOfWork.SaveChangesAsync(cancellationToken);
+//        public string UpdatedFieldsString
+//        {
+//            get
+//            {
+//                var fields = new List<string>();
+//                if (Bio != OriginalBio) fields.Add("Bio");
+//                if (Locality != OriginalLocality) fields.Add("Locality");
+//                if (Street != OriginalStreet) fields.Add("Street");
+//                if (Interests != OriginalInterests) fields.Add("Interests");
+//                return fields.Count > 0 ? string.Join(", ", fields) : "None";
+//            }
+//        }
 
-            logger.LogWarning("""
-                Rollback completed for {IdentityId}. 
-                Attempted updates: {Updates}
-                """,
-                identityId,
-                attemptedUpdates.UpdatedFieldsString);
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex, "Failed to rollback changes for {IdentityId}", identityId);
-        }
-    }
+//        public UserUpdateSet(User user)
+//        {
+//            // Store original values
+//            OriginalBio = user.Bio;
 
-    private class UserUpdateSet
-    {
-        // Current values
-        public string? Bio { get; set; }
-        public string? Locality { get; set; }
-        public string? Street { get; set; }
-        public string? Interests { get; set; }
+//            OriginalLocality = user.Locality;
+//            OriginalStreet = user.Street;
 
-        // Original values
-        public string? OriginalBio { get; }
-        public string? OriginalLocality { get; }
-        public string? OriginalStreet { get; }
-        public string? OriginalInterests { get; }
-
-        public bool HasUpdates =>
-            Bio != OriginalBio ||
-            Locality != OriginalLocality ||
-            Street != OriginalStreet ||
-            Interests != OriginalInterests;
-
-        public string UpdatedFieldsString
-        {
-            get
-            {
-                var fields = new List<string>();
-                if (Bio != OriginalBio) fields.Add("Bio");
-                if (Locality != OriginalLocality) fields.Add("Locality");
-                if (Street != OriginalStreet) fields.Add("Street");
-                if (Interests != OriginalInterests) fields.Add("Interests");
-                return fields.Count > 0 ? string.Join(", ", fields) : "None";
-            }
-        }
-
-        public UserUpdateSet(User user)
-        {
-            // Store original values
-            OriginalBio = user.Bio;
-
-            OriginalLocality = user.Locality;
-            OriginalStreet = user.Street;
-
-            if (user.Interests != null && user.Interests.Any())
-            {
-                OriginalInterests = string.Join(", ", user.Interests.Select(i => i.Tag.Name));
-            }
-
-            // Initialize current values
-            Locality = user.Locality;
-            Street = user.Street;
-            Bio = user.Bio;
-            Interests = OriginalInterests;
-        }
-    }
-}
+//            // Initialize current values
+//            Locality = user.Locality;
+//            Street = user.Street;
+//            Bio = user.Bio;
+//            Interests = OriginalInterests;
+//        }
+//    }
+//}

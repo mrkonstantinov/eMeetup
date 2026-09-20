@@ -1,6 +1,6 @@
 ﻿using eMeetup.Modules.Users.Domain.Interfaces.Repositories;
 using eMeetup.Modules.Users.Domain.Interfaces.Services;
-using eMeetup.Modules.Users.Domain.Users;
+using eMeetup.Modules.Users.Domain.Photos;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 

@@ -1,4 +1,4 @@
-﻿using eMeetup.Modules.Users.Domain.Users;
+﻿using eMeetup.Modules.Users.Domain.Photos;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -32,12 +32,6 @@ internal sealed class UserPhotoConfiguration : IEntityTypeConfiguration<UserPhot
 
         builder.Property(p => p.UploadedAt)
             .IsRequired();
-
-        // Navigation property configuration moved here
-        builder.HasOne(p => p.User)
-            .WithMany(u => u.Photos)
-            .HasForeignKey(p => p.UserId)
-            .OnDelete(DeleteBehavior.Cascade);
 
         // Indexes
         builder.HasIndex(p => p.UserId);

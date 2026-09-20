@@ -1,3 +1,8 @@
-﻿namespace eMeetup.Modules.Users.Infrastructure.Identity;
+﻿using System.Text.Json.Serialization;
 
-internal sealed record CredentialRepresentation(string Type, string Value, bool Temporary);
+namespace eMeetup.Modules.Users.Infrastructure.Identity;
+
+internal sealed record CredentialRepresentation(
+    [property: JsonPropertyName("type")] string Type,
+    [property: JsonPropertyName("value")] string Value,
+    [property: JsonPropertyName("temporary")] bool Temporary);
