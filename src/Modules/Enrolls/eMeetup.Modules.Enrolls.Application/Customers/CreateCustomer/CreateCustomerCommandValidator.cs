@@ -9,7 +9,5 @@ internal sealed class CreateCustomerCommandValidator : AbstractValidator<CreateC
         RuleFor(c => c.CustomerId).NotEmpty();
         RuleFor(c => c.Email).EmailAddress();
         RuleFor(c => c.UserName).NotEmpty();
-        RuleFor(c => c.DateOfBirth).NotEmpty();
-        RuleFor(c => c.Gender).NotEmpty();
     }
 }

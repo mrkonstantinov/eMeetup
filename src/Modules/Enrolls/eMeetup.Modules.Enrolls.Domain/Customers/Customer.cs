@@ -20,15 +20,13 @@ public sealed class Customer : Entity
 
     public DateTime SyncedAt { get; private set; }
 
-    public static Customer Create(Guid id, string email, string userName, DateTime dateOfBirth, Gender gender, DateTime syncedAt)
+    public static Customer Create(Guid id, string email, string userName, DateTime syncedAt)
     {
         return new Customer
         {
             Id = id,
             Email = email,
             UserName = userName,
-            DateOfBirth = dateOfBirth,
-            Gender = gender,
             SyncedAt = syncedAt
         };
     }

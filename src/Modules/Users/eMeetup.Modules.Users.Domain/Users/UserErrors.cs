@@ -65,4 +65,6 @@ public static class UserErrors
     public static Error UpdateFailed(string error) =>
         Error.Failure("Users.UpdateFailed", $"Failed to update user to database. {error}.");
 
+    public static Error OperationFailed(string error) =>
+        Error.Failure("Users.OperationFailed", $"Failed. {error}.");    
 }

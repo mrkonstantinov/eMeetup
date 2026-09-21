@@ -4,83 +4,151 @@ using Dapper;
 using eMeetup.Common.Application.Data;
 using eMeetup.Common.Application.Messaging;
 using eMeetup.Common.Domain;
+using eMeetup.Modules.Users.Application.Abstractions.Authentication;
 using eMeetup.Modules.Users.Application.Abstractions.Identity;
 using eMeetup.Modules.Users.Domain.Interfaces.Repositories;
 using eMeetup.Modules.Users.Domain.Users;
+using Microsoft.Extensions.Logging;
 
 namespace eMeetup.Modules.Users.Application.Users.GetUser;
 
-internal sealed class GetUserQueryHandler(IDbConnectionFactory dbConnectionFactory, IIdentityProviderService identityProviderService)
+internal sealed class GetUserQueryHandler(
+    IUserRepository userRepository,
+    IUserContext userContext,
+    ILogger<GetUserQueryHandler> logger)
     : IQueryHandler<GetUserQuery, UserResponse>
 {
-    public async Task<Result<UserResponse>> Handle(GetUserQuery request, CancellationToken cancellationToken)
+    public async Task<Result<UserResponse>> Handle(
+        GetUserQuery request,
+        CancellationToken cancellationToken)
     {
-        await using var connection = await dbConnectionFactory.OpenConnectionAsync();
+        var userId = userContext.UserId;
 
-        // Use PostgreSQL JSON features for optimal data retrieval
-        var user = await GetUserWithDetailsPostgresAsync(connection, request.UserId);
-        if (user is null)
+        using var loggerScope = logger.BeginScope(
+            "GetUserProfile {UserId}",
+            userId);
+
+        try
         {
-            return Result.Failure<UserResponse>(UserErrors.NotFound(request.UserId.ToString()));
+            logger.LogInformation("Getting profile for user {UserId}", userId);
+
+            var user = await userRepository.GetByIdWithAllAsync(userId, cancellationToken);
+
+            if (user is null)
+            {
+                logger.LogWarning("User {UserId} not found", userId);
+                return Result.Failure<UserResponse>(UserErrors.NotFound(userId.ToString()));
+            }
+
+            var response = MapToResponse(user);
+
+            logger.LogInformation("Profile for user {UserId} retrieved successfully", userId);
+
+            return Result.Success(response);
         }
+        catch (Exception ex)
+        {
+            logger.LogError(
+                ex,
+                "An unexpected error occurred while getting profile for user {UserId}",
+                userId);
 
-        return Result.Success(user);
+            return Result.Failure<UserResponse>(
+                UserErrors.OperationFailed(ex.Message));
+        }
     }
 
-    private async Task<UserResponse?> GetUserWithDetailsPostgresAsync(IDbConnection connection, Guid userId)
+    // ================================================================
+    // === MAPPING ===
+    // ================================================================
+
+    private static UserResponse MapToResponse(User user)
     {
-        const string userSql = @"
-        SELECT 
-            u.id AS Id,
-            u.email AS Email,
-            u.user_name UserName,
-            u.date_of_birth AS DateOfBirth,
-            u.gender AS Gender,
-            u.bio AS Bio,
-            u.profile_image_url AS ProfileImageUrl,
-            u.locality AS Locality,
-            u.street AS street,
-            u.created_at AS CreatedAt,
-            u.updated_at AS UpdatedAt
-        FROM users.users u
-        WHERE u.id = @userId;
-    ";
+        var profile = user.Profile;
 
-        const string photosSql = @"
-        SELECT 
-            id AS Id,
-            url AS Url,
-            display_order AS DisplayOrder,
-            is_primary AS IsPrimary
-        FROM users.user_photos
-        WHERE user_id = @userId
-        ORDER BY display_order;
-    ";
+        return new UserResponse
+        {
+            Id = user.Id,
+            UserName = user.Username,
+            Email = user.Email,
+            Status = user.Status.ToString(),
+            ProfileCompleted = user.ProfileCompleted,
+            CreatedAt = user.CreatedAt,
+            LastActiveAt = user.LastActiveAt,
+            Profile = new UserProfileDetails
+            {
+                // Личная информация
+                AvatarUrl = profile.AvatarUrl,
+                DateOfBirth = profile.DateOfBirth,
+                Age = profile.DateOfBirth.HasValue ? profile.GetAge() : null,
+                Bio = profile.Bio,
 
-        const string interestsSql = @"
-        SELECT string_agg(t.name, ', ' ORDER BY t.name) AS Interests
-        FROM users.user_interests ui
-        INNER JOIN users.tags t ON t.id = ui.tag_id
-        WHERE ui.user_id = @userId
-        GROUP BY ui.user_id;
-    ";
+                // Контакты
+                Phone = profile.Phone,
+                Telegram = profile.Telegram,
+                Instagram = profile.Instagram,
 
-        // Получаем данные отдельными запросами
-        using var multi = await connection.QueryMultipleAsync(
-            $"{userSql}; {photosSql}; {interestsSql}",
-            new { userId }
-        );
+                // Местоположение
+                City = profile.City,
+                Country = profile.Country,
+                Latitude = profile.Latitude,
+                Longitude = profile.Longitude,
+                TimeZone = profile.TimeZone,
 
-        var user = await multi.ReadFirstOrDefaultAsync<UserResponse>();
-        if (user == null) return null;
+                // Социальные характеристики
+                Gender = profile.Gender,
+                Languages = profile.GetLanguagesArray(),
 
-        var photos = await multi.ReadAsync<UserPhotoResponse>();
-        var interests = await multi.ReadFirstOrDefaultAsync<string>();
+                // Интересы
+                Interests = profile.GetInterestsArray(),
 
-        user.Photos = photos.AsList();
-        user.Interests = interests;
+                // Активности
+                ActivityPreferences = new ActivityPreferencesResponse
+                {
+                    PreferredActivities = profile.ActivityPreferences.PreferredActivities
+                        .Select(a => a.ToString())
+                        .ToArray(),
+                    ActivityLevels = profile.ActivityPreferences.ActivityLevels
+                        .Select(l => l.ToString())
+                        .ToArray(),
+                    PreferredTimeOfDay = profile.ActivityPreferences.PreferredTimeOfDay?.ToString(),
+                    PreferredDays = profile.ActivityPreferences.PreferredDays
+                        .Select(d => d.ToString())
+                        .ToArray(),
+                    MaxDistanceKm = profile.ActivityPreferences.MaxDistanceKm,
+                    MinParticipants = profile.ActivityPreferences.MinParticipants,
+                    MaxParticipants = profile.ActivityPreferences.MaxParticipants
+                },
 
-        return user;
+                // Статус
+                AvailabilityStatus = new AvailabilityStatusResponse
+                {
+                    Type = profile.AvailabilityStatus.Type.ToString(),
+                    AvailableFrom = profile.AvailabilityStatus.AvailableFrom,
+                    AvailableUntil = profile.AvailabilityStatus.AvailableUntil,
+                    StatusMessage = profile.AvailabilityStatus.StatusMessage
+                },
+                IsPublic = profile.IsPublic,
+
+                // Верификация
+                IsEmailVerified = profile.IsEmailVerified,
+                IsPhoneVerified = profile.IsPhoneVerified,
+
+                // Фото
+                Photos = user.Photos
+                    .OrderBy(p => p.DisplayOrder)
+                    .Select(p => new UserPhotoResponse
+                    {
+                        Id = p.Id,
+                        Url = p.Url,
+                        ThumbnailUrl = p.ThumbnailUrl,
+                        IsPrimary = p.IsPrimary,
+                        DisplayOrder = p.DisplayOrder,
+                        UploadedAt = p.UploadedAt
+                    })
+                    .ToArray(),
+                ProfileImageUrl = user.ProfileImageUrl
+            }
+        };
     }
-
 }

@@ -3,10 +3,12 @@ using eMeetup.Common.Application.EventBus;
 using eMeetup.Common.Application.Messaging;
 using eMeetup.Common.Infrastructure.Outbox;
 using eMeetup.Common.Presentation.Endpoints;
+using eMeetup.Modules.Users.Application.Abstractions.Authentication;
 using eMeetup.Modules.Users.Application.Abstractions.Data;
 using eMeetup.Modules.Users.Application.Abstractions.Identity;
 using eMeetup.Modules.Users.Domain.Interfaces.Repositories;
 using eMeetup.Modules.Users.Domain.Interfaces.Services;
+using eMeetup.Modules.Users.Infrastructure.Authentication;
 using eMeetup.Modules.Users.Infrastructure.Authorization;
 using eMeetup.Modules.Users.Infrastructure.Database;
 using eMeetup.Modules.Users.Infrastructure.Identity;
@@ -89,6 +91,7 @@ public static class UsersModule
 
        
         services.AddScoped<IUnitOfWork>(sp => sp.GetRequiredService<UsersDbContext>());
+        services.AddScoped<IUserContext, UserContext>();
 
         services.Configure<OutboxOptions>(configuration.GetSection("Users:Outbox"));
         services.ConfigureOptions<ConfigureProcessOutboxJob>();

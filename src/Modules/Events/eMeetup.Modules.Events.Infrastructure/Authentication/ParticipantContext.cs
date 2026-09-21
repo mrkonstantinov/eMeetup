@@ -10,6 +10,6 @@ internal sealed class ParticipantContext(IHttpContextAccessor httpContextAccesso
     public Guid ParticipantId => httpContextAccessor.HttpContext?.User.GetUserId() ??
                               throw new EmeetupException("User identifier is unavailable");
 
-    //public string OrganizerName => httpContextAccessor.HttpContext?.User.GetUserName() ??
+    //public string OrganizerName => httpContextAccessor.HttpContext?.User.GetUserName() ??  
     //                          throw new EmeetupException("User identifier is unavailable");
 }

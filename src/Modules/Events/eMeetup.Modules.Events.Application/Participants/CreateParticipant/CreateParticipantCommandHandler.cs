@@ -10,7 +10,7 @@ internal sealed class CreateParticipantCommandHandler(IParticipantRepository par
 {
     public async Task<Result> Handle(CreateParticipantCommand request, CancellationToken cancellationToken)
     {
-        var participant = Participant.Create(request.ParticipantId, request.Email, request.UserName, request.DateOfBirth, request.Gender, request.SyncedAt);
+        var participant = Participant.Create(request.ParticipantId, request.Email, request.UserName, request.SyncedAt);
 
         participantRepository.Insert(participant);
 

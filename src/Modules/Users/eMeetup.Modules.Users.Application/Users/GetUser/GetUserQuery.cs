@@ -3,4 +3,4 @@ using static Dapper.SqlMapper;
 
 namespace eMeetup.Modules.Users.Application.Users.GetUser;
 
-public sealed record GetUserQuery(Guid UserId) : IQuery<UserResponse>;
+public sealed record GetUserQuery : IQuery<UserResponse>;

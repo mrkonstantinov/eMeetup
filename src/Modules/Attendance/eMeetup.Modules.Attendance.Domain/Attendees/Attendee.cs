@@ -20,15 +20,13 @@ public sealed class Attendee : Entity
 
     public DateTime SyncedAt { get; private set; }
 
-    public static Attendee Create(Guid id, string email, string userName, DateTime dateOfBirth, Gender gender, DateTime syncedAt)
+    public static Attendee Create(Guid id, string email, string userName, DateTime syncedAt)
     {
         return new Attendee
         {
             Id = id,
             Email = email,
             UserName = userName,
-            DateOfBirth = dateOfBirth,
-            Gender = gender, 
             SyncedAt = syncedAt
         };
     }

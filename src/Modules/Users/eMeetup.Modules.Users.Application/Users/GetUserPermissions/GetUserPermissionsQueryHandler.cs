@@ -25,7 +25,7 @@ internal sealed class GetUserPermissionsQueryHandler(IDbConnectionFactory dbConn
              FROM users.users u
              JOIN users.user_roles ur ON ur.user_id = u.id
              JOIN users.role_permissions rp ON rp.role_name = ur.role_name
-             WHERE u.identity_id = @IdentityId
+             WHERE u.identity_id = @IdentityId::uuid
              """;
 
         List<UserPermission> permissions = (await connection.QueryAsync<UserPermission>(sql, request)).AsList();

@@ -23,15 +23,13 @@ public class Participant : Entity
 
     public DateTime SyncedAt { get; private set; }
 
-    public static Participant Create(Guid id, string email, string userName, DateTime dateOfBirth, Gender gender, DateTime syncedAt)
+    public static Participant Create(Guid id, string email, string userName, DateTime syncedAt)
     {
         return new Participant
         {
             Id = id,
             Email = email,
             UserName = userName,
-            DateOfBirth = dateOfBirth,
-            Gender = gender,
             SyncedAt = syncedAt
         };
     }

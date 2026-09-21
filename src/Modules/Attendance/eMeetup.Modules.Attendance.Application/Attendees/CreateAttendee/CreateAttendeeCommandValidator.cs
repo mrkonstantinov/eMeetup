@@ -9,7 +9,5 @@ internal sealed class CreateAttendeeCommandValidator : AbstractValidator<CreateA
         RuleFor(c => c.AttendeeId).NotEmpty();
         RuleFor(c => c.Email).EmailAddress();
         RuleFor(c => c.UserName).NotEmpty();
-        RuleFor(c => c.DateOfBirth).NotEmpty();
-        RuleFor(c => c.Gender).NotEmpty();
     }
 }
