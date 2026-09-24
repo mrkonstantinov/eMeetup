@@ -78,17 +78,28 @@ app.UseSerilogRequestLogging();
 
 app.UseExceptionHandler();
 
-app.UseAuthentication();
+app.UseStaticFiles();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapEndpoints();
 
-app.UseStaticFiles(new StaticFileOptions
+
+app.MapGet("/debug/root", (IWebHostEnvironment env) => new
 {
-    FileProvider = new PhysicalFileProvider(
-        Path.Combine(builder.Environment.ContentRootPath, "wwwroot", "uploads")),
-    RequestPath = "/uploads"
+    WebRootPath = env.WebRootPath,
+    ContentRootPath = env.ContentRootPath,
+    CurrentDirectory = Directory.GetCurrentDirectory(),
+    BaseDirectory = AppContext.BaseDirectory,
+    UploadsExists = Directory.Exists(
+        Path.Combine(env.WebRootPath ?? "", "uploads")),
+    Files = Directory.Exists(Path.Combine(env.WebRootPath ?? "", "uploads"))
+        ? Directory.GetFiles(Path.Combine(env.WebRootPath!, "uploads"))
+            .Select(Path.GetFileName)
+            .Take(20)
+            .ToArray()
+        : Array.Empty<string>()
 });
 
 app.Run();
