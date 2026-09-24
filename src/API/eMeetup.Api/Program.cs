@@ -9,6 +9,7 @@ using eMeetup.Modules.Attendance.Infrastructure;
 using eMeetup.Modules.Enrolls.Infrastructure;
 using eMeetup.Modules.Events.Infrastructure;
 using eMeetup.Modules.Users.Infrastructure;
+using Microsoft.Extensions.FileProviders;
 using Serilog;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
@@ -83,7 +84,12 @@ app.UseAuthorization();
 
 app.MapEndpoints();
 
-app.UseStaticFiles();
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(
+        Path.Combine(builder.Environment.ContentRootPath, "wwwroot", "uploads")),
+    RequestPath = "/uploads"
+});
 
 app.Run();
 

@@ -24,6 +24,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
+using SixLabors.ImageSharp;
 
 namespace eMeetup.Modules.Users.Infrastructure;
 
@@ -89,7 +90,8 @@ public static class UsersModule
         //services.AddScoped<IUserPhotoUpdateService, UserPhotoUpdateService>();
         //services.AddScoped<ITagRepository, TagRepository>();
 
-       
+        services.AddUsersStorage(configuration);
+
         services.AddScoped<IUnitOfWork>(sp => sp.GetRequiredService<UsersDbContext>());
         services.AddScoped<IUserContext, UserContext>();
 

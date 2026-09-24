@@ -76,7 +76,7 @@ internal sealed class RegisterUserCommandHandler(
             {
                 logger.LogError("No rows were affected during database save for {Email}", request.Email);
                 //await TryCleanupIdentityUserAsync(identityResult.Value, request.Email);
-                return Result.Failure<Guid>(UserErrors.DatabaseSaveFailed);
+                return Result.Failure<Guid>(UserErrors.DatabaseSaveFailed("No rows were affected during database save for {Email}"));
             }
 
             logger.LogInformation("User registered successfully: {Email} with ID: {UserId}",

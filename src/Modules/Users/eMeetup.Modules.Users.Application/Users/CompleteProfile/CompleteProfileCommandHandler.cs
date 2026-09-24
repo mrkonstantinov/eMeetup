@@ -111,7 +111,7 @@ internal sealed class CompleteProfileCommandHandler(
                     "No rows were affected during profile save for user {UserId}",
                     userId);
 
-                return Result.Failure(UserErrors.DatabaseSaveFailed);
+                return Result.Failure(UserErrors.DatabaseSaveFailed("No rows were affected during profile save for user {UserId}"));
             }
 
             // ============================================================

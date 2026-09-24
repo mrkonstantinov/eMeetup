@@ -98,7 +98,13 @@ public sealed class User : Entity
     /// <summary>
     /// Добавляет фото пользователю
     /// </summary>
-    public Result AddPhoto(string url, bool isPrimary = false)
+    public Result AddPhoto(
+    string url,
+    bool isPrimary = false,
+    string? fileName = null,
+    long? fileSize = null,
+    string? contentType = null,
+    string? thumbnailUrl = null)
     {
         if (!CanParticipate())
             return Result.Failure(PhotoErrors.CannotUploadForInactiveUser);
@@ -111,7 +117,16 @@ public sealed class User : Entity
 
         var shouldBePrimary = isPrimary || !_photos.Any();
 
-        var photo = UserPhoto.Create(Id, url, _photos.Count, shouldBePrimary);
+        var photo = UserPhoto.Create(
+            userId: Id,
+            url: url,
+            displayOrder: _photos.Count,
+            isPrimary: shouldBePrimary,
+            fileName: fileName,
+            fileSize: fileSize,
+            contentType: contentType,
+            thumbnailUrl: thumbnailUrl);
+
         if (photo.IsFailure)
             return Result.Failure(photo.Error);
 

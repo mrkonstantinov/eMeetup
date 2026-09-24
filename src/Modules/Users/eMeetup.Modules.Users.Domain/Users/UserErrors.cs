@@ -59,8 +59,8 @@ public static class UserErrors
     public static Error RegistrationFailed(string error) =>
     Error.Failure("Users.RegistrationFailed", $"User registration failed. {error}.");
 
-    public static Error DatabaseSaveFailed =>
-        Error.Failure("Users.DatabaseSaveFailed", "Failed to save user to database. Please try again.");
+    public static Error DatabaseSaveFailed(string error) =>
+        Error.Failure("Users.DatabaseSaveFailed", $"Failed {error}.");
 
     public static Error UpdateFailed(string error) =>
         Error.Failure("Users.UpdateFailed", $"Failed to update user to database. {error}.");

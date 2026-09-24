@@ -8,6 +8,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="wwwroot\uploads\photos\**" />
+    <Content Remove="wwwroot\uploads\photos\**" />
+    <EmbeddedResource Remove="wwwroot\uploads\photos\**" />
+    <None Remove="wwwroot\uploads\photos\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Content Remove="modules - Copy.events.Development.json" />
     <Content Remove="modules - Copy.events.json" />
   </ItemGroup>
@@ -24,7 +31,6 @@
 
   <ItemGroup>
     <Folder Include="wwwroot\Images\" />
-    <Folder Include="wwwroot\uploads\photos\" />
   </ItemGroup>
 
   <ItemGroup>

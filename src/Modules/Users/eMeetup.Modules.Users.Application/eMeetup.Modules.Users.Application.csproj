@@ -7,8 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Users\UpdateUser\UpdateUserCommandHandler - Copy.cs" />
-    <Compile Remove="Users\UpdateUser\UpdateUserPhotosCommandHandler_old.cs" />
+    <Compile Remove="Users\UpdateProfile\UpdateUserCommandHandler - Copy.cs" />
+    <Compile Remove="Users\UpdateProfile\UpdateUserPhotosCommandHandler_old.cs" />
   </ItemGroup>
 
   <ItemGroup>
