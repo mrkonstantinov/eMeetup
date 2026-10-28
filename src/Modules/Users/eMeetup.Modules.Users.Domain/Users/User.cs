@@ -13,6 +13,28 @@ public sealed class User : Entity
 
     private User() { }
 
+    // Constructor for basic user registration (required fields only)
+    private User(
+        string email,
+        string name,
+        DateTime dateOfBirth,
+        Gender gender,
+        string identityId)
+    {
+        Id = Guid.NewGuid();
+        Email = email;
+        UserName = name;
+        DateOfBirth = dateOfBirth;
+        Gender = gender;
+        IdentityId = identityId;
+        Status = UserStatus.Active;
+        CreatedAt = DateTime.UtcNow;
+        LastActive = DateTime.UtcNow;
+
+        // Assign default role
+        _roles.Add(Role.Member);
+    }
+
     public Guid Id { get; private set; }
     public string IdentityId { get; private set; } = null!;
     public string Email { get; private set; } = null!;
@@ -51,28 +73,6 @@ public sealed class User : Entity
 
     //public List<string> Subscriptions { get; set; } = new List<string>();  // List of subscription plans
     //public List<string> Subscribers { get; set; } = new List<string>();  // List of users who subscribed to this profile
-
-    // Constructor for basic user registration (required fields only)
-    private User(
-        string email,
-        string name,
-        DateTime dateOfBirth,
-        Gender gender,
-        string identityId)
-    {
-        Id = Guid.NewGuid();
-        Email = email;
-        UserName = name;
-        DateOfBirth = dateOfBirth;
-        Gender = gender;
-        IdentityId = identityId;
-        Status = UserStatus.Active;
-        CreatedAt = DateTime.UtcNow;
-        LastActive = DateTime.UtcNow;
-
-        // Assign default role
-        _roles.Add(Role.Member);
-    }
 
 
     // Factory method for registration (basic information only)

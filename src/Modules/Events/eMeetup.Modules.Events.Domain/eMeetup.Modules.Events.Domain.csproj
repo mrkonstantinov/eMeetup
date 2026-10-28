@@ -10,4 +10,8 @@
     <ProjectReference Include="..\..\..\Common\eMeetup.Common.Domain\eMeetup.Common.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Interfaces\Repositories\" />
+  </ItemGroup>
+
 </Project>

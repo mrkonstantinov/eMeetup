@@ -1,28 +1,18 @@
 ﻿using eMeetup.Common.Application.EventBus;
 using eMeetup.Common.Application.Messaging;
-using eMeetup.Common.Domain.Interfaces.Repositories;
 using eMeetup.Common.Infrastructure.Outbox;
 using eMeetup.Common.Presentation.Endpoints;
 using eMeetup.Modules.Events.Application.Abstractions.Authentication;
 using eMeetup.Modules.Events.Application.Abstractions.Data;
-using eMeetup.Modules.Events.Domain.Events;
-using eMeetup.Modules.Events.Domain.EventSessions;
-using eMeetup.Modules.Events.Domain.Interfaces.Repositories;
-using eMeetup.Modules.Events.Domain.MateTypes;
 using eMeetup.Modules.Events.Infrastructure.Authentication;
 using eMeetup.Modules.Events.Infrastructure.Database;
-using eMeetup.Modules.Events.Infrastructure.Events;
-using eMeetup.Modules.Events.Infrastructure.EventSessions;
 using eMeetup.Modules.Events.Infrastructure.Inbox;
-using eMeetup.Modules.Events.Infrastructure.MateTypes;
 using eMeetup.Modules.Events.Infrastructure.Outbox;
-using eMeetup.Modules.Events.Infrastructure.Tags;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.Options;
 
 namespace eMeetup.Modules.Events.Infrastructure;
 
@@ -56,12 +46,8 @@ public static class EventsModule
                 .AddInterceptors(sp.GetRequiredService<InsertOutboxMessagesInterceptor>()));
 
         services.AddScoped<IUnitOfWork>(sp => sp.GetRequiredService<EventsDbContext>());
-
-        services.AddScoped<ITagRepository, TagRepository>();
-        services.AddScoped<IEventRepository, EventRepository>();
-        services.AddScoped<IEventTagsRepository, EventTagsRepository>();
-        services.AddScoped<IEventSessionRepository, EventSessionRepository>();
-        services.AddScoped<IMateTypeRepository, MateTypeRepository>();
+        
+        //services.AddScoped<ITagRepository, TagRepository>();
 
 
         services.AddScoped<IOrganizerContext, OrganizerContext>();

@@ -129,820 +129,29 @@ namespace eMeetup.Modules.Events.Infrastructure.Database.Migrations
                     b.ToTable("outbox_message_consumers", "events");
                 });
 
-            modelBuilder.Entity("eMeetup.Modules.Events.Domain.EventSessions.EventSession", b =>
+            modelBuilder.Entity("eMeetup.Modules.Events.Domain.ActivityCategories.ActivityCategory", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("id");
-
-                    b.Property<string>("Address")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("address");
-
-                    b.Property<DateTime?>("CanceledAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("canceled_at");
-
-                    b.Property<DateTime?>("CreatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_at");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("text")
-                        .HasColumnName("description");
-
-                    b.Property<DateTime?>("EndsAtUtc")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("ends_at_utc");
-
-                    b.Property<Guid>("EventId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("event_id");
-
-                    b.Property<double?>("Latitude")
-                        .HasPrecision(10, 8)
-                        .HasColumnType("double precision")
-                        .HasColumnName("latitude");
-
-                    b.Property<string>("Locality")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("locality");
-
-                    b.Property<double?>("Longitude")
-                        .HasPrecision(11, 8)
-                        .HasColumnType("double precision")
-                        .HasColumnName("longitude");
-
-                    b.Property<DateTime?>("PublishedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("published_at");
-
-                    b.Property<DateTime>("StartsAtUtc")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("starts_at_utc");
-
-                    b.Property<int>("Status")
                         .HasColumnType("integer")
-                        .HasColumnName("status");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("title");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("updated_at");
-
-                    b.HasKey("Id")
-                        .HasName("pk_event_sessions");
-
-                    b.HasIndex("EventId")
-                        .HasDatabaseName("ix_event_sessions_event_id");
-
-                    b.HasIndex("StartsAtUtc")
-                        .HasDatabaseName("ix_event_sessions_starts_at_utc");
-
-                    b.HasIndex("EventId", "Status")
-                        .HasDatabaseName("ix_event_sessions_event_status");
-
-                    b.HasIndex("Status", "StartsAtUtc")
-                        .HasDatabaseName("ix_event_sessions_status_start_date");
-
-                    b.ToTable("event_sessions", "events");
-                });
-
-            modelBuilder.Entity("eMeetup.Modules.Events.Domain.EventTags.EventTag", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
                         .HasColumnName("id");
 
-                    b.Property<Guid>("EventId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("event_id");
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<Guid>("TagId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("tag_id");
+                    b.Property<string>("Color")
+                        .HasMaxLength(7)
+                        .HasColumnType("character varying(7)")
+                        .HasColumnName("color");
 
-                    b.HasKey("Id")
-                        .HasName("pk_event_tags");
-
-                    b.HasIndex("EventId")
-                        .HasDatabaseName("ix_event_tags_event_id");
-
-                    b.HasIndex("TagId")
-                        .HasDatabaseName("ix_event_tags_tag_id");
-
-                    b.ToTable("event_tags", "events");
-                });
-
-            modelBuilder.Entity("eMeetup.Modules.Events.Domain.Events.Event", b =>
-                {
-                    b.Property<Guid>("Id")
+                    b.Property<DateTimeOffset>("CreatedAt")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("id");
-
-                    b.Property<DateTime?>("CreatedAt")
                         .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_at");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("text")
-                        .HasColumnName("description");
-
-                    b.Property<bool>("IsArchived")
-                        .HasColumnType("boolean")
-                        .HasColumnName("is_archived");
-
-                    b.Property<Guid>("OrganizerId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("organizer_id");
-
-                    b.Property<string>("OrganizerName")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("organizer_name");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("title");
-
-                    b.Property<string>("Url")
-                        .HasColumnType("text")
-                        .HasColumnName("url");
-
-                    b.HasKey("Id")
-                        .HasName("pk_events");
-
-                    b.ToTable("events", "events");
-                });
-
-            modelBuilder.Entity("eMeetup.Modules.Events.Domain.MateTypes.MateType", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("id");
-
-                    b.Property<int>("AllocatedSlots")
-                        .HasColumnType("integer")
-                        .HasColumnName("allocated_slots");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_at");
+                        .HasColumnName("created_at")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                     b.Property<string>("Description")
                         .HasMaxLength(500)
                         .HasColumnType("character varying(500)")
-                        .HasColumnName("description");
-
-                    b.Property<Guid>("EventSessionId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("event_session_id");
-
-                    b.Property<int?>("Gender")
-                        .HasColumnType("integer")
-                        .HasColumnName("gender");
-
-                    b.Property<int?>("MaxAge")
-                        .HasColumnType("integer")
-                        .HasColumnName("max_age");
-
-                    b.Property<int?>("MinAge")
-                        .HasColumnType("integer")
-                        .HasColumnName("min_age");
-
-                    b.Property<string>("PreferredAgeRange")
-                        .HasMaxLength(20)
-                        .HasColumnType("character varying(20)")
-                        .HasColumnName("preferred_age_range");
-
-                    b.Property<int?>("PreferredGender")
-                        .HasColumnType("integer")
-                        .HasColumnName("preferred_gender");
-
-                    b.Property<int>("Priority")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasDefaultValue(0)
-                        .HasColumnName("priority");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)")
-                        .HasColumnName("name");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("updated_at");
-
-                    b.HasKey("Id")
-                        .HasName("pk_mate_types");
-
-                    b.HasIndex("EventSessionId")
-                        .HasDatabaseName("ix_mate_types_event_session_id");
-
-                    b.HasIndex("Gender")
-                        .HasDatabaseName("ix_mate_types_gender");
-
-                    b.HasIndex("EventSessionId", "Priority")
-                        .HasDatabaseName("ix_mate_types_session_priority");
-
-                    b.ToTable("mate_types", "events");
-                });
-
-            modelBuilder.Entity("eMeetup.Modules.Events.Domain.Tags.Tag", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("id")
-                        .HasDefaultValueSql("gen_random_uuid()");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasMaxLength(200)
-                        .HasColumnType("character varying(200)")
-                        .HasDefaultValue("")
-                        .HasColumnName("description");
-
-                    b.Property<bool>("IsActive")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("boolean")
-                        .HasDefaultValue(true)
-                        .HasColumnName("is_active");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
-                        .HasColumnName("name");
-
-                    b.Property<string>("Slug")
-                        .IsRequired()
-                        .HasMaxLength(60)
-                        .HasColumnType("character varying(60)")
-                        .HasColumnName("slug");
-
-                    b.Property<Guid?>("TagGroupId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("tag_group_id");
-
-                    b.Property<int>("UsageCount")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasDefaultValue(0)
-                        .HasColumnName("usage_count");
-
-                    b.HasKey("Id")
-                        .HasName("pk_tags");
-
-                    b.HasIndex("IsActive")
-                        .HasDatabaseName("ix_tags_is_active");
-
-                    b.HasIndex("Name")
-                        .IsUnique()
-                        .HasDatabaseName("ix_tags_name");
-
-                    b.HasIndex("Slug")
-                        .IsUnique()
-                        .HasDatabaseName("ix_tags_slug");
-
-                    b.HasIndex("TagGroupId")
-                        .HasDatabaseName("ix_tags_tag_group_id");
-
-                    b.HasIndex("UsageCount")
-                        .HasDatabaseName("ix_tags_usage_count");
-
-                    b.ToTable("tags", "events");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("11111111-1111-1111-1111-aaaaaaaaaaaa"),
-                            Description = "Занятия бегом и пробежки",
-                            IsActive = true,
-                            Name = "Бег",
-                            Slug = "бег",
-                            TagGroupId = new Guid("11111111-1111-1111-1111-111111111111"),
-                            UsageCount = 0
-                        },
-                        new
-                        {
-                            Id = new Guid("11111111-1111-1111-1111-bbbbbbbbbbbb"),
-                            Description = "Тренировки в бассейне",
-                            IsActive = true,
-                            Name = "Плавание",
-                            Slug = "плавание",
-                            TagGroupId = new Guid("11111111-1111-1111-1111-111111111111"),
-                            UsageCount = 0
-                        },
-                        new
-                        {
-                            Id = new Guid("11111111-1111-1111-1111-cccccccccccc"),
-                            Description = "Поездки по городу и шоссе",
-                            IsActive = true,
-                            Name = "Велоспорт",
-                            Slug = "велоспорт",
-                            TagGroupId = new Guid("11111111-1111-1111-1111-111111111111"),
-                            UsageCount = 0
-                        },
-                        new
-                        {
-                            Id = new Guid("11111111-1111-1111-1111-dddddddddddd"),
-                            Description = "Фитнес и силовые тренировки",
-                            IsActive = true,
-                            Name = "Тренажерный зал",
-                            Slug = "тренажерный-зал",
-                            TagGroupId = new Guid("11111111-1111-1111-1111-111111111111"),
-                            UsageCount = 0
-                        },
-                        new
-                        {
-                            Id = new Guid("11111111-1111-1111-1111-eeeeeeeeeeee"),
-                            Description = "Занятия йогой и растяжка",
-                            IsActive = true,
-                            Name = "Йога",
-                            Slug = "йога",
-                            TagGroupId = new Guid("11111111-1111-1111-1111-111111111111"),
-                            UsageCount = 0
-                        },
-                        new
-                        {
-                            Id = new Guid("22222222-2222-2222-2222-aaaaaaaaaaaa"),
-                            Description = "Катание на склонах",
-                            IsActive = true,
-                            Name = "Горные лыжи",
-                            Slug = "горные-лыжи",
-                            TagGroupId = new Guid("22222222-2222-2222-2222-222222222222"),
-                            UsageCount = 0
-                        },
-                        new
-                        {
-                            Id = new Guid("22222222-2222-2222-2222-bbbbbbbbbbbb"),
-                            Description = "Скандинавская ходьба на лыжах по трассам",
-                            IsActive = true,
-                            Name = "Беговые лыжи",
-                            Slug = "беговые-лыжи",
-                            TagGroupId = new Guid("22222222-2222-2222-2222-222222222222"),
-                            UsageCount = 0
-                        },
-                        new
-                        {
-                            Id = new Guid("22222222-2222-2222-2222-cccccccccccc"),
-                            Description = "Катание на склонах и в парках",
-                            IsActive = true,
-                            Name = "Сноуборд",
-                            Slug = "сноуборд",
-                            TagGroupId = new Guid("22222222-2222-2222-2222-222222222222"),
-                            UsageCount = 0
-                        },
-                        new
-                        {
-                            Id = new Guid("22222222-2222-2222-2222-dddddddddddd"),
-                            Description = "Катание на ледовых катках",
-                            IsActive = true,
-                            Name = "Катание на коньках",
-                            Slug = "катание-на-коньках",
-                            TagGroupId = new Guid("22222222-2222-2222-2222-222222222222"),
-                            UsageCount = 0
-                        },
-                        new
-                        {
-                            Id = new Guid("22222222-2222-2222-2222-eeeeeeeeeeee"),
-                            Description = "Катание на ватрушках с горок",
-                            IsActive = true,
-                            Name = "Тюбинг",
-                            Slug = "тюбинг",
-                            TagGroupId = new Guid("22222222-2222-2222-2222-222222222222"),
-                            UsageCount = 0
-                        },
-                        new
-                        {
-                            Id = new Guid("22222222-2222-2222-2222-ffffffffffff"),
-                            Description = "Походы на снегоступах",
-                            IsActive = true,
-                            Name = "Зимний поход",
-                            Slug = "зимний-поход",
-                            TagGroupId = new Guid("22222222-2222-2222-2222-222222222222"),
-                            UsageCount = 0
-                        },
-                        new
-                        {
-                            Id = new Guid("33333333-3333-3333-3333-aaaaaaaaaaaa"),
-                            Description = "Дневные походы по тропам",
-                            IsActive = true,
-                            Name = "Поход",
-                            Slug = "поход",
-                            TagGroupId = new Guid("33333333-3333-3333-3333-333333333333"),
-                            UsageCount = 0
-                        },
-                        new
-                        {
-                            Id = new Guid("33333333-3333-3333-3333-bbbbbbbbbbbb"),
-                            Description = "Многодневные велосипедные путешествия",
-                            IsActive = true,
-                            Name = "Велотур",
-                            Slug = "велотур",
-                            TagGroupId = new Guid("33333333-3333-3333-3333-333333333333"),
-                            UsageCount = 0
-                        },
-                        new
-                        {
-                            Id = new Guid("33333333-3333-3333-3333-cccccccccccc"),
-                            Description = "Трапезы на природе",
-                            IsActive = true,
-                            Name = "Пикник",
-                            Slug = "пикник",
-                            TagGroupId = new Guid("33333333-3333-3333-3333-333333333333"),
-                            UsageCount = 0
-                        },
-                        new
-                        {
-                            Id = new Guid("33333333-3333-3333-3333-dddddddddddd"),
-                            Description = "Ночёвки на природе",
-                            IsActive = true,
-                            Name = "Кемпинг",
-                            Slug = "кемпинг",
-                            TagGroupId = new Guid("33333333-3333-3333-3333-333333333333"),
-                            UsageCount = 0
-                        },
-                        new
-                        {
-                            Id = new Guid("33333333-3333-3333-3333-eeeeeeeeeeee"),
-                            Description = "Бег по природным тропам",
-                            IsActive = true,
-                            Name = "Трейлраннинг",
-                            Slug = "трейлраннинг",
-                            TagGroupId = new Guid("33333333-3333-3333-3333-333333333333"),
-                            UsageCount = 0
-                        },
-                        new
-                        {
-                            Id = new Guid("44444444-4444-4444-4444-aaaaaaaaaaaa"),
-                            Description = "Сплав на лёгких надувных лодках",
-                            IsActive = true,
-                            Name = "Пакрафтинг",
-                            Slug = "пакрафтинг",
-                            TagGroupId = new Guid("44444444-4444-4444-4444-444444444444"),
-                            UsageCount = 0
-                        },
-                        new
-                        {
-                            Id = new Guid("44444444-4444-4444-4444-bbbbbbbbbbbb"),
-                            Description = "Катание на доске с веслом стоя",
-                            IsActive = true,
-                            Name = "САП-сёрфинг",
-                            Slug = "сап-сёрфинг",
-                            TagGroupId = new Guid("44444444-4444-4444-4444-444444444444"),
-                            UsageCount = 0
-                        },
-                        new
-                        {
-                            Id = new Guid("44444444-4444-4444-4444-cccccccccccc"),
-                            Description = "Сплав на каяках по рекам и озёрам",
-                            IsActive = true,
-                            Name = "Каякинг",
-                            Slug = "каякинг",
-                            TagGroupId = new Guid("44444444-4444-4444-4444-444444444444"),
-                            UsageCount = 0
-                        },
-                        new
-                        {
-                            Id = new Guid("44444444-4444-4444-4444-dddddddddddd"),
-                            Description = "Путешествия на каноэ по спокойной воде",
-                            IsActive = true,
-                            Name = "Каноэ",
-                            Slug = "каноэ",
-                            TagGroupId = new Guid("44444444-4444-4444-4444-444444444444"),
-                            UsageCount = 0
-                        },
-                        new
-                        {
-                            Id = new Guid("44444444-4444-4444-4444-eeeeeeeeeeee"),
-                            Description = "Сплав по бурной воде",
-                            IsActive = true,
-                            Name = "Рафтинг",
-                            Slug = "рафтинг",
-                            TagGroupId = new Guid("44444444-4444-4444-4444-444444444444"),
-                            UsageCount = 0
-                        },
-                        new
-                        {
-                            Id = new Guid("44444444-4444-4444-4444-ffffffffffff"),
-                            Description = "Плавание в озёрах и морях",
-                            IsActive = true,
-                            Name = "Плавание на открытой воде",
-                            Slug = "плавание-на-открытой-воде",
-                            TagGroupId = new Guid("44444444-4444-4444-4444-444444444444"),
-                            UsageCount = 0
-                        },
-                        new
-                        {
-                            Id = new Guid("55555555-5555-5555-5555-aaaaaaaaaaaa"),
-                            Description = "Фестивали живой музыки и концертов",
-                            IsActive = true,
-                            Name = "Музыкальный фестиваль",
-                            Slug = "музыкальный-фестиваль",
-                            TagGroupId = new Guid("55555555-5555-5555-5555-555555555555"),
-                            UsageCount = 0
-                        },
-                        new
-                        {
-                            Id = new Guid("55555555-5555-5555-5555-bbbbbbbbbbbb"),
-                            Description = "Кулинарные мероприятия",
-                            IsActive = true,
-                            Name = "Гастрофестиваль",
-                            Slug = "гастрофестиваль",
-                            TagGroupId = new Guid("55555555-5555-5555-5555-555555555555"),
-                            UsageCount = 0
-                        },
-                        new
-                        {
-                            Id = new Guid("55555555-5555-5555-5555-cccccccccccc"),
-                            Description = "Традиционные праздники",
-                            IsActive = true,
-                            Name = "Культурный фестиваль",
-                            Slug = "культурный-фестиваль",
-                            TagGroupId = new Guid("55555555-5555-5555-5555-555555555555"),
-                            UsageCount = 0
-                        },
-                        new
-                        {
-                            Id = new Guid("55555555-5555-5555-5555-dddddddddddd"),
-                            Description = "Местные ярмарки и гуляния",
-                            IsActive = true,
-                            Name = "Городской праздник",
-                            Slug = "городской-праздник",
-                            TagGroupId = new Guid("55555555-5555-5555-5555-555555555555"),
-                            UsageCount = 0
-                        },
-                        new
-                        {
-                            Id = new Guid("55555555-5555-5555-5555-eeeeeeeeeeee"),
-                            Description = "Дегустации крафтового пива",
-                            IsActive = true,
-                            Name = "Пивной фестиваль",
-                            Slug = "пивной-фестиваль",
-                            TagGroupId = new Guid("55555555-5555-5555-5555-555555555555"),
-                            UsageCount = 0
-                        },
-                        new
-                        {
-                            Id = new Guid("66666666-6666-6666-6666-aaaaaaaaaaaa"),
-                            Description = "Осмотр достопримечательностей",
-                            IsActive = true,
-                            Name = "Городская поездка",
-                            Slug = "городская-поездка",
-                            TagGroupId = new Guid("66666666-6666-6666-6666-666666666666"),
-                            UsageCount = 0
-                        },
-                        new
-                        {
-                            Id = new Guid("66666666-6666-6666-6666-bbbbbbbbbbbb"),
-                            Description = "Кулинарные и винные туры",
-                            IsActive = true,
-                            Name = "Гастротур",
-                            Slug = "гастротур",
-                            TagGroupId = new Guid("66666666-6666-6666-6666-666666666666"),
-                            UsageCount = 0
-                        },
-                        new
-                        {
-                            Id = new Guid("66666666-6666-6666-6666-cccccccccccc"),
-                            Description = "Путешествия на машине",
-                            IsActive = true,
-                            Name = "Автопутешествие",
-                            Slug = "автопутешествие",
-                            TagGroupId = new Guid("66666666-6666-6666-6666-666666666666"),
-                            UsageCount = 0
-                        },
-                        new
-                        {
-                            Id = new Guid("66666666-6666-6666-6666-dddddddddddd"),
-                            Description = "Экскурсии по музеям и архитектуре",
-                            IsActive = true,
-                            Name = "Культурный тур",
-                            Slug = "культурный-тур",
-                            TagGroupId = new Guid("66666666-6666-6666-6666-666666666666"),
-                            UsageCount = 0
-                        },
-                        new
-                        {
-                            Id = new Guid("66666666-6666-6666-6666-eeeeeeeeeeee"),
-                            Description = "Короткие поездки за город",
-                            IsActive = true,
-                            Name = "Уикенд за городом",
-                            Slug = "уикенд-за-городом",
-                            TagGroupId = new Guid("66666666-6666-6666-6666-666666666666"),
-                            UsageCount = 0
-                        },
-                        new
-                        {
-                            Id = new Guid("77777777-7777-7777-7777-aaaaaaaaaaaa"),
-                            Description = "Фильмы и кинопоказы",
-                            IsActive = true,
-                            Name = "Кино",
-                            Slug = "кино",
-                            TagGroupId = new Guid("77777777-7777-7777-7777-777777777777"),
-                            UsageCount = 0
-                        },
-                        new
-                        {
-                            Id = new Guid("77777777-7777-7777-7777-bbbbbbbbbbbb"),
-                            Description = "Спектакли и театральные постановки",
-                            IsActive = true,
-                            Name = "Театр",
-                            Slug = "театр",
-                            TagGroupId = new Guid("77777777-7777-7777-7777-777777777777"),
-                            UsageCount = 0
-                        },
-                        new
-                        {
-                            Id = new Guid("77777777-7777-7777-7777-cccccccccccc"),
-                            Description = "Концерты живой музыки",
-                            IsActive = true,
-                            Name = "Концерт",
-                            Slug = "концерт",
-                            TagGroupId = new Guid("77777777-7777-7777-7777-777777777777"),
-                            UsageCount = 0
-                        },
-                        new
-                        {
-                            Id = new Guid("77777777-7777-7777-7777-dddddddddddd"),
-                            Description = "Рок и метал концерты",
-                            IsActive = true,
-                            Name = "Рок-концерт",
-                            Slug = "рок-концерт",
-                            TagGroupId = new Guid("77777777-7777-7777-7777-777777777777"),
-                            UsageCount = 0
-                        },
-                        new
-                        {
-                            Id = new Guid("77777777-7777-7777-7777-eeeeeeeeeeee"),
-                            Description = "Художественные галереи и выставки",
-                            IsActive = true,
-                            Name = "Выставка искусств",
-                            Slug = "выставка-искусств",
-                            TagGroupId = new Guid("77777777-7777-7777-7777-777777777777"),
-                            UsageCount = 0
-                        },
-                        new
-                        {
-                            Id = new Guid("77777777-7777-7777-7777-ffffffffffff"),
-                            Description = "Юмористические выступления",
-                            IsActive = true,
-                            Name = "Стендап",
-                            Slug = "стендап",
-                            TagGroupId = new Guid("77777777-7777-7777-7777-777777777777"),
-                            UsageCount = 0
-                        },
-                        new
-                        {
-                            Id = new Guid("88888888-8888-8888-8888-aaaaaaaaaaaa"),
-                            Description = "Встречи в барах и пабах",
-                            IsActive = true,
-                            Name = "Паб",
-                            Slug = "паб",
-                            TagGroupId = new Guid("88888888-8888-8888-8888-888888888888"),
-                            UsageCount = 0
-                        },
-                        new
-                        {
-                            Id = new Guid("88888888-8888-8888-8888-bbbbbbbbbbbb"),
-                            Description = "Летние кафе и террасы",
-                            IsActive = true,
-                            Name = "Веранда",
-                            Slug = "веранда",
-                            TagGroupId = new Guid("88888888-8888-8888-8888-888888888888"),
-                            UsageCount = 0
-                        },
-                        new
-                        {
-                            Id = new Guid("88888888-8888-8888-8888-cccccccccccc"),
-                            Description = "Неформальные встречи за кофе",
-                            IsActive = true,
-                            Name = "Кофе-дейт",
-                            Slug = "кофе-дейт",
-                            TagGroupId = new Guid("88888888-8888-8888-8888-888888888888"),
-                            UsageCount = 0
-                        },
-                        new
-                        {
-                            Id = new Guid("88888888-8888-8888-8888-dddddddddddd"),
-                            Description = "Вечера настольных игр",
-                            IsActive = true,
-                            Name = "Настольные игры",
-                            Slug = "настольные-игры",
-                            TagGroupId = new Guid("88888888-8888-8888-8888-888888888888"),
-                            UsageCount = 0
-                        },
-                        new
-                        {
-                            Id = new Guid("88888888-8888-8888-8888-eeeeeeeeeeee"),
-                            Description = "Неспешные встречи в парке",
-                            IsActive = true,
-                            Name = "Пикник в парке",
-                            Slug = "пикник-в-парке",
-                            TagGroupId = new Guid("88888888-8888-8888-8888-888888888888"),
-                            UsageCount = 0
-                        },
-                        new
-                        {
-                            Id = new Guid("88888888-8888-8888-8888-ffffffffffff"),
-                            Description = "Расслабленный летний отдых в гамаке на природе",
-                            IsActive = true,
-                            Name = "Отдых в гамаке",
-                            Slug = "отдых-в-гамаке",
-                            TagGroupId = new Guid("88888888-8888-8888-8888-888888888888"),
-                            UsageCount = 0
-                        },
-                        new
-                        {
-                            Id = new Guid("99999999-9999-9999-9999-aaaaaaaaaaaa"),
-                            Description = "Соревнования по плаванию, велоспорту и бегу",
-                            IsActive = true,
-                            Name = "Триатлон",
-                            Slug = "триатлон",
-                            TagGroupId = new Guid("99999999-9999-9999-9999-999999999999"),
-                            UsageCount = 0
-                        },
-                        new
-                        {
-                            Id = new Guid("99999999-9999-9999-9999-bbbbbbbbbbbb"),
-                            Description = "Участие в марафонах в других городах",
-                            IsActive = true,
-                            Name = "Марафон",
-                            Slug = "марафон",
-                            TagGroupId = new Guid("99999999-9999-9999-9999-999999999999"),
-                            UsageCount = 0
-                        },
-                        new
-                        {
-                            Id = new Guid("99999999-9999-9999-9999-cccccccccccc"),
-                            Description = "Забеги с препятствиями",
-                            IsActive = true,
-                            Name = "Гонка с препятствиями",
-                            Slug = "гонка-с-препятствиями",
-                            TagGroupId = new Guid("99999999-9999-9999-9999-999999999999"),
-                            UsageCount = 0
-                        },
-                        new
-                        {
-                            Id = new Guid("99999999-9999-9999-9999-dddddddddddd"),
-                            Description = "Соревновательные велозаезды",
-                            IsActive = true,
-                            Name = "Велосипедная гонка",
-                            Slug = "велосипедная-гонка",
-                            TagGroupId = new Guid("99999999-9999-9999-9999-999999999999"),
-                            UsageCount = 0
-                        },
-                        new
-                        {
-                            Id = new Guid("99999999-9999-9999-9999-eeeeeeeeeeee"),
-                            Description = "Заплывы на открытой воде или в бассейне",
-                            IsActive = true,
-                            Name = "Соревнования по плаванию",
-                            Slug = "соревнования-по-плаванию",
-                            TagGroupId = new Guid("99999999-9999-9999-9999-999999999999"),
-                            UsageCount = 0
-                        },
-                        new
-                        {
-                            Id = new Guid("99999999-9999-9999-9999-ffffffffffff"),
-                            Description = "Соревнования по бегу по бездорожью",
-                            IsActive = true,
-                            Name = "Трейловый забег",
-                            Slug = "трейловый-забег",
-                            TagGroupId = new Guid("99999999-9999-9999-9999-999999999999"),
-                            UsageCount = 0
-                        });
-                });
-
-            modelBuilder.Entity("eMeetup.Modules.Events.Domain.Tags.TagGroup", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("id")
-                        .HasDefaultValueSql("gen_random_uuid()");
-
-                    b.Property<string>("Description")
-                        .ValueGeneratedOnAdd()
-                        .HasMaxLength(200)
-                        .HasColumnType("character varying(200)")
-                        .HasDefaultValue("")
                         .HasColumnName("description");
 
                     b.Property<int>("DisplayOrder")
@@ -952,192 +161,1062 @@ namespace eMeetup.Modules.Events.Infrastructure.Database.Migrations
                         .HasColumnName("display_order");
 
                     b.Property<string>("Icon")
-                        .ValueGeneratedOnAdd()
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)")
-                        .HasDefaultValue("")
                         .HasColumnName("icon");
 
-                    b.Property<bool>("IsActive")
+                    b.Property<bool>("IsSystem")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("boolean")
-                        .HasDefaultValue(true)
-                        .HasColumnName("is_active");
+                        .HasDefaultValue(false)
+                        .HasColumnName("is_system");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
                         .HasColumnName("name");
 
+                    b.Property<int?>("ParentId")
+                        .HasColumnType("integer")
+                        .HasColumnName("parent_id");
+
+                    b.Property<string>("Slug")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("slug");
+
+                    b.Property<int>("Status")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(1)
+                        .HasColumnName("status");
+
+                    b.Property<DateTimeOffset?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
                     b.HasKey("Id")
-                        .HasName("pk_tag_groups");
+                        .HasName("pk_activity_categories");
 
                     b.HasIndex("DisplayOrder")
-                        .HasDatabaseName("ix_tag_groups_display_order");
-
-                    b.HasIndex("IsActive")
-                        .HasDatabaseName("ix_tag_groups_is_active");
+                        .HasDatabaseName("ix_activity_categories_display_order");
 
                     b.HasIndex("Name")
-                        .IsUnique()
-                        .HasDatabaseName("ix_tag_groups_name");
+                        .HasDatabaseName("ix_activity_categories_name");
 
-                    b.ToTable("tag_groups", "events");
+                    b.HasIndex("ParentId")
+                        .HasDatabaseName("ix_activity_categories_parent_id");
+
+                    b.HasIndex("Slug")
+                        .IsUnique()
+                        .HasDatabaseName("ix_activity_categories_slug");
+
+                    b.HasIndex("Status")
+                        .HasDatabaseName("ix_activity_categories_status");
+
+                    b.HasIndex("Status", "DisplayOrder")
+                        .HasDatabaseName("ix_activity_categories_status_display_order");
+
+                    b.ToTable("activity_categories", "events");
 
                     b.HasData(
                         new
                         {
-                            Id = new Guid("11111111-1111-1111-1111-111111111111"),
-                            Description = "Бег, плавание, велоспорт и другие спортивные активности",
+                            Id = 1,
+                            Color = "#FF6B6B",
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Спортивные активности: бег, футбол, теннис и другие",
                             DisplayOrder = 1,
-                            Icon = "🏃",
-                            IsActive = true,
-                            Name = "Активный образ жизни"
+                            Icon = "⚽",
+                            IsSystem = true,
+                            Name = "Спорт",
+                            Slug = "sport",
+                            Status = 1
                         },
                         new
                         {
-                            Id = new Guid("22222222-2222-2222-2222-222222222222"),
-                            Description = "Лыжи, сноуборд, коньки и тюбинг",
+                            Id = 2,
+                            Color = "#4ECDC4",
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Походы, велотуры, скалолазание и другие приключения",
                             DisplayOrder = 2,
-                            Icon = "❄️",
-                            IsActive = true,
-                            Name = "Зимние активности"
-                        },
-                        new
-                        {
-                            Id = new Guid("33333333-3333-3333-3333-333333333333"),
-                            Description = "Походы, велотуры и пикники на природе",
-                            DisplayOrder = 3,
                             Icon = "⛰️",
-                            IsActive = true,
-                            Name = "Приключения и активный отдых"
+                            IsSystem = true,
+                            Name = "Активный отдых",
+                            Slug = "aktivnyi-otdyh",
+                            Status = 1
                         },
                         new
                         {
-                            Id = new Guid("44444444-4444-4444-4444-444444444444"),
+                            Id = 3,
+                            Color = "#45B7D1",
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Лыжи, сноуборд, коньки и тюбинг",
+                            DisplayOrder = 3,
+                            Icon = "❄️",
+                            IsSystem = true,
+                            Name = "Зимние активности",
+                            Slug = "zimnie-aktivnosti",
+                            Status = 1
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Color = "#96CEB4",
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Description = "Пакрафтинг, САП, каякинг и другие водные походы",
                             DisplayOrder = 4,
                             Icon = "🚣",
-                            IsActive = true,
-                            Name = "Водные приключения"
+                            IsSystem = true,
+                            Name = "Водные приключения",
+                            Slug = "vodnye-priklyucheniya",
+                            Status = 1
                         },
                         new
                         {
-                            Id = new Guid("55555555-5555-5555-5555-555555555555"),
-                            Description = "Музыкальные, гастрономические и культурные фестивали",
+                            Id = 5,
+                            Color = "#FFEAA7",
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Театры, музеи, выставки, концерты",
                             DisplayOrder = 5,
-                            Icon = "🎪",
-                            IsActive = true,
-                            Name = "Фестивали и мероприятия"
-                        },
-                        new
-                        {
-                            Id = new Guid("66666666-6666-6666-6666-666666666666"),
-                            Description = "Городские поездки, экскурсии, гастротуры и автопутешествия",
-                            DisplayOrder = 6,
-                            Icon = "✈️",
-                            IsActive = true,
-                            Name = "Путешествия"
-                        },
-                        new
-                        {
-                            Id = new Guid("77777777-7777-7777-7777-777777777777"),
-                            Description = "Кино, театр, концерты и рок-шоу",
-                            DisplayOrder = 7,
                             Icon = "🎭",
-                            IsActive = true,
-                            Name = "Культура и развлечения"
+                            IsSystem = true,
+                            Name = "Культура",
+                            Slug = "kultura",
+                            Status = 1
                         },
                         new
                         {
-                            Id = new Guid("88888888-8888-8888-8888-888888888888"),
-                            Description = "Встречи в пабах, летние веранды и приятное времяпрепровождение",
+                            Id = 6,
+                            Color = "#DDA0DD",
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Концерты, джем-сейшны, музыкальные фестивали",
+                            DisplayOrder = 6,
+                            Icon = "🎵",
+                            IsSystem = true,
+                            Name = "Музыка",
+                            Slug = "muzyka",
+                            Status = 1
+                        },
+                        new
+                        {
+                            Id = 7,
+                            Color = "#FF8A5C",
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Рестораны, кафе, кулинарные мастер-классы",
+                            DisplayOrder = 7,
+                            Icon = "🍕",
+                            IsSystem = true,
+                            Name = "Еда и напитки",
+                            Slug = "eda-i-napitki",
+                            Status = 1
+                        },
+                        new
+                        {
+                            Id = 8,
+                            Color = "#A29BFE",
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Лекции, семинары, воркшопы, курсы",
                             DisplayOrder = 8,
-                            Icon = "😎",
-                            IsActive = true,
-                            Name = "Отдых и тусовки"
+                            Icon = "📚",
+                            IsSystem = true,
+                            Name = "Образование",
+                            Slug = "obrazovanie",
+                            Status = 1
                         },
                         new
                         {
-                            Id = new Guid("99999999-9999-9999-9999-999999999999"),
-                            Description = "Марафоны, триатлоны, соревнования и забеги в других городах",
+                            Id = 9,
+                            Color = "#FD79A8",
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Нетворкинг, стартапы, бизнес-встречи",
                             DisplayOrder = 9,
-                            Icon = "🏆",
-                            IsActive = true,
-                            Name = "Спортивные события"
+                            Icon = "💼",
+                            IsSystem = true,
+                            Name = "Бизнес",
+                            Slug = "biznes",
+                            Status = 1
+                        },
+                        new
+                        {
+                            Id = 10,
+                            Color = "#00CEC9",
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Настольные игры, киберспорт, квизы",
+                            DisplayOrder = 10,
+                            Icon = "🎮",
+                            IsSystem = true,
+                            Name = "Игры",
+                            Slug = "igry",
+                            Status = 1
+                        },
+                        new
+                        {
+                            Id = 11,
+                            Color = "#FDCB6E",
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Городские поездки, экскурсии, автопутешествия",
+                            DisplayOrder = 11,
+                            Icon = "✈️",
+                            IsSystem = true,
+                            Name = "Путешествия",
+                            Slug = "puteshestviya",
+                            Status = 1
+                        },
+                        new
+                        {
+                            Id = 12,
+                            Color = "#E17055",
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Йога, медитация, фитнес, здоровое питание",
+                            DisplayOrder = 12,
+                            Icon = "🧘",
+                            IsSystem = true,
+                            Name = "Здоровье и велнес",
+                            Slug = "zdorove-i-velnes",
+                            Status = 1
+                        },
+                        new
+                        {
+                            Id = 13,
+                            Color = "#6C5CE7",
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Благотворительность, помощь животным, экология",
+                            DisplayOrder = 13,
+                            Icon = "🤲",
+                            IsSystem = true,
+                            Name = "Волонтерство",
+                            Slug = "volonterstvo",
+                            Status = 1
+                        },
+                        new
+                        {
+                            Id = 14,
+                            Color = "#00B894",
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Совместные походы в кино, обсуждения",
+                            DisplayOrder = 14,
+                            Icon = "🎬",
+                            IsSystem = true,
+                            Name = "Кино и сериалы",
+                            Slug = "kino-i-serialy",
+                            Status = 1
+                        },
+                        new
+                        {
+                            Id = 15,
+                            Color = "#0984E3",
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Фотосессии, фотопрогулки, обучение",
+                            DisplayOrder = 15,
+                            Icon = "📷",
+                            IsSystem = true,
+                            Name = "Фотография",
+                            Slug = "fotografiya",
+                            Status = 1
+                        },
+                        new
+                        {
+                            Id = 101,
+                            Color = "#FF6B6B",
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Бег, марафоны, забеги",
+                            DisplayOrder = 1,
+                            Icon = "🏃",
+                            IsSystem = true,
+                            Name = "Бег",
+                            ParentId = 1,
+                            Slug = "beg",
+                            Status = 1
+                        },
+                        new
+                        {
+                            Id = 102,
+                            Color = "#FF6B6B",
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Футбол, мини-футбол",
+                            DisplayOrder = 2,
+                            Icon = "⚽",
+                            IsSystem = true,
+                            Name = "Футбол",
+                            ParentId = 1,
+                            Slug = "futbol",
+                            Status = 1
+                        },
+                        new
+                        {
+                            Id = 103,
+                            Color = "#FF6B6B",
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Баскетбол, стритбол",
+                            DisplayOrder = 3,
+                            Icon = "🏀",
+                            IsSystem = true,
+                            Name = "Баскетбол",
+                            ParentId = 1,
+                            Slug = "basketbol",
+                            Status = 1
+                        },
+                        new
+                        {
+                            Id = 104,
+                            Color = "#FF6B6B",
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Волейбол, пляжный волейбол",
+                            DisplayOrder = 4,
+                            Icon = "🏐",
+                            IsSystem = true,
+                            Name = "Волейбол",
+                            ParentId = 1,
+                            Slug = "voleibol",
+                            Status = 1
+                        },
+                        new
+                        {
+                            Id = 105,
+                            Color = "#FF6B6B",
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Теннис, настольный теннис",
+                            DisplayOrder = 5,
+                            Icon = "🎾",
+                            IsSystem = true,
+                            Name = "Теннис",
+                            ParentId = 1,
+                            Slug = "tennis",
+                            Status = 1
+                        },
+                        new
+                        {
+                            Id = 106,
+                            Color = "#FF6B6B",
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Велоспорт, велопрогулки",
+                            DisplayOrder = 6,
+                            Icon = "🚴",
+                            IsSystem = true,
+                            Name = "Велоспорт",
+                            ParentId = 1,
+                            Slug = "velosport",
+                            Status = 1
+                        },
+                        new
+                        {
+                            Id = 107,
+                            Color = "#FF6B6B",
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Плавание, аквааэробика",
+                            DisplayOrder = 7,
+                            Icon = "🏊",
+                            IsSystem = true,
+                            Name = "Плавание",
+                            ParentId = 1,
+                            Slug = "plavanie",
+                            Status = 1
+                        },
+                        new
+                        {
+                            Id = 108,
+                            Color = "#FF6B6B",
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Тренажерный зал, групповые занятия",
+                            DisplayOrder = 8,
+                            Icon = "💪",
+                            IsSystem = true,
+                            Name = "Фитнес",
+                            ParentId = 1,
+                            Slug = "fitnes",
+                            Status = 1
+                        },
+                        new
+                        {
+                            Id = 201,
+                            Color = "#4ECDC4",
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Пешие походы, треккинг",
+                            DisplayOrder = 1,
+                            Icon = "🥾",
+                            IsSystem = true,
+                            Name = "Походы",
+                            ParentId = 2,
+                            Slug = "pohody",
+                            Status = 1
+                        },
+                        new
+                        {
+                            Id = 202,
+                            Color = "#4ECDC4",
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Кемпинг, палаточные лагеря",
+                            DisplayOrder = 2,
+                            Icon = "🏕️",
+                            IsSystem = true,
+                            Name = "Кемпинг",
+                            ParentId = 2,
+                            Slug = "kemping",
+                            Status = 1
+                        },
+                        new
+                        {
+                            Id = 203,
+                            Color = "#4ECDC4",
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Скалолазание, болдеринг",
+                            DisplayOrder = 3,
+                            Icon = "🧗",
+                            IsSystem = true,
+                            Name = "Скалолазание",
+                            ParentId = 2,
+                            Slug = "skalolazanie",
+                            Status = 1
+                        },
+                        new
+                        {
+                            Id = 204,
+                            Color = "#4ECDC4",
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Пикники на природе",
+                            DisplayOrder = 4,
+                            Icon = "🧺",
+                            IsSystem = true,
+                            Name = "Пикник",
+                            ParentId = 2,
+                            Slug = "piknik",
+                            Status = 1
+                        },
+                        new
+                        {
+                            Id = 301,
+                            Color = "#45B7D1",
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Горные и беговые лыжи",
+                            DisplayOrder = 1,
+                            Icon = "⛷️",
+                            IsSystem = true,
+                            Name = "Лыжи",
+                            ParentId = 3,
+                            Slug = "lyzhi",
+                            Status = 1
+                        },
+                        new
+                        {
+                            Id = 302,
+                            Color = "#45B7D1",
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Сноуборд",
+                            DisplayOrder = 2,
+                            Icon = "🏂",
+                            IsSystem = true,
+                            Name = "Сноуборд",
+                            ParentId = 3,
+                            Slug = "snoubord",
+                            Status = 1
+                        },
+                        new
+                        {
+                            Id = 303,
+                            Color = "#45B7D1",
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Коньки, хоккей",
+                            DisplayOrder = 3,
+                            Icon = "⛸️",
+                            IsSystem = true,
+                            Name = "Коньки",
+                            ParentId = 3,
+                            Slug = "konki",
+                            Status = 1
+                        },
+                        new
+                        {
+                            Id = 304,
+                            Color = "#45B7D1",
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Тюбинг, снежные горки",
+                            DisplayOrder = 4,
+                            Icon = "🛷",
+                            IsSystem = true,
+                            Name = "Тюбинг",
+                            ParentId = 3,
+                            Slug = "tyubing",
+                            Status = 1
+                        },
+                        new
+                        {
+                            Id = 401,
+                            Color = "#96CEB4",
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Каякинг, сплавы",
+                            DisplayOrder = 1,
+                            Icon = "🚣",
+                            IsSystem = true,
+                            Name = "Каякинг",
+                            ParentId = 4,
+                            Slug = "kayaking",
+                            Status = 1
+                        },
+                        new
+                        {
+                            Id = 402,
+                            Color = "#96CEB4",
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Сапбординг",
+                            DisplayOrder = 2,
+                            Icon = "🏄",
+                            IsSystem = true,
+                            Name = "САП",
+                            ParentId = 4,
+                            Slug = "sap",
+                            Status = 1
+                        },
+                        new
+                        {
+                            Id = 403,
+                            Color = "#96CEB4",
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Серфинг",
+                            DisplayOrder = 3,
+                            Icon = "🌊",
+                            IsSystem = true,
+                            Name = "Серфинг",
+                            ParentId = 4,
+                            Slug = "serfing",
+                            Status = 1
+                        },
+                        new
+                        {
+                            Id = 404,
+                            Color = "#96CEB4",
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Дайвинг, снорклинг",
+                            DisplayOrder = 4,
+                            Icon = "🤿",
+                            IsSystem = true,
+                            Name = "Дайвинг",
+                            ParentId = 4,
+                            Slug = "daiving",
+                            Status = 1
+                        },
+                        new
+                        {
+                            Id = 501,
+                            Color = "#FFEAA7",
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Театры, спектакли",
+                            DisplayOrder = 1,
+                            Icon = "🎭",
+                            IsSystem = true,
+                            Name = "Театр",
+                            ParentId = 5,
+                            Slug = "teatr",
+                            Status = 1
+                        },
+                        new
+                        {
+                            Id = 502,
+                            Color = "#FFEAA7",
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Музеи, выставки",
+                            DisplayOrder = 2,
+                            Icon = "🏛️",
+                            IsSystem = true,
+                            Name = "Музеи",
+                            ParentId = 5,
+                            Slug = "muzei",
+                            Status = 1
+                        },
+                        new
+                        {
+                            Id = 503,
+                            Color = "#FFEAA7",
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Экскурсии по городу",
+                            DisplayOrder = 3,
+                            Icon = "🚶",
+                            IsSystem = true,
+                            Name = "Экскурсии",
+                            ParentId = 5,
+                            Slug = "ekskursii",
+                            Status = 1
+                        },
+                        new
+                        {
+                            Id = 504,
+                            Color = "#FFEAA7",
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Кинотеатры, кинопоказы",
+                            DisplayOrder = 4,
+                            Icon = "🎬",
+                            IsSystem = true,
+                            Name = "Кино",
+                            ParentId = 5,
+                            Slug = "kino",
+                            Status = 1
+                        },
+                        new
+                        {
+                            Id = 601,
+                            Color = "#DDA0DD",
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Концерты, живые выступления",
+                            DisplayOrder = 1,
+                            Icon = "🎤",
+                            IsSystem = true,
+                            Name = "Концерты",
+                            ParentId = 6,
+                            Slug = "kontserty",
+                            Status = 1
+                        },
+                        new
+                        {
+                            Id = 602,
+                            Color = "#DDA0DD",
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Джем-сейшны, музыкальные встречи",
+                            DisplayOrder = 2,
+                            Icon = "🎸",
+                            IsSystem = true,
+                            Name = "Джем-сейшны",
+                            ParentId = 6,
+                            Slug = "dzhem-seishny",
+                            Status = 1
+                        },
+                        new
+                        {
+                            Id = 603,
+                            Color = "#DDA0DD",
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Музыкальные фестивали",
+                            DisplayOrder = 3,
+                            Icon = "🎪",
+                            IsSystem = true,
+                            Name = "Фестивали",
+                            ParentId = 6,
+                            Slug = "festivali",
+                            Status = 1
+                        },
+                        new
+                        {
+                            Id = 701,
+                            Color = "#FF8A5C",
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Походы в рестораны",
+                            DisplayOrder = 1,
+                            Icon = "🍽️",
+                            IsSystem = true,
+                            Name = "Рестораны",
+                            ParentId = 7,
+                            Slug = "restorany",
+                            Status = 1
+                        },
+                        new
+                        {
+                            Id = 702,
+                            Color = "#FF8A5C",
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Кофе, десерты",
+                            DisplayOrder = 2,
+                            Icon = "☕",
+                            IsSystem = true,
+                            Name = "Кафе",
+                            ParentId = 7,
+                            Slug = "kafe",
+                            Status = 1
+                        },
+                        new
+                        {
+                            Id = 703,
+                            Color = "#FF8A5C",
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Кулинарные мастер-классы",
+                            DisplayOrder = 3,
+                            Icon = "🍳",
+                            IsSystem = true,
+                            Name = "Кулинария",
+                            ParentId = 7,
+                            Slug = "kulinariya",
+                            Status = 1
+                        },
+                        new
+                        {
+                            Id = 704,
+                            Color = "#FF8A5C",
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Винные, пивные дегустации",
+                            DisplayOrder = 4,
+                            Icon = "🍷",
+                            IsSystem = true,
+                            Name = "Дегустации",
+                            ParentId = 7,
+                            Slug = "degustatsii",
+                            Status = 1
+                        },
+                        new
+                        {
+                            Id = 705,
+                            Color = "#FF8A5C",
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Барбекю, гриль",
+                            DisplayOrder = 5,
+                            Icon = "🔥",
+                            IsSystem = true,
+                            Name = "Барбекю",
+                            ParentId = 7,
+                            Slug = "barbekyu",
+                            Status = 1
+                        },
+                        new
+                        {
+                            Id = 801,
+                            Color = "#A29BFE",
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Лекции, семинары",
+                            DisplayOrder = 1,
+                            Icon = "📖",
+                            IsSystem = true,
+                            Name = "Лекции",
+                            ParentId = 8,
+                            Slug = "lektsii",
+                            Status = 1
+                        },
+                        new
+                        {
+                            Id = 802,
+                            Color = "#A29BFE",
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Практические воркшопы",
+                            DisplayOrder = 2,
+                            Icon = "🛠️",
+                            IsSystem = true,
+                            Name = "Воркшопы",
+                            ParentId = 8,
+                            Slug = "vorkshopy",
+                            Status = 1
+                        },
+                        new
+                        {
+                            Id = 803,
+                            Color = "#A29BFE",
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Языковые встречи, разговорные клубы",
+                            DisplayOrder = 3,
+                            Icon = "🗣️",
+                            IsSystem = true,
+                            Name = "Языки",
+                            ParentId = 8,
+                            Slug = "yazyki",
+                            Status = 1
+                        },
+                        new
+                        {
+                            Id = 804,
+                            Color = "#A29BFE",
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Книжные клубы",
+                            DisplayOrder = 4,
+                            Icon = "📚",
+                            IsSystem = true,
+                            Name = "Книги",
+                            ParentId = 8,
+                            Slug = "knigi",
+                            Status = 1
+                        },
+                        new
+                        {
+                            Id = 901,
+                            Color = "#FD79A8",
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Бизнес-встречи, нетворкинг",
+                            DisplayOrder = 1,
+                            Icon = "🤝",
+                            IsSystem = true,
+                            Name = "Нетворкинг",
+                            ParentId = 9,
+                            Slug = "netvorking",
+                            Status = 1
+                        },
+                        new
+                        {
+                            Id = 902,
+                            Color = "#FD79A8",
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Встречи стартаперов",
+                            DisplayOrder = 2,
+                            Icon = "🚀",
+                            IsSystem = true,
+                            Name = "Стартапы",
+                            ParentId = 9,
+                            Slug = "startapy",
+                            Status = 1
+                        },
+                        new
+                        {
+                            Id = 903,
+                            Color = "#FD79A8",
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Конференции, форумы",
+                            DisplayOrder = 3,
+                            Icon = "📊",
+                            IsSystem = true,
+                            Name = "Конференции",
+                            ParentId = 9,
+                            Slug = "konferentsii",
+                            Status = 1
+                        },
+                        new
+                        {
+                            Id = 1001,
+                            Color = "#00CEC9",
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Настольные игры, мафия",
+                            DisplayOrder = 1,
+                            Icon = "🎲",
+                            IsSystem = true,
+                            Name = "Настольные игры",
+                            ParentId = 10,
+                            Slug = "nastolnye-igry",
+                            Status = 1
+                        },
+                        new
+                        {
+                            Id = 1002,
+                            Color = "#00CEC9",
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Компьютерные игры",
+                            DisplayOrder = 2,
+                            Icon = "🖥️",
+                            IsSystem = true,
+                            Name = "Киберспорт",
+                            ParentId = 10,
+                            Slug = "kibersport",
+                            Status = 1
+                        },
+                        new
+                        {
+                            Id = 1003,
+                            Color = "#00CEC9",
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Интеллектуальные квизы",
+                            DisplayOrder = 3,
+                            Icon = "🧠",
+                            IsSystem = true,
+                            Name = "Квизы",
+                            ParentId = 10,
+                            Slug = "kvizy",
+                            Status = 1
+                        },
+                        new
+                        {
+                            Id = 1004,
+                            Color = "#00CEC9",
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Квест-комнаты",
+                            DisplayOrder = 4,
+                            Icon = "🔍",
+                            IsSystem = true,
+                            Name = "Квесты",
+                            ParentId = 10,
+                            Slug = "kvesty",
+                            Status = 1
+                        },
+                        new
+                        {
+                            Id = 1101,
+                            Color = "#FDCB6E",
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Поездки по городам",
+                            DisplayOrder = 1,
+                            Icon = "🏙️",
+                            IsSystem = true,
+                            Name = "Городские поездки",
+                            ParentId = 11,
+                            Slug = "gorodskie-poezdki",
+                            Status = 1
+                        },
+                        new
+                        {
+                            Id = 1102,
+                            Color = "#FDCB6E",
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Автопутешествия, road trips",
+                            DisplayOrder = 2,
+                            Icon = "🚗",
+                            IsSystem = true,
+                            Name = "Автопутешествия",
+                            ParentId = 11,
+                            Slug = "avtoputeshestviya",
+                            Status = 1
+                        },
+                        new
+                        {
+                            Id = 1103,
+                            Color = "#FDCB6E",
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Экотуризм, природа",
+                            DisplayOrder = 3,
+                            Icon = "🌿",
+                            IsSystem = true,
+                            Name = "Экотуризм",
+                            ParentId = 11,
+                            Slug = "ekoturizm",
+                            Status = 1
+                        },
+                        new
+                        {
+                            Id = 1201,
+                            Color = "#E17055",
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Йога, пилатес",
+                            DisplayOrder = 1,
+                            Icon = "🧘‍♀️",
+                            IsSystem = true,
+                            Name = "Йога",
+                            ParentId = 12,
+                            Slug = "ioga",
+                            Status = 1
+                        },
+                        new
+                        {
+                            Id = 1202,
+                            Color = "#E17055",
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Медитация, дыхательные практики",
+                            DisplayOrder = 2,
+                            Icon = "🕯️",
+                            IsSystem = true,
+                            Name = "Медитация",
+                            ParentId = 12,
+                            Slug = "meditatsiya",
+                            Status = 1
+                        },
+                        new
+                        {
+                            Id = 1203,
+                            Color = "#E17055",
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Спа, велнес",
+                            DisplayOrder = 3,
+                            Icon = "💆",
+                            IsSystem = true,
+                            Name = "Спа",
+                            ParentId = 12,
+                            Slug = "spa",
+                            Status = 1
+                        },
+                        new
+                        {
+                            Id = 1301,
+                            Color = "#6C5CE7",
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Приюты, помощь животным",
+                            DisplayOrder = 1,
+                            Icon = "🐕",
+                            IsSystem = true,
+                            Name = "Помощь животным",
+                            ParentId = 13,
+                            Slug = "pomosch-zhivotnym",
+                            Status = 1
+                        },
+                        new
+                        {
+                            Id = 1302,
+                            Color = "#6C5CE7",
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Экологические акции",
+                            DisplayOrder = 2,
+                            Icon = "♻️",
+                            IsSystem = true,
+                            Name = "Экология",
+                            ParentId = 13,
+                            Slug = "ekologiya",
+                            Status = 1
+                        },
+                        new
+                        {
+                            Id = 1303,
+                            Color = "#6C5CE7",
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Благотворительные мероприятия",
+                            DisplayOrder = 3,
+                            Icon = "❤️",
+                            IsSystem = true,
+                            Name = "Благотворительность",
+                            ParentId = 13,
+                            Slug = "blagotvoritelnost",
+                            Status = 1
+                        },
+                        new
+                        {
+                            Id = 1401,
+                            Color = "#00B894",
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Походы в кино",
+                            DisplayOrder = 1,
+                            Icon = "🍿",
+                            IsSystem = true,
+                            Name = "Кинотеатры",
+                            ParentId = 14,
+                            Slug = "kinoteatry",
+                            Status = 1
+                        },
+                        new
+                        {
+                            Id = 1402,
+                            Color = "#00B894",
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Обсуждения фильмов",
+                            DisplayOrder = 2,
+                            Icon = "🎞️",
+                            IsSystem = true,
+                            Name = "Киноклубы",
+                            ParentId = 14,
+                            Slug = "kinokluby",
+                            Status = 1
+                        },
+                        new
+                        {
+                            Id = 1501,
+                            Color = "#0984E3",
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Фотопрогулки, фотосессии",
+                            DisplayOrder = 1,
+                            Icon = "🌅",
+                            IsSystem = true,
+                            Name = "Фотопрогулки",
+                            ParentId = 15,
+                            Slug = "fotoprogulki",
+                            Status = 1
+                        },
+                        new
+                        {
+                            Id = 1502,
+                            Color = "#0984E3",
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Курсы фотографии",
+                            DisplayOrder = 2,
+                            Icon = "📸",
+                            IsSystem = true,
+                            Name = "Обучение",
+                            ParentId = 15,
+                            Slug = "obuchenie",
+                            Status = 1
                         });
                 });
 
-            modelBuilder.Entity("eMeetup.Modules.Events.Domain.EventSessions.EventSession", b =>
+            modelBuilder.Entity("eMeetup.Modules.Events.Domain.ActivityCategories.ActivityCategory", b =>
                 {
-                    b.HasOne("eMeetup.Modules.Events.Domain.Events.Event", "Event")
-                        .WithMany("Sessions")
-                        .HasForeignKey("EventId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_event_session_event");
+                    b.HasOne("eMeetup.Modules.Events.Domain.ActivityCategories.ActivityCategory", "Parent")
+                        .WithMany("Children")
+                        .HasForeignKey("ParentId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasConstraintName("fk_activity_categories_activity_categories_parent_id");
 
-                    b.Navigation("Event");
+                    b.Navigation("Parent");
                 });
 
-            modelBuilder.Entity("eMeetup.Modules.Events.Domain.EventTags.EventTag", b =>
+            modelBuilder.Entity("eMeetup.Modules.Events.Domain.ActivityCategories.ActivityCategory", b =>
                 {
-                    b.HasOne("eMeetup.Modules.Events.Domain.Events.Event", "Event")
-                        .WithMany("Tags")
-                        .HasForeignKey("EventId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_event_tags_events_event_id");
-
-                    b.HasOne("eMeetup.Modules.Events.Domain.Tags.Tag", "Tag")
-                        .WithMany("EventTags")
-                        .HasForeignKey("TagId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_event_tags_tags_tag_id");
-
-                    b.Navigation("Event");
-
-                    b.Navigation("Tag");
-                });
-
-            modelBuilder.Entity("eMeetup.Modules.Events.Domain.MateTypes.MateType", b =>
-                {
-                    b.HasOne("eMeetup.Modules.Events.Domain.EventSessions.EventSession", null)
-                        .WithMany()
-                        .HasForeignKey("EventSessionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_mate_type_event_session");
-                });
-
-            modelBuilder.Entity("eMeetup.Modules.Events.Domain.Tags.Tag", b =>
-                {
-                    b.HasOne("eMeetup.Modules.Events.Domain.Tags.TagGroup", "TagGroup")
-                        .WithMany("Tags")
-                        .HasForeignKey("TagGroupId")
-                        .OnDelete(DeleteBehavior.SetNull)
-                        .HasConstraintName("fk_tags_tag_group_tag_group_id");
-
-                    b.Navigation("TagGroup");
-                });
-
-            modelBuilder.Entity("eMeetup.Modules.Events.Domain.Events.Event", b =>
-                {
-                    b.Navigation("Sessions");
-
-                    b.Navigation("Tags");
-                });
-
-            modelBuilder.Entity("eMeetup.Modules.Events.Domain.Tags.Tag", b =>
-                {
-                    b.Navigation("EventTags");
-                });
-
-            modelBuilder.Entity("eMeetup.Modules.Events.Domain.Tags.TagGroup", b =>
-                {
-                    b.Navigation("Tags");
+                    b.Navigation("Children");
                 });
 #pragma warning restore 612, 618
         }
